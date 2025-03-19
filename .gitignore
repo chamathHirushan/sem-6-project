@@ -3,6 +3,9 @@
 
 ##################################### Frontend #####################################
 
+#env
+/frontend/.env
+
 # Logs
 /frontend/logs
 /frontend/*.log
@@ -34,3 +37,9 @@
 /frontend/*.sw?
 
 ##################################### Backtend ######################################
+
+#env venv cache
+/backend/.env
+/backend/venv/
+
+/backend/__pycache__/
