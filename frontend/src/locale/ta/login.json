@@ -1,0 +1,10 @@
+{
+    "login": {
+      "username": "Username",
+      "password": "Password",
+      "submit": "Log In"
+    },
+    "error": {
+      "invalid_credentials": "Invalid username or password"
+    }
+  }
