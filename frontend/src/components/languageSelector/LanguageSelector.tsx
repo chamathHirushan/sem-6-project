@@ -4,11 +4,23 @@ import Select from "react-select";
 import { LanguageSelectorData } from "./LanguageSelectorData";
 import i18n from "../../locale/i18n";
 import moment from "moment";
+
 const customStyles = {
+  control: (provided: any, state: any) => ({
+    ...provided,
+    borderColor: state.isFocused ? "#4F959D" : "#ccc",
+    boxShadow: state.isFocused ? "0 0 0 1px #4F959D" : "none",
+    '&:hover': {
+      borderColor: state.isFocused ? "#4F959D" : "#ccc",
+    }
+  }),
   option: (provided: any, state: any) => ({
     ...provided,
-    backgroundColor: state.isSelected ? "rgba(189,197,209,.3)" : "white",
+    backgroundColor: state.isSelected ? "hsla(216, 17.90%, 78.00%, 0.30)" : "white",
     color: "black",
+    '&:hover': {
+      backgroundColor: state.isSelected ? "hsla(216, 17.90%, 78.00%, 0.50)" : "hsla(0, 0%, 90%, 0.2)",
+    }
   }),
 };
 
@@ -42,13 +54,12 @@ const LanguageSelector: React.ForwardRefRenderFunction<{
   return (
     <Select
       isSearchable={false}
-      // placeholder="Select Option"
       className="w-full md:w-auto"
       value={selectedOption}
       options={LanguageSelectorData}
       onChange={handleChange}
       menuPlacement="top"
-      defaultValue={LanguageSelectorData[1]}
+      defaultValue={LanguageSelectorData[0]}
       styles={customStyles}
       // @ts-ignore
       getOptionLabel={(e: any) => (

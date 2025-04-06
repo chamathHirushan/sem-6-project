@@ -1,10 +1,6 @@
 {
-    "login": {
-      "username": "Username",
-      "password": "Password",
-      "submit": "Log In"
-    },
-    "error": {
-      "invalid_credentials": "Invalid username or password"
-    }
-  }
+"welcome" : "ආයුබෝවන්!",
+"login" : "ඇතුලුවන්න",
+"register" : "ලියාපදිංචි වන්න",
+"or" : "or"
+}

@@ -1,10 +1,12 @@
 {
-    "login": {
-      "username": "Username",
-      "password": "Password",
-      "submit": "Log In"
-    },
-    "error": {
-      "invalid_credentials": "Invalid username or password"
-    }
+    "welcome" : "Welcome!",
+    "login" : "Login",
+    "register" : "Register",
+    "or" : "or",
+    "email" : " Email",
+    "password" : " Password",
+    "forgotPassword" : "Forgot Password?",
+    "Phonenumber" : " Phone Number",
+    "rememberMe" : "Remember Me"
+
   }
