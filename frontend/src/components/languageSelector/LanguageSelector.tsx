@@ -54,7 +54,7 @@ const LanguageSelector: React.ForwardRefRenderFunction<{
   return (
     <Select
       isSearchable={false}
-      className="w-full md:w-auto"
+      className="w-full md:w-auto ml-2 mb-2"
       value={selectedOption}
       options={LanguageSelectorData}
       onChange={handleChange}
