@@ -11,5 +11,6 @@
     "google" : " Sign in with Google",
     "magicLink" : " Sign in Magic Link",
     "verificationEmailSent" : "Verification email sent. Please check your inbox.",
-    "signUpError" : "Sign up error"
+    "signUpError" : "Sign up error",
+    "magicLinkSent" : "Magic link sent. Please check your inbox."
   }

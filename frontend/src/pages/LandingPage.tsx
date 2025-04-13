@@ -7,8 +7,8 @@ export default function LandingPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await apiClient.get("/"); // Replace with actual API endpoint
-        setBackendData(response || "No data received"); // Adjust based on API response
+        const response = await apiClient.get("/admin/new"); // Replace with actual API endpoint
+        setBackendData(response.message || "No data received"); // Adjust based on API response
       } catch (error) {
         setBackendData("Error fetching data");
         console.error("API Error:", error);

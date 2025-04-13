@@ -1,8 +1,13 @@
 from fastapi import APIRouter
 from services.gateway_service import GatewayService
+from utilities.validate_permissins import require_role
 
-router = APIRouter()
 otp_service = GatewayService()
+
+router= APIRouter(
+    dependencies=[require_role(1)],
+    tags=["Gateways"]
+)
 
 @router.post("/otp/send")
 async def send_otp(

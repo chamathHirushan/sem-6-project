@@ -7,45 +7,10 @@ import LanguageSelector from "../components/languageSelector/LanguageSelector";
 import useI18n from "../locale/useI18n";
 import Spinner from "../components/Loading/Spinner";
 import { auth } from "../../firebase.config";
-import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, isSignInWithEmailLink } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, sendPasswordResetEmail } from "firebase/auth";
 import {toast} from "react-toastify";
-
-// const useAuth = () => {
-//   const [token, setToken] = useState<string | null>(null);
-
-//   useEffect(() => {
-//     const fetchToken = async () => {
-//       try {
-//         const response = await apiClient.get("/api/auth/token");
-//         setToken(response.data.accessToken);
-//       } catch (error) {
-//         console.error("Error fetching token:", error);
-//         setToken(null);
-//       }
-//     };
-
-//     fetchToken();
-//   }, []);
-
-//   return token;
-// }
-
-// const authProvider = ({children}) => {
-
-//   const [token, setToken] = useState(null);
-
-//   useEffect(() => {
-//     const fetchToken = async () => {
-//       try{
-//         const response = await apiClient.get("/api/auth/token");
-//         setToken(response.data.accessToken);
-//       }catch{
-//         setToken(null);
-//       }
-//   }
-//   fetchToken();
-//   },[]);
-// }
+import {Navigate} from "react-router-dom";
+import {useAuth} from "../contexts/AuthContext";
 
 function cleanErrorMessage(message: string): string {
   if (typeof message !== "string") {
@@ -62,28 +27,40 @@ function cleanErrorMessage(message: string): string {
 }
 
 export default function LoginPage() {
-  const [backendData, setBackendData] = useState<string>("Loading...");
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+  const {user, userLoggedIn} = useAuth();
   const {t} = useI18n("login");
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await apiClient.get("/api"); // Replace with actual API endpoint
-        setBackendData(response || "No data received"); // Adjust based on API response
-      } catch (error) {
-        setBackendData("Error fetching data");
-        console.error("API Error:", error);
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      let provided_email = window.localStorage.getItem('emailForSignIn');
+      if (!provided_email) {
+        provided_email = window.prompt('Please provide your email for confirmation');
       }
-    }
-
-    fetchData();
+      try {
+        if (provided_email) {
+          signInWithEmailLink(auth, provided_email, window.location.href);
+        } 
+        window.localStorage.removeItem('emailForSignIn');
+      } catch (error) {
+          console.error("Error during sign-in:", error);
+      }
+    }   
   }, []);
+
+  const resetPassword = async () => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast.success(t('passwordResetEmailSent'));
+    } catch (error) {
+      toast.error(cleanErrorMessage(cleanErrorMessage((error as any).message)));
+    }
+  };
 
   const handleSignup = async () => {
     try {
@@ -125,6 +102,10 @@ export default function LoginPage() {
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential?.accessToken;
       const user = result.user;
+      // console.log(user);
+      // console.log(token);
+      // console.log(result);
+      // console.log(credential);
 
       toast.success(t('loginSuccess'));
 
@@ -139,10 +120,7 @@ export default function LoginPage() {
 
   const handleMagicLink = async () => {
     const actionCodeSettings = {
-      // URL you want to redirect back to. The domain (www.example.com) for this
-      // URL must be in the authorized domains list in the Firebase Console.
-      url: 'https://www.example.com/finishSignUp?cartId=1234',
-      // This must be true.
+      url: 'http://localhost:5173/login',   //change
       handleCodeInApp: true,
       iOS: {
         bundleId: 'com.example.ios'
@@ -153,40 +131,27 @@ export default function LoginPage() {
         minimumVersion: '12'
       },
       // The domain must be configured in Firebase Hosting and owned by the project.
-      linkDomain: 'custom-domain.com'
+      // linkDomain: 'custom-domain.com'
     };
-    // TODO
-    // try {
-    //     setIsLoading(true);
-    //     console.log("Submitting data:", { email, password });
-    //     const response = await apiClient.post("/api/auth/continue", { email, password });
-    //     console.log("Continue response:", response);
-    // } catch (error) {
-    //     console.error("Error during continue:", error);
-    // }
-    // finally {
-    //     setIsLoading(true);
-    // }
-    sendSignInLinkToEmail(auth, email, actionCodeSettings)
-      .then(() => {
-        // The link was successfully sent. Inform the user.
-        // Save the email locally so you don't need to ask the user for it again
-        // if they open the link on the same device.
-        window.localStorage.setItem('emailForSignIn', email);
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ...
-      });
 
-  };
-
+    if (!email) {
+      toast.error(t('emailRequired'));
+      return;
+    }
+    try {
+      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      window.localStorage.setItem('emailForSignIn', email);
+      toast.success(t('passwordResetEmailSent'));
+    } catch (error) {
+      toast.error(cleanErrorMessage((error as any).message));
+    }
+  };  
+  console.log("User",user)
   return(
   // <p>{backendData}</p>
   <div className="flex-col lg:flex-row flex ">
-    <div className="flex flex-col flex-1 mt-16">
+    {userLoggedIn && (<Navigate to="/temp" replace />)}
+    <div className="flex flex-col flex-1 mt-5">
       <div className="flex flex-col mt-24 justify-center items-center">
         <h1 className="text-6xl font-bold text-gray-600 text-center w-90">{t("welcome")}</h1>
           <div className="flex w-80 mt-7 mb-4 border-b border-gray-200">
@@ -222,6 +187,9 @@ export default function LoginPage() {
                       placeholder={t('email')}
                       className="w-full border-2 border-gray-light bg-white h-10 px-5 pl-8 rounded text-sm focus:outline-none"
                       name="email"
+                      type="email"
+                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                      required
                   />
               </div>
               {!isLogin && (
@@ -268,6 +236,15 @@ export default function LoginPage() {
                 />
               </div>
               )}
+            {isLogin && (
+              <button
+                onClick={resetPassword}
+                disabled={!email}
+                className="text-xs font-normal text-gray-300 hover:underline text-left mb-1 ml-2 disabled:text-gray-200 disabled:cursor-not-allowed"
+              >
+                {t('forgotPassword')}
+              </button>
+            )}
             {isLogin ? (
             <button
                 onClick={() => handleLogin()}
@@ -284,7 +261,13 @@ export default function LoginPage() {
                 {isLoading ? <Spinner colour="#205781" size="20px"/> : t('signup')}
             </button>)}
           </div>
-          <div className="flex flex-col gap-3 w-80 mt-4 ">
+          <div className="flex flex-col gap-3 mt-4">
+            <div className="flex items-center">
+              <div className="flex-grow border-t-2 border-gray-200"></div>
+              <span className="mx-2 text-sm font-normal text-gray-200">{t('or')}</span>
+              <div className="flex-grow border-t-2 border-gray-200"></div>
+            </div>
+            <div className="flex flex-col gap-3 w-80 mt-4 ">
             <button
                 onClick={() => handleGoogle()}
                 className="w-full bg-black text-white m-auto disabled:cursor-not-allowed border-2 border-gray-light h-10 px-5 pl-8 rounded-lg text-sm focus:outline-none flex items-center justify-center"
@@ -307,7 +290,7 @@ export default function LoginPage() {
                 </span>
                 {t('magicLink')}
             </button>
-
+            </div>
           </div>
         </div>
     </div>

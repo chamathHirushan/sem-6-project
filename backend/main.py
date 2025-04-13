@@ -1,9 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
 import uvicorn
-from routes import gateway
+from routes import gateway, auth, admin
 
 load_dotenv()
 
@@ -19,6 +19,8 @@ app.add_middleware(
 )
 
 app.include_router(gateway.router, prefix="/api")
+app.include_router(auth.router, prefix="/auth")
+app.include_router(admin.router, prefix="/admin")
 
 @app.get("/")
 def read_root():
@@ -30,3 +32,4 @@ def api_base():
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    #uvicorn.run("main:app", host="0.0.0.0", port=8000)

@@ -1,3 +1,5 @@
+import { auth } from "../../firebase.config";
+
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 class ApiClient {
@@ -17,14 +19,18 @@ class ApiClient {
 
   private async request(method: string, endpoint: string, body?: any) {
     const url = `${this.baseUrl}${endpoint}`;
-    const headers = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
+
+    const token = await auth.currentUser?.getIdToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     const config: RequestInit = {
       method,
       headers,
-      credentials: 'include', // For cookies if using session-based auth
     };
 
     if (body) {
