@@ -1,7 +1,6 @@
 import { ConfigProvider } from "antd";
-import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { router } from "./routes";
+import { AppRouter } from "./routes";
 import "react-toastify/dist/ReactToastify.css"; 
 import { AuthProvider } from './contexts/AuthContext.tsx'
 
@@ -20,7 +19,7 @@ function App() {
                 pauseOnHover
                 style={{zIndex: 1100}}
             />
-            <RouterProvider router={router}/>
+            <AppRouter/>
         </AuthProvider>
     </ConfigProvider>
 );

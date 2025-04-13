@@ -6,7 +6,7 @@ cred = credentials.Certificate("./config/firebase-service-account.json")
 firebase_admin.initialize_app(cred)
 router = APIRouter()
 
-@router.post("/login")
+@router.get("/")
 async def login(
         authorization: str = Header(None)
     ):

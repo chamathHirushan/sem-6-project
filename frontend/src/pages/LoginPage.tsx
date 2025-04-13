@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import {apiClient} from "../api/client";
 import logoImg from "../assets/logo.png";
 import googleIcon from "../assets/google.png";
 import {KeyIcon, EnvelopeIcon, PhoneIcon} from "@heroicons/react/24/outline";
@@ -98,15 +97,7 @@ export default function LoginPage() {
     const provider = new GoogleAuthProvider();
 
     try {
-      const result = await signInWithPopup(auth, provider)
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential?.accessToken;
-      const user = result.user;
-      // console.log(user);
-      // console.log(token);
-      // console.log(result);
-      // console.log(credential);
-
+      await signInWithPopup(auth, provider)
       toast.success(t('loginSuccess'));
 
       } catch (error) {
@@ -146,11 +137,18 @@ export default function LoginPage() {
       toast.error(cleanErrorMessage((error as any).message));
     }
   };  
-  console.log("User",user)
+
   return(
-  // <p>{backendData}</p>
   <div className="flex-col lg:flex-row flex ">
-    {userLoggedIn && (<Navigate to="/temp" replace />)}
+
+    {userLoggedIn && (
+      user?.role >= 2 ? (
+        <Navigate to="/admin" replace />
+      ) : user?.role === 1 ? (
+        <Navigate to="/dashboard" replace />
+      ) : null
+    )}
+    
     <div className="flex flex-col flex-1 mt-5">
       <div className="flex flex-col mt-24 justify-center items-center">
         <h1 className="text-6xl font-bold text-gray-600 text-center w-90">{t("welcome")}</h1>

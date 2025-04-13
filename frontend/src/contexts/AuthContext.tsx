@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     if (storedUser) {
                         setUser(JSON.parse(storedUser));
                     } else {
-                        const fetchedUser = await apiClient.post("/auth/login", undefined);
+                        const fetchedUser = await apiClient.get("/auth");
                         setUser(fetchedUser);
                         sessionStorage.setItem("sewaUser", JSON.stringify(fetchedUser));
                 }

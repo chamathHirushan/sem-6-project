@@ -9,17 +9,10 @@ type ProtectedRouteProps = {
 
 export const ProtectedRoute = ({ 
   isAllowed, 
-  requiredRoles = [], 
-  userRole, 
-  redirectTo = "/login" 
+  redirectTo = "/unauthorized" 
 }: ProtectedRouteProps) => {
 
   if (!isAllowed) return <Navigate to={redirectTo} replace />;
-
-  // Role check: if requiredRoles exist, check if userRole is included
-  if (requiredRoles.length > 0 && !requiredRoles.includes(userRole || "")) {
-    return <Navigate to="/unauthorized" replace />;
-  }
 
   return <Outlet />;
 };
