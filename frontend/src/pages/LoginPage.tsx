@@ -8,7 +8,7 @@ import Spinner from "../components/Loading/Spinner";
 import { auth } from "../../firebase.config";
 import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, sendPasswordResetEmail } from "firebase/auth";
 import {toast} from "react-toastify";
-import {Navigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useAuth} from "../contexts/AuthContext";
 
 function cleanErrorMessage(message: string): string {
@@ -34,6 +34,7 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const {user, userLoggedIn} = useAuth();
   const {t} = useI18n("login");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isSignInWithEmailLink(auth, window.location.href)) {
@@ -138,17 +139,18 @@ export default function LoginPage() {
     }
   };  
 
+  useEffect(() => {
+    if (userLoggedIn) {
+      if (user?.role >= 2) {
+        navigate("/admin", { replace: true });
+      } else if (user?.role === 1) {
+        navigate("/dashboard", { replace: true });
+      }
+    }
+  }, [userLoggedIn, user]);
+
   return(
   <div className="flex-col lg:flex-row flex ">
-
-    {userLoggedIn && (
-      user?.role >= 2 ? (
-        <Navigate to="/admin" replace />
-      ) : user?.role === 1 ? (
-        <Navigate to="/dashboard" replace />
-      ) : null
-    )}
-    
     <div className="flex flex-col flex-1 mt-5">
       <div className="flex flex-col mt-24 justify-center items-center">
         <h1 className="text-6xl font-bold text-gray-600 text-center w-90">{t("welcome")}</h1>

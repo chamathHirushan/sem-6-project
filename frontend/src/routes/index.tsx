@@ -16,14 +16,14 @@ export function AppRouter() {
     { path: "/unauthorized", element: <UnauthorizedPage /> },
 
     {
-      element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 1} />,
+      element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 1} isLoggedIn={userLoggedIn} />,
       children: [
         { path: "/dashboard", element: <DashboardPage /> },
       ],
     },
 
     {
-      element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 2} />,
+      element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 2} isLoggedIn={userLoggedIn} />,
       children: [
         { path: "/admin", element: <AdminPage /> },
       ],

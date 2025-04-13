@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { apiClient } from "../api/client";
+import Logout from "../components/Logout";
 
 export default function AdminDashboard() {
     const [backendData, setBackendData] = useState<string>("Loading...");
@@ -24,6 +25,7 @@ export default function AdminDashboard() {
       <>
         <p>Logged as level {user.role} user</p>
         <p>{backendData}</p>
+        <Logout/>
       </>
     );
   }
