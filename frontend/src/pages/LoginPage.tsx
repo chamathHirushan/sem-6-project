@@ -55,15 +55,20 @@ export default function LoginPage() {
 
   const resetPassword = async () => {
     try {
+      setIsLoading(true);
       await sendPasswordResetEmail(auth, email);
       toast.success(t('passwordResetEmailSent'));
     } catch (error) {
       toast.error(cleanErrorMessage(cleanErrorMessage((error as any).message)));
     }
+    finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSignup = async () => {
     try {
+        setIsLoading(true);
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
     
@@ -72,16 +77,18 @@ export default function LoginPage() {
       } catch (error) {
         toast.error(cleanErrorMessage((error as any).message));
       }
+      finally {
+        setIsLoading(false);
+      }
     };
 
   const handleLogin = async () => {
     try {
+      setIsLoading(true);
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const user = userCredential.user;
 
-      if (user.emailVerified) {
-        toast.success(t('loginSuccess'));
-      } else {
+      if (!user.emailVerified) {
         toast.error(t('emailNotVerified'));
       }
 
@@ -90,7 +97,7 @@ export default function LoginPage() {
           toast.error(cleanErrorMessage((error as any).message));
       }
       finally {
-          setIsLoading(true);
+          setIsLoading(false);
       }
     };
 
@@ -98,15 +105,15 @@ export default function LoginPage() {
     const provider = new GoogleAuthProvider();
 
     try {
+      setIsLoading(true);
       await signInWithPopup(auth, provider)
-      toast.success(t('loginSuccess'));
 
       } catch (error) {
           console.error("Error during continue:", error);
           toast.error(cleanErrorMessage((error as any).message));
       }
       finally {
-          setIsLoading(true);
+          setIsLoading(false);
       }
     };
 
@@ -125,7 +132,7 @@ export default function LoginPage() {
       // The domain must be configured in Firebase Hosting and owned by the project.
       // linkDomain: 'custom-domain.com'
     };
-
+    setIsLoading(true);
     if (!email) {
       toast.error(t('emailRequired'));
       return;
@@ -133,10 +140,11 @@ export default function LoginPage() {
     try {
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       window.localStorage.setItem('emailForSignIn', email);
-      toast.success(t('passwordResetEmailSent'));
+      toast.success(t('VerificationEmailSent'));
     } catch (error) {
       toast.error(cleanErrorMessage((error as any).message));
     }
+    setIsLoading(false);
   };  
 
   useEffect(() => {
@@ -144,7 +152,7 @@ export default function LoginPage() {
       if (user?.role >= 2) {
         navigate("/admin", { replace: true });
       } else if (user?.role === 1) {
-        navigate("/dashboard", { replace: true });
+        navigate("/work", { replace: true });
       }
     }
   }, [userLoggedIn, user]);

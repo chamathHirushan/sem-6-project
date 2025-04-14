@@ -14,6 +14,7 @@ async def login(
         id_token = authorization.split(" ")[1]
         decoded_token = auth.verify_id_token(id_token)
         email = decoded_token.get("email")
+        photo = decoded_token.get("picture") or decoded_token.get("photoUrl")
         
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
@@ -26,7 +27,7 @@ async def login(
         "role": 3,
         "name": "Chamat",
         "phone_number": "+1234567890",
-        "profile_picture": "https://example.com/profile.jpg"
+        "profile_picture": photo
     }
     if not user_record:
         raise HTTPException(status_code=404, detail="User not found")

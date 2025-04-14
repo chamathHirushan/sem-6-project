@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
-import { apiClient } from "../api/client";
-import Logout from "../components/Logout";
+import { apiClient } from "../../api/client";
+import {useAuth} from "../../contexts/AuthContext";
 
-export default function AdminDashboard() {
-    const [backendData, setBackendData] = useState<string>("Loading...");
+export default function Profile() {
+      const [backendData, setBackendData] = useState<string>("Loading...");
       const {user} = useAuth();
     
       useEffect(() => {
         async function fetchData() {
           try {
-            const response = await apiClient.get("/admin/dashboard");
+            const response = await apiClient.get("/user/dashboard");
             setBackendData(response.message || "No data received");
           } catch (error) {
             setBackendData("Error fetching data");
@@ -20,12 +19,11 @@ export default function AdminDashboard() {
     
         fetchData();
       }, []);
-
     return (
       <>
         <p>Logged as level {user.role} user</p>
+        <p>Profile page content goes here.</p>
         <p>{backendData}</p>
-        <Logout/>
       </>
     );
   }

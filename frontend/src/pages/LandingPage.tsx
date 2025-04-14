@@ -18,5 +18,7 @@ export default function LandingPage() {
     fetchData();
   }, []);
 
-  return <p>{backendData}</p>;
+  return (
+    <p>{backendData}</p>
+  );
 }

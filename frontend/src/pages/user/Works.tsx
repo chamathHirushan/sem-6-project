@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "../api/client";
-import {useAuth} from "../contexts/AuthContext";
-import Logout from "../components/Logout";
+import { apiClient } from "../../api/client";
+import {useAuth} from "../../contexts/AuthContext";
 
-export default function UserDashboard() {
+export default function Works() {
       const [backendData, setBackendData] = useState<string>("Loading...");
       const {user} = useAuth();
     
@@ -23,8 +22,8 @@ export default function UserDashboard() {
     return (
       <>
         <p>Logged as level {user.role} user</p>
+        <p>Works page content goes here.</p>
         <p>{backendData}</p>
-        <Logout/>
       </>
     );
   }
