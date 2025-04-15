@@ -38,8 +38,10 @@
 
 ##################################### Backtend ######################################
 
-#env venv cache
+#env
 /backend/.env
+
+# venv cache
 /backend/venv/
 
 /backend/**/__pycache__/

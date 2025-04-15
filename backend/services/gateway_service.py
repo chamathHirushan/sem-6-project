@@ -55,7 +55,7 @@ class GatewayService:
             "success": True,
             "message": "OTP sent successfully."}
 
-    def _verify_otp(self, user_id, input_otp):
+    def _verify_otp(self, user_id, input_otp, phone_number):
         otp_key = f"otp:{user_id}"
         real_otp = redis.get(otp_key)
         
@@ -72,6 +72,8 @@ class GatewayService:
             redis.delete(otp_key)
             redis.delete(f"otp_req_count:{user_id}")
             redis.delete(otp_validate_count)
+            # store the phone number in the database
+            print(f"Phone number {phone_number} verified successfully. storing in the database.")
             return True
         
         redis.incr(otp_validate_count)

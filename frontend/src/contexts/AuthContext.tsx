@@ -1,7 +1,8 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { auth } from "../../firebase.config";
 import Spinner from "../components/Loading/Spinner";
-import { apiClient } from "../api/client";
+import { getUser } from "../api/userAPI";
+import {toast} from "react-toastify";
 
 // Create context
 export const AuthContext = createContext<any>(undefined);
@@ -14,13 +15,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const handleAuthStateChange = async (firebaseUser: any) => {
             if (firebaseUser) {
-                setUserLoggedIn(true);
                 try {
+                    if (!firebaseUser.emailVerified) {
+                        await firebaseUser.sendEmailVerification();
+                        toast.error("Please verify your email address to log in.");
+                        auth.signOut();
+                        return;
+                    }
+                    setUserLoggedIn(true);
                     const storedUser = sessionStorage.getItem("sewaUser");
                     if (storedUser) {
                         setUser(JSON.parse(storedUser));
                     } else {
-                        const fetchedUser = await apiClient.get("/auth");
+                        const fetchedUser = await getUser();
                         setUser(fetchedUser);
                         sessionStorage.setItem("sewaUser", JSON.stringify(fetchedUser));
                 }

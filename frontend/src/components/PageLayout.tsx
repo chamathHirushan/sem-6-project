@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {logoutUser} from "../components/Logout";
 import logoHr from "../assets/sewalk_horizontal_logo.png";
 import { Outlet } from 'react-router-dom';
+import MobileVerificationPopup from './MobileVerificationPopup';
 
 const NavBar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -227,11 +228,9 @@ const Layout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <NavBar />
-      
-      <main className="flex-1 pt-16"> {/* Add padding-top to account for fixed navbar */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Outlet /> 
-        </div>
+      <main className="flex-1 pt-16 bg-background">
+          <Outlet />
+          <MobileVerificationPopup/>
       </main>
     </div>
   );

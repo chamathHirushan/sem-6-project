@@ -9,16 +9,29 @@ class ApiClient {
     this.baseUrl = API_BASE_URL;
   }
 
-  async get(endpoint: string) {
-    return this.request('GET', endpoint);
+  async get(endpoint: string, params?: Record<string, string>) {
+    return this.request('GET', endpoint, undefined, params);
   }
 
-  async post(endpoint: string, body: any) {
-    return this.request('POST', endpoint, body);
+  async post(endpoint: string, body: any, params?: Record<string, string>) {
+    return this.request('POST', endpoint, body, params);
   }
 
-  private async request(method: string, endpoint: string, body?: any) {
-    const url = `${this.baseUrl}${endpoint}`;
+  async put(endpoint: string, body: any, params?: Record<string, string>) {
+    return this.request('PUT', endpoint, body, params);
+  }
+
+  async delete(endpoint: string, params?: Record<string, string>) {
+    return this.request('DELETE', endpoint, undefined, params);
+  }
+
+  private async request(method: string, endpoint: string, body?: any, params?: Record<string, string>) {
+    let url = `${this.baseUrl}${endpoint}`;
+    if (params) {
+      const queryParams = new URLSearchParams(params).toString();
+      url = `${url}?${queryParams}`;
+    }
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
@@ -40,7 +53,8 @@ class ApiClient {
     try {
       const response = await fetch(url, config);
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'An error occurred');
       }
       return await response.json();
     } catch (error) {

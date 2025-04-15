@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from dotenv import load_dotenv
 import uvicorn
-from routes import gateway, auth, admin, user
-
+from dotenv import load_dotenv
 load_dotenv()
+
+from routes import gateway, auth, admin, user
 
 app = FastAPI()
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")

@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, Header
+from fastapi import Depends, HTTPException, Header, Request
 from firebase_admin import auth
 
 async def get_current_user_role(authorization: str = Header(...)):
@@ -15,7 +15,7 @@ async def get_current_user_role(authorization: str = Header(...)):
         email = decoded_token.get("email")
         # query = users.select().where(users.c.email == email)
         user_role = 3 # temp
-        return user_role
+        return user_role, email
     
     except auth.InvalidIdTokenError:
         raise HTTPException(
@@ -30,13 +30,12 @@ async def get_current_user_role(authorization: str = Header(...)):
 
 # Create role-checking hook factory
 def require_role(required_role: int):
-    async def role_checker(current_role: int = Depends(get_current_user_role)):
-        if current_role < required_role:
+    async def dependency(request: Request):
+        user_role, email = await get_current_user_role(request.headers.get("Authorization"))
+        if user_role < required_role:
             raise HTTPException(
                 status_code= 403,
-                detail=f"Permission denied."
+                detail="Permission denied."
             )
-            # handle the case where the user does not have the required role, log them out
-        return True
-    
-    return Depends(role_checker)
+        request.state.email = email
+    return Depends(dependency)

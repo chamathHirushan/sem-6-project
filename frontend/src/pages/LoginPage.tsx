@@ -10,6 +10,7 @@ import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailA
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../contexts/AuthContext";
+import { useTimedVisibility } from "../hooks/useTimeVisibility";
 
 function cleanErrorMessage(message: string): string {
   if (typeof message !== "string") {
@@ -28,13 +29,16 @@ function cleanErrorMessage(message: string): string {
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneError, setPhoneError] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [confirmError, setConfirmError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const {user, userLoggedIn} = useAuth();
   const {t} = useI18n("login");
   const navigate = useNavigate();
+  const [MagNeeds, showMagicRequirement] = useTimedVisibility();
 
   useEffect(() => {
     if (isSignInWithEmailLink(auth, window.location.href)) {
@@ -53,6 +57,16 @@ export default function LoginPage() {
     }   
   }, []);
 
+  const validatePhoneNumber = (number: string) => {
+    if (number.length == 0) {
+      setPhoneError(false);
+      return;
+    }
+    const pattern = /^(\+94\s?\d{9}|94\d{9}|0\d{9})$/;
+    const isValid = pattern.test(number);
+    setPhoneError(!isValid);
+  };
+
   const resetPassword = async () => {
     try {
       setIsLoading(true);
@@ -68,12 +82,17 @@ export default function LoginPage() {
 
   const handleSignup = async () => {
     try {
+        if (confirmPassword !== password){
+          setConfirmError(true);
+          return;
+        }
         setIsLoading(true);
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
     
         await sendEmailVerification(user);
         toast.success(t('verificationEmailSent'));
+        setIsLogin(true);
       } catch (error) {
         toast.error(cleanErrorMessage((error as any).message));
       }
@@ -90,6 +109,7 @@ export default function LoginPage() {
 
       if (!user.emailVerified) {
         toast.error(t('emailNotVerified'));
+        await sendEmailVerification(user);
       }
 
       } catch (error) {
@@ -159,7 +179,7 @@ export default function LoginPage() {
 
   return(
   <div className="flex-col lg:flex-row flex ">
-    <div className="flex flex-col flex-1 mt-5">
+    <div className="flex flex-col flex-1 mt-2">
       <div className="flex flex-col mt-24 justify-center items-center">
         <h1 className="text-6xl font-bold text-gray-600 text-center w-90">{t("welcome")}</h1>
           <div className="flex w-80 mt-7 mb-4 border-b border-gray-200">
@@ -187,7 +207,7 @@ export default function LoginPage() {
           >
               <div className="relative text-gray-600 rounded">
                   <button className="absolute left-2 top-0 bottom-0 mr-4" aria-label="Lock">
-                    <EnvelopeIcon className="w-6 h-6 text-blue-500" />
+                    <EnvelopeIcon className="w-5 h-5 text-blue-500" />
                   </button>
                   <input
                       onChange={e => setEmail(e.target.value)}
@@ -196,29 +216,42 @@ export default function LoginPage() {
                       className="w-full border-2 border-gray-light bg-white h-10 px-5 pl-8 rounded text-sm focus:outline-none"
                       name="email"
                       type="email"
-                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                       required
                   />
+                  { MagNeeds && (
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-red-500">
+                      * Required
+                    </span>
+                  )}
               </div>
               {!isLogin && (
               <div className="relative text-gray-600 rounded">
                 <button className="absolute left-2 top-0 bottom-0 mr-4" aria-label="Phone">
-                  <PhoneIcon className="w-6 h-6 text-blue-500" />
+                  <PhoneIcon className="w-5 h-5 text-blue-500" />
                 </button>
                 <input
-                  onChange={e => setPhoneNumber(e.target.value.replace(/\s+/g, ''))}  // Remove spaces
+                  onChange={(e) => {
+                    let value = e.target.value.replace(/[\s-]+/g, '')
+                    setPhoneNumber(value);
+                    validatePhoneNumber(value);
+                  }}
                   value={phoneNumber}
                   placeholder={t('Phonenumber')}
                   className="w-full border-2 border-gray-light bg-white h-10 px-5 pl-8 rounded text-sm focus:outline-none"
                   name="phone"
                   type="tel"
                   pattern="^(\+94[\s]?\d{9}|0[\s]?\d{9}|\+94\d{9})$" 
-                  title="Phone number must be in the format +94-XXXXXXXXX, +94XXXXXXXXX, or 0XXXXXXXXX"  // Title for better UX
+                  title="Phone number must be in the format +94-XXXXXXXXX, +94XXXXXXXXX, or 0XXXXXXXXX"
                 />
+                {phoneError  && (
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-red-500">
+                    * Invalid
+                  </span>
+                )}
               </div>)}
               <div className="relative text-gray-600 rounded">
                 <button className="absolute left-2 top-0 bottom-0 mr-4" aria-label="Lock">
-                    <KeyIcon className="text-gray-600 h-5 w-6"/>
+                    <KeyIcon className="w-5 h-5 text-blue-500"/>
                 </button>
                 <input
                     onChange={e => setPassword(e.target.value)}
@@ -232,16 +265,25 @@ export default function LoginPage() {
               {!isLogin && (
               <div className="relative text-gray-600 rounded">
                 <button className="absolute left-2 top-0 bottom-0 mr-4" aria-label="Lock">
-                    <KeyIcon className="text-gray-600 h-5 w-6"/>
+                    <KeyIcon className="w-5 h-5 text-blue-500"/>
                 </button>
                 <input
-                    onChange={e => setConfirmPassword(e.target.value)}
+                    onChange={e => {
+                      setConfirmPassword(e.target.value);
+                      setConfirmError(false);
+                    }}
+                    onBlur={() => setConfirmError((confirmPassword !== password) && confirmPassword.length > 0)}
                     value={confirmPassword}
                     placeholder={t('Confirm password')}
                     className="w-full border-2 border-gray-light bg-white h-10 px-5 pl-8 rounded text-sm focus:outline-none"
                     name="confirmpassword"
                     type="password"
                 />
+                {confirmError  && (
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-red-500">
+                    * Mismatch
+                  </span>
+                )}
               </div>
               )}
             {isLogin && (
@@ -263,7 +305,7 @@ export default function LoginPage() {
             </button>) : (
             <button
                 onClick={() => handleSignup()}
-                disabled={!email || !password || !phoneNumber || !confirmPassword}
+                disabled={!email || !password || !phoneNumber || !confirmPassword || phoneError || confirmError}
                 className="w-full bg-secondary m-auto disabled:cursor-not-allowed border-2 border-gray-light h-10 px-5 pl-8 rounded-lg text-sm focus:outline-none flex items-center justify-center"
             >
                 {isLoading ? <Spinner colour="#205781" size="20px"/> : t('signup')}
@@ -286,7 +328,7 @@ export default function LoginPage() {
                 {t('google')}
             </button>
             <button
-                onClick={() => handleMagicLink()}
+                onClick={() => { email ? handleMagicLink() : showMagicRequirement(); }}
                 className="w-full bg-black text-white m-auto disabled:cursor-not-allowed border-2 border-gray-light h-10 px-5 pl-8 rounded-lg text-sm focus:outline-none flex items-center justify-center"
             >
                 <span className="mr-2">
