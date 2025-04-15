@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "../api/client";
+import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
   const [backendData, setBackendData] = useState<string>("Loading...");
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {
@@ -19,6 +21,9 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <p>{backendData}</p>
+    <>
+      <p>{backendData}</p>
+      <button onClick={() => navigate("/login")}>Go to Login</button>
+    </>
   );
 }

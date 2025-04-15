@@ -14,18 +14,20 @@ async def login(
         id_token = authorization.split(" ")[1]
         decoded_token = auth.verify_id_token(id_token)
         email = decoded_token.get("email")
+        name = decoded_token.get("name")
         photo = decoded_token.get("picture") or decoded_token.get("photoUrl")
         
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    # # 2. Get user record from DB
     # query = users.select().where(users.c.email == email)
-    # user_record = await database.fetch_one(query)
+    # if found fetch the details
+    # if not found create a new user in the database with the firebase details
+    
     user_record = {
         "email": email,
         "role": 3,
-        "name": "Chamat",
+        "name": name,
         "phone_number": "+1234567890",
         "profile_picture": photo
     }
