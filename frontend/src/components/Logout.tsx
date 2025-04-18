@@ -1,7 +1,6 @@
-import { auth } from "../../firebase.config";
+import { signout } from "../api/authAPI";
 
-export async function logoutUser(navigate: (path: string) => void) {
-    await auth.signOut();
-    sessionStorage.clear();
-    navigate("/login");
+export function logoutUser(navigate: (path: string) => void) {
+    signout();
+    navigate("/");
 }

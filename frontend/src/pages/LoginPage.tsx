@@ -169,9 +169,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (userLoggedIn) {
-      if (user?.role >= 2) {
+      if (user?.role >= 3) {
         navigate("/admin", { replace: true });
-      } else if (user?.role === 1) {
+      } else if (user?.role <= 2) {
         navigate("/work", { replace: true });
       }
     }

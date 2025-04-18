@@ -6,7 +6,7 @@ from fastapi import Request
 otp_service = GatewayService()
 
 router= APIRouter(
-    dependencies=[require_role(1)],
+    dependencies=[require_role(0)],
     tags=["Gateways"]
 )
 

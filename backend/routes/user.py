@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from utilities.validate_permissins import require_role
 
 router= APIRouter(
-    dependencies=[require_role(1)],
+    dependencies=[require_role(0)],
     tags=["User"]
 )
 

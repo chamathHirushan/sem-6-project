@@ -12,7 +12,7 @@ const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
-  const [adminView, setAdminView] = useState(() => user?.role >= 2);
+  const [adminView, setAdminView] = useState(() => user?.role >= 3);
 
   const handleAdminStateChange = (state: boolean) => {
     setAdminView(state);
@@ -64,12 +64,9 @@ const NavBar = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        profileDropdownRef.current &&
-        profileDropdownRef.current.contains(event.target as Node)
+        !profileDropdownRef.current ||
+        !profileDropdownRef.current.contains(event.target as Node)
       ) {
-        setIsProfileOpen(true);
-      }
-      else{
         setIsProfileOpen(false);
       }
     };
@@ -145,7 +142,7 @@ const NavBar = () => {
                 </div>)}
             <div className="relative ml-auto">
               {userLoggedIn ? (
-                <>
+                <div ref={profileDropdownRef}>
                   <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                     className="flex items-center text-sm focus:outline-none"
@@ -166,7 +163,6 @@ const NavBar = () => {
                   {/* Profile dropdown */}
                   {isProfileOpen && (
                     <div
-                      ref={profileDropdownRef}
                       className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                       role="menu"
                       aria-orientation="vertical"
@@ -190,10 +186,7 @@ const NavBar = () => {
                           ) : (
                             <button
                               key={item.name}
-                              onClick={() => {
-                                item.onClick?.();
-                                setIsProfileOpen(false);
-                              }}
+                              onClick={() => {item.onClick?.();}}
                               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               role="menuitem"
                               tabIndex={-1}
@@ -205,7 +198,7 @@ const NavBar = () => {
                       </div>
                     </div>
                   )}
-                </>
+                </div>
               ) : (
                 <button
                   onClick={() => {

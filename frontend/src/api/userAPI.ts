@@ -1,11 +1,5 @@
 import { apiClient } from "./client";
 
-
-export const getUser = async () => {
-    const response = await apiClient.get("/auth");
-    return response;
-}
-
 export const sendOTP = async (phone_number: string) => {
     const response = await apiClient.post("/api/otp/send", null, {
       phone_number: phone_number

@@ -25,28 +25,23 @@ class ApiClient {
     return this.request('DELETE', endpoint, undefined, params);
   }
 
-  private async request(method: string, endpoint: string, body?: any, params?: Record<string, string>) {
+  private async request<T>(method: string, endpoint: string, body?: any, params?: Record<string, string>, retry: boolean = true): Promise<T> {
     let url = `${this.baseUrl}${endpoint}`;
     if (params) {
       const queryParams = new URLSearchParams(params).toString();
       url = `${url}?${queryParams}`;
     }
 
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    const token = await auth.currentUser?.getIdToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
+    const headers: Record<string, string> = {};
 
     const config: RequestInit = {
       method,
       headers,
+      credentials: 'include'
     };
 
     if (body) {
+      headers['Content-Type'] = 'application/json';
       config.body = JSON.stringify(body);
     }
 
@@ -54,6 +49,15 @@ class ApiClient {
       const response = await fetch(url, config);
       if (!response.ok) {
         const errorData = await response.json();
+        if (response.status === 401 && errorData.detail ==="Access token expired" && retry) {
+          const refreshed = await this.tryRefreshToken();
+          if (refreshed) {
+            return this.request(method, endpoint, body, params, false);
+          } else {
+            await auth.signOut();
+            this.redirectToLogin();
+          }
+        }
         throw new Error(errorData.detail || 'An error occurred');
       }
       return await response.json();
@@ -62,6 +66,25 @@ class ApiClient {
       throw error;
     }
   }
-}
+
+  private async tryRefreshToken(): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.baseUrl}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+  
+      return response.ok;
+    } catch (err) {
+      console.error('Refresh token request failed:', err);
+      return false;
+    }
+  }
+
+  private redirectToLogin() {
+      window.history.pushState({}, '', '/login');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  }
 
 export const apiClient = new ApiClient();

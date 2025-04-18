@@ -1,37 +1,28 @@
-from fastapi import Depends, HTTPException, Header, Request
-from firebase_admin import auth
+from fastapi import Depends, HTTPException, Request
+from services.auth_service import AuthService
+import jwt
 
-async def get_current_user_role(authorization: str = Header(...)):
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(
-            status_code= 401,
-            detail="Invalid authentication scheme"
-        )
-    
-    token = authorization.split("Bearer ")[1]
+async def get_current_user_role(request: Request):
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="No access token")
     
     try:
-        decoded_token = auth.verify_id_token(token)
+        decoded_token = AuthService().decode_access_token(access_token)
         email = decoded_token.get("email")
-        # query = users.select().where(users.c.email == email)
-        user_role = 3 # temp
+        user_role = decoded_token.get("role")
         return user_role, email
-    
-    except auth.InvalidIdTokenError:
-        raise HTTPException(
-            status_code= 401,
-            detail="Invalid token"
-        )
-    except auth.ExpiredIdTokenError:
-        raise HTTPException(
-            status_code= 401,
-            detail="Expired token"
-        )
+
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Access token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid access token")
+
 
 # Create role-checking hook factory
 def require_role(required_role: int):
     async def dependency(request: Request):
-        user_role, email = await get_current_user_role(request.headers.get("Authorization"))
+        user_role, email = await get_current_user_role(request)
         if user_role < required_role:
             raise HTTPException(
                 status_code= 403,

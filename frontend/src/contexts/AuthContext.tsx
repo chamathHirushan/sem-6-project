@@ -1,7 +1,7 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { auth } from "../../firebase.config";
 import Spinner from "../components/Loading/Spinner";
-import { getUser } from "../api/userAPI";
+import { getUser } from "../api/authAPI";
 import {toast} from "react-toastify";
 
 // Create context
@@ -35,6 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     console.error("Error getting ID token:", error);
                 }
             } else {
+                sessionStorage.clear();
                 setUser(null);
                 setUserLoggedIn(false);
             }

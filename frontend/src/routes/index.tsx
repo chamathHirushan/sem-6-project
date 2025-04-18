@@ -28,7 +28,7 @@ export function AppRouter() {
       element: <Layout />,
       children: [
       {
-        element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 1} isLoggedIn={userLoggedIn} />,
+        element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 0} isLoggedIn={userLoggedIn} />,
         children: [
           { path: "/work", element: <Works /> },
           { path: "/hire", element: <Hires /> },
@@ -42,7 +42,7 @@ export function AppRouter() {
       },
 
       {
-        element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 2} isLoggedIn={userLoggedIn} />,
+        element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 3} isLoggedIn={userLoggedIn} />,
         children: [
           { path: "/admin", element: <AdminAnalytics /> },
           { path: "/earnings", element: <Earnings /> },
