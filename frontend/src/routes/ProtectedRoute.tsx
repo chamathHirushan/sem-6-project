@@ -2,24 +2,18 @@ import { Navigate, Outlet } from "react-router-dom";
 
 type ProtectedRouteProps = {
   isAllowed: boolean;
-  requiredRoles?: string[];
-  userRole?: string;
+  isLoggedIn?: boolean;
   redirectTo?: string;
 };
 
 export const ProtectedRoute = ({ 
-  isAllowed, 
-  requiredRoles = [], 
-  userRole, 
-  redirectTo = "/login" 
+  isAllowed,
+  isLoggedIn = false,
+  redirectTo = "/unauthorized" 
 }: ProtectedRouteProps) => {
 
+  if (!isLoggedIn) return <Navigate to={"/"} replace />;
   if (!isAllowed) return <Navigate to={redirectTo} replace />;
-
-  // Role check: if requiredRoles exist, check if userRole is included
-  if (requiredRoles.length > 0 && !requiredRoles.includes(userRole || "")) {
-    return <Navigate to="/unauthorized" replace />;
-  }
 
   return <Outlet />;
 };

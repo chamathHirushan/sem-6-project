@@ -1,52 +1,56 @@
-import { createBrowserRouter } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import LandingPage from "../pages/LandingPage";
 import LoginPage from "../pages/LoginPage";
-import RegisterPage from "../pages/RegisterPage";
-import DashboardPage from "../pages/UserDashboard";
-import AdminPage from "../pages/AdminDashboard";
+import Works from "../pages/user/Works";
+import AdminAnalytics from "../pages/admin/AdminAnalytics";
 import UnauthorizedPage from "../pages/Unauthorized";
+import Earnings from "../pages/admin/Earnings";
+import Users from "../pages/admin/Users";
+import Hires from "../pages/user/Hires";
+import MyJobs from "../pages/user/MyJobs";
+import Conversations from "../pages/user/Conversations";
+import Analytics from "../pages/user/Analytics";
+import MyFields from "../pages/user/MyFields";
+import Fav from "../pages/user/Fav";
+import Profile from "../pages/user/Profile";
+import Layout from "../components/PageLayout";
 
-// Authentication and role values
-const isAuthenticated = false; // Set to `true` when logged in
-const userRole: "user" | "admin" = "user"; // Change to "admin" for admin access
+export function AppRouter() {
+  const { user, userLoggedIn } = useAuth();
 
-const publicRoutes = [
-  { path: "/", element: <LandingPage /> },
-  { path: "/login", element: <LoginPage /> },
-  { path: "/register", element: <RegisterPage /> },
-];
+  const router = createBrowserRouter([
+    { path: "/", element: <LandingPage /> },
+    { path: "/login", element: <LoginPage /> },
+    { path: "/unauthorized", element: <UnauthorizedPage /> },
+    {
+      element: <Layout />,
+      children: [
+      {
+        element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 0} isLoggedIn={userLoggedIn} />,
+        children: [
+          { path: "/work", element: <Works /> },
+          { path: "/hire", element: <Hires /> },
+          { path: "/my-jobs", element: <MyJobs /> },
+          { path: "/conversations", element: <Conversations /> },
+          { path: "/analytics", element: <Analytics /> },
+          { path: "/job-fields", element: <MyFields /> },
+          { path: "/favorites", element: <Fav /> },
+          { path: "/profile", element: <Profile /> },
+        ],
+      },
 
-const userRoutes = [
-  { path: "/dashboard", element: <DashboardPage /> },
-  { path: "/unauthorized", element: <UnauthorizedPage /> },
-];
+      {
+        element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 3} isLoggedIn={userLoggedIn} />,
+        children: [
+          { path: "/admin", element: <AdminAnalytics /> },
+          { path: "/earnings", element: <Earnings /> },
+          { path: "/users", element: <Users /> },
+        ],
+      },
+      ]}
+  ]);
 
-const adminRoutes = [
-  { path: "/admin", element: <AdminPage /> },
-];
-
-export const router = createBrowserRouter([
-  ...publicRoutes,
-
-  {
-    element: <ProtectedRoute isAllowed={isAuthenticated} />,
-    children: userRoutes.map((route) => ({
-      path: route.path,
-      element: route.element,
-    })),
-  },
-
-  {
-    element: (
-      <ProtectedRoute
-        redirectTo="/unauthorized"
-        isAllowed={isAuthenticated && userRole === "admin"}
-      />
-    ),
-    children: adminRoutes.map((route) => ({
-      path: route.path,
-      element: route.element,
-    })),
-  },
-]);
+  return <RouterProvider router={router} />;
+}

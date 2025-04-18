@@ -3,10 +3,14 @@
     "login" : "Login",
     "register" : "Register",
     "or" : "or",
-    "email" : " Email",
-    "password" : " Password",
+    "email" : "Email",
+    "password" : "Password",
     "forgotPassword" : "Forgot Password?",
-    "Phonenumber" : " Phone Number",
-    "rememberMe" : "Remember Me"
-
+    "Phonenumber" : "Phone Number",
+    "rememberMe" : "Remember Me",
+    "google" : "Sign in with Google",
+    "magicLink" : "Sign in Magic Link",
+    "verificationEmailSent" : "Verification email sent. Please check your inbox.",
+    "signUpError" : "Sign up error",
+    "magicLinkSent" : "Magic link sent. Please check your inbox."
   }
