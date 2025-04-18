@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urlparse
 from fastapi import APIRouter, HTTPException, Request, Response
 from firebase_admin import auth, credentials
 import firebase_admin
@@ -11,6 +12,10 @@ router = APIRouter()
 
 ACCESS_TOKEN_EXPIRE_HOURS = int(os.getenv("ACCESS_TOKEN_EXPIRE_HOURS", 1))
 REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", 7))
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+
+parsed_url = urlparse(FRONTEND_URL)
+domain = parsed_url.hostname 
 
 @router.post("/me")
 async def session(
@@ -51,25 +56,29 @@ async def session(
             access_token = AuthService().create_access_token(user_record)
             refresh_token = AuthService().create_refresh_token(user_record, country)
             
-            response.set_cookie(
-                key="access_token",
-                value=access_token,
-                httponly=True,
-                secure=True,
-                samesite="Strict",
-                max_age=3600 * ACCESS_TOKEN_EXPIRE_HOURS,
-                domain="localhost"
-            )
+            cookie_options = {
+                "httponly": True,
+                "secure": True,
+                "samesite": "Strict",
+                "max_age": 3600 * ACCESS_TOKEN_EXPIRE_HOURS
+            }
             
-            response.set_cookie(
-                key="refresh_token",
-                value=refresh_token,
-                httponly=True,
-                secure=True,
-                samesite="Strict",
-                path="/auth/refresh",
-                max_age=86400 * REFRESH_TOKEN_EXPIRE_DAYS,
-            )
+            refresh_cookie_options = {
+                "httponly": True,
+                "secure": True,
+                "samesite": "Strict",
+                "path": "/auth/refresh",
+                "max_age": 86400 * REFRESH_TOKEN_EXPIRE_DAYS
+            }
+
+            if domain and not domain.startswith("localhost"):
+                print("executed")
+                cookie_options["domain"] = domain
+                refresh_cookie_options["domain"] = domain
+
+            response.set_cookie(key="access_token", value=access_token, **cookie_options)
+            response.set_cookie(key="refresh_token", value=refresh_token, **refresh_cookie_options) 
+
         return user_record
 
     except Exception as e:
@@ -106,15 +115,18 @@ async def refresh_token(
             raise HTTPException(status_code=404, detail="User not found")
 
         new_access_token = AuthService().create_access_token(user_record)
+        
+        new_cookie_options = {
+            "httponly": True,
+            "secure": True,
+            "samesite": "Strict",
+            "max_age": 3600 * ACCESS_TOKEN_EXPIRE_HOURS
+        }
+        if domain and not domain.startswith("localhost"):
+            new_cookie_options["domain"] = domain
 
-        response.set_cookie(
-            key="access_token",
-            value=new_access_token,
-            httponly=True,
-            secure=True,
-            samesite="Strict",
-            max_age=3600 * ACCESS_TOKEN_EXPIRE_HOURS,
-        )
+        response.set_cookie(key="access_token", value=new_access_token, **new_cookie_options)
+
         return {"message": "Token refreshed"}
 
     except Exception:
