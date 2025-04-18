@@ -1,5 +1,7 @@
 import { toast } from "react-toastify";
 import { auth } from "../../firebase.config";
+import { getAccessToken, setAccessToken } from "../utils/tokenStore";
+import { isPublicRoute } from "../utils/publicRoutes";
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -34,6 +36,10 @@ class ApiClient {
     }
 
     const headers: Record<string, string> = {};
+    const token = getAccessToken();
+    if (token && !isPublicRoute()) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const config: RequestInit = {
       method,
@@ -74,7 +80,8 @@ class ApiClient {
         method: 'POST',
         credentials: 'include',
       });
-  
+      const data = await response.json();
+      setAccessToken(data.token);
       return response.ok;
     } catch (err) {
       console.error('Refresh token request failed:', err);
