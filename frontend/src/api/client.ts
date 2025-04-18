@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { auth } from "../../firebase.config";
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
@@ -49,7 +50,7 @@ class ApiClient {
       const response = await fetch(url, config);
       if (!response.ok) {
         const errorData = await response.json();
-        if (response.status === 401 && errorData.detail ==="Access token expired" && retry) {
+        if (response.status === 401 && retry) {
           const refreshed = await this.tryRefreshToken();
           if (refreshed) {
             return this.request(method, endpoint, body, params, false);
@@ -84,6 +85,7 @@ class ApiClient {
   private redirectToLogin() {
       window.history.pushState({}, '', '/login');
       window.dispatchEvent(new PopStateEvent('popstate'));
+      toast.warn("Please login again!", { toastId: "login-warning" });
     }
   }
 

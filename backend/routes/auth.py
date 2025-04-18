@@ -94,6 +94,14 @@ async def refresh_token(
             raise HTTPException(status_code=401, detail="Invalid IP address")
         
         user_record = UserService().get_user(email)
+        #dummy , deleet this below
+        user_record = {
+                "email": email,
+                "role": 3,
+                "name": "name",
+                "phone_number": "+1234567890",
+                "profile_picture": "photo"
+            }
         if not user_record:
             raise HTTPException(status_code=404, detail="User not found")
 
