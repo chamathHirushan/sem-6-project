@@ -43,8 +43,7 @@ class ApiClient {
 
     const config: RequestInit = {
       method,
-      headers,
-      credentials: 'include'
+      headers
     };
 
     if (body) {
