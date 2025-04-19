@@ -43,7 +43,7 @@ class ApiClient {
 
     const config: RequestInit = {
       method,
-      headers
+      headers,
     };
 
     if (body) {
@@ -55,15 +55,18 @@ class ApiClient {
       const response = await fetch(url, config);
       if (!response.ok) {
         const errorData = await response.json();
-        if (response.status === 401 && retry) {
-          const refreshed = await this.tryRefreshToken();
-          if (refreshed) {
-            return this.request(method, endpoint, body, params, false);
-          } else {
-            await auth.signOut();
-            this.redirectToLogin();
+
+        if ((response.status === 401 && retry) || response.status === 403) {
+          if (response.status === 401 && retry) {
+            const refreshed = await this.tryRefreshToken();
+            if (refreshed) {
+              return this.request(method, endpoint, body, params, false);
+            }
           }
+          await auth.signOut();
+          this.redirectToLogin();
         }
+
         throw new Error(errorData.detail || 'An error occurred');
       }
       return await response.json();
