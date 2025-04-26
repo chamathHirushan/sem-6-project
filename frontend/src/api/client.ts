@@ -1,5 +1,7 @@
 import { toast } from "react-toastify";
 import { auth } from "../../firebase.config";
+import { getAccessToken, setAccessToken } from "../utils/tokenStore";
+import { isPublicRoute } from "../utils/publicRoutes";
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -34,11 +36,14 @@ class ApiClient {
     }
 
     const headers: Record<string, string> = {};
+    const token = getAccessToken();
+    if (token && !isPublicRoute()) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const config: RequestInit = {
       method,
       headers,
-      credentials: 'include'
     };
 
     if (body) {
@@ -50,15 +55,18 @@ class ApiClient {
       const response = await fetch(url, config);
       if (!response.ok) {
         const errorData = await response.json();
-        if (response.status === 401 && retry) {
-          const refreshed = await this.tryRefreshToken();
-          if (refreshed) {
-            return this.request(method, endpoint, body, params, false);
-          } else {
-            await auth.signOut();
-            this.redirectToLogin();
+
+        if ((response.status === 401 && retry) || response.status === 403) {
+          if (response.status === 401 && retry) {
+            const refreshed = await this.tryRefreshToken();
+            if (refreshed) {
+              return this.request(method, endpoint, body, params, false);
+            }
           }
+          await auth.signOut();
+          this.redirectToLogin();
         }
+
         throw new Error(errorData.detail || 'An error occurred');
       }
       return await response.json();
@@ -74,7 +82,8 @@ class ApiClient {
         method: 'POST',
         credentials: 'include',
       });
-  
+      const data = await response.json();
+      setAccessToken(data.token);
       return response.ok;
     } catch (err) {
       console.error('Refresh token request failed:', err);

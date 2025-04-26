@@ -1,11 +1,11 @@
-from fastapi import Depends, HTTPException, Request
+from fastapi import Depends, HTTPException, Request, Header
 from services.auth_service import AuthService
 import jwt
 
-async def get_current_user_role(request: Request):
-    access_token = request.cookies.get("access_token")
-    if not access_token:
-        raise HTTPException(status_code=401, detail="No access token")
+async def get_current_user_role(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid Authorization header")
+    access_token = authorization.split(" ")[1]
     
     try:
         decoded_token = AuthService().decode_access_token(access_token)
@@ -21,8 +21,11 @@ async def get_current_user_role(request: Request):
 
 # Create role-checking hook factory
 def require_role(required_role: int):
-    async def dependency(request: Request):
-        user_role, email = await get_current_user_role(request)
+    async def dependency(
+        request: Request,
+        user_data: tuple = Depends(get_current_user_role)
+    ):
+        user_role, email = user_data
         if user_role < required_role:
             raise HTTPException(
                 status_code= 403,

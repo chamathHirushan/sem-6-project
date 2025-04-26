@@ -81,5 +81,5 @@ class AuthService:
             raise HTTPException(status_code=401, detail="Invalid refresh token")
         
     def clear_cookies(self, response: Response):
-        response.delete_cookie(key="access_token", path="/")
+        #response.delete_cookie(key="access_token", path="/")
         response.delete_cookie(key="refresh_token", path="/auth/refresh")

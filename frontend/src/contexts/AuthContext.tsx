@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { auth } from "../../firebase.config";
 import Spinner from "../components/Loading/Spinner";
+import { setAccessToken } from "../utils/tokenStore";
 import { getUser } from "../api/authAPI";
 import {toast} from "react-toastify";
 
@@ -27,7 +28,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     if (storedUser) {
                         setUser(JSON.parse(storedUser));
                     } else {
-                        const fetchedUser = await getUser();
+                        const fetchedAuth = await getUser() as { user: any, token: string };
+                        if (fetchedAuth.token) {setAccessToken(fetchedAuth.token);}
+
+                        const fetchedUser = fetchedAuth.user;
                         setUser(fetchedUser);
                         sessionStorage.setItem("sewaUser", JSON.stringify(fetchedUser));
                 }
