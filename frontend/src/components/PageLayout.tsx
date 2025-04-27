@@ -86,7 +86,7 @@ const NavBar = () => {
           {/* Left side - Logo and main nav */}
           <div className="flex items-center">
             <div
-                className="h-20 w-40 bg-no-repeat bg-contain mt-4"
+                className="h-10 w-40 bg-no-repeat bg-contain"
                 onClick ={() => navigate(adminView ? "/admin" : "/work")}
                 style={{ backgroundImage: `url(${logoHr})` }}
             />
