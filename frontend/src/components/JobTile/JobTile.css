@@ -1,0 +1,82 @@
+/* Common styles for both views */
+.job-tile {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    transition: transform 0.2s;
+}
+
+.job-tile:hover {
+    transform: scale(1.02);
+}
+
+.job-tile-image {
+    object-fit: cover;
+}
+
+/* Portrait view (grid) */
+.job-tile.portrait {
+    flex-direction: column;
+    width: 200px;
+}
+
+.job-tile.portrait .job-tile-image {
+    width: 100%;
+    height: 150px;
+}
+
+.job-tile.portrait .job-tile-content {
+    padding: 10px;
+    text-align: center;
+}
+
+/* Landscape view (table) */
+.job-tile.landscape {
+    flex-direction: row;
+    width: 100%;
+    height: 120px;
+}
+
+.job-tile.landscape .job-tile-image {
+    width: 120px;
+    height: 100%;
+}
+
+.job-tile.landscape .job-tile-content {
+    padding: 10px;
+    flex: 1;
+}
+
+.job-tile-id {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.job-tile-address,
+.job-tile-days,
+.job-tile-type {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.job-tile-bookmark {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.job-tile-bookmark.bookmarked {
+    background-color: #dc3545;
+}
+
+.job-tile-bookmark:hover {
+    opacity: 0.9;
+}
