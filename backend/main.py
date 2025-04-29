@@ -2,12 +2,18 @@ from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import uvicorn
+from models.database import engine
+from models import Base
 from dotenv import load_dotenv
 load_dotenv()
 
 from routes import gateway, auth, admin, user
 
 app = FastAPI()
+
+# create all tables in DB o startup
+Base.metadata.create_all(bind=engine)
+
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
 app.add_middleware(
@@ -25,8 +31,9 @@ app.include_router(user.router, prefix="/user")
 
 @app.get("/")
 def read_root():
-    return {"message": "landing endpoint"}
+    return {"message": "Job Finder app is running!"}
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
     #uvicorn.run("main:app", host="0.0.0.0", port=8000)
+
