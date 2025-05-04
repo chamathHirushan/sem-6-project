@@ -11,6 +11,7 @@ import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../contexts/AuthContext";
 import { useTimedVisibility } from "../hooks/useTimeVisibility";
+import { storePhoneNumber } from "../api/authAPI";
 
 function cleanErrorMessage(message: string): string {
   if (typeof message !== "string") {
@@ -93,6 +94,7 @@ export default function LoginPage() {
         await sendEmailVerification(user);
         toast.success(t('verificationEmailSent'));
         setIsLogin(true);
+        storePhoneNumber(email, phoneNumber);  // store the phone number for user
       } catch (error) {
         toast.error(cleanErrorMessage((error as any).message));
       }
@@ -193,7 +195,7 @@ export default function LoginPage() {
               onClick={() => setIsLogin(false)}
               className={`flex-1 py-2 text-center font-medium ${!isLogin ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
             >
-              {t('signup')}
+              {t('register')}
             </button>
           </div>
           <div 
@@ -308,7 +310,7 @@ export default function LoginPage() {
                 disabled={!email || !password || !phoneNumber || !confirmPassword || phoneError || confirmError}
                 className="w-full bg-secondary m-auto disabled:cursor-not-allowed border-2 border-gray-light h-10 px-5 pl-8 rounded-lg text-sm focus:outline-none flex items-center justify-center"
             >
-                {isLoading ? <Spinner colour="#205781" size="20px"/> : t('signup')}
+                {isLoading ? <Spinner colour="#205781" size="20px"/> : t('register')}
             </button>)}
           </div>
           <div className="flex flex-col gap-3 mt-4">
@@ -348,12 +350,15 @@ export default function LoginPage() {
         style={{backgroundImage: `url(${logoImg})`}}
         className="flex-1 bg-cover lg:h-screen items-end flex hidden lg:flex"
     >
-        <div className={"text-black ml-20 mb-16"}>
-            <h2>text1</h2>
-            <div className={"mt-5"}>
-                <h4>text2</h4>
-                <span>text3</span>
-            </div>
+        <div className="ml-20 mb-14">
+          <div className="mt-2">
+            <h4 className="text-lg font-semibold text-gray-600 font-medium block mt-2">
+              {t('text1')}
+            </h4>
+            <span className="font-dm_sans text-2xl font-semibold text-gray-800 tracking-wide mt-2">
+              {t('text2')}
+            </span>
+          </div>
         </div>
     </div>
     <div className="absolute bottom-0">

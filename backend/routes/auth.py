@@ -151,3 +151,13 @@ async def signout(
         return {"message": "Logged out successfully"}
     except Exception:
         raise HTTPException(status_code=500, detail="Logout failed")
+    
+@router.post("/store-phone")
+async def store_phone(
+    request: Request
+):
+    # store the phone number in the database for the user
+    body = await request.json()
+    phone_number = body.get("phone_number")
+    email = body.get("email")
+    print("storing phone number for user:", email, "phone number:", phone_number)

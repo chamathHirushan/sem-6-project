@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, forwardRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {logoutUser} from "../components/Logout";
 import logoHr from "../assets/sewalk_horizontal_logo.png";
 import { Outlet } from 'react-router-dom';
 import MobileVerificationPopup from './MobileVerificationPopup';
+import LanguageSelector from './languageSelector/LanguageSelector';
 
-const NavBar = () => {
+const NavBar = forwardRef<HTMLElement>((props, ref) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user,userLoggedIn } = useAuth();
   const navigate = useNavigate();
@@ -80,67 +81,72 @@ const NavBar = () => {
   const defaultProfilePicUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff`;
 
   return (
-    <nav className="bg-white shadow-lg fixed w-full z-10">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+    <nav ref={ref} className="bg-white shadow-lg fixed w-full z-10">
+      <div className="w-[90%] mx-auto py-4 lg:py-0">
+        <div className="flex flex-col xl:flex-row justify-between items-center h-auto xl:h-16">
           {/* Left side - Logo and main nav */}
-          <div className="flex items-center">
+          <div className="flex items-center flex-wrap justify-center xl:justify-start lg:flex-grow">
             <div
-                className="h-20 w-40 bg-no-repeat bg-contain mt-4"
-                onClick ={() => navigate(adminView ? "/admin" : "/work")}
-                style={{ backgroundImage: `url(${logoHr})` }}
+              className="h-20 w-40 bg-no-repeat bg-contain cursor-pointer mt-3"
+              onClick={() => navigate(adminView ? "/admin" : "/work")}
+              style={{ backgroundImage: `url(${logoHr})` }}
             />
-            <div className="hidden md:flex space-x-8 ml-10">
+            <div className="flex flex-wrap items-center justify-center space-x-4">
               {navigation.map((item) => (
-                <Link 
+                <Link
                   to={item.path}
                   key={item.path}
-                  className={`text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium ${
-                    location.pathname === item.path ? 'text-primary' : ''
+                  className={`text-gray-700 hover:text-blue-600 px-3 py-1 lg:py-0 rounded-md text-sm font-medium ${
+                    location.pathname === item.path ? "text-primary" : ""
                   }`}
                 >
                   {item.name}
-              </Link>
+                </Link>
               ))}
             </div>
           </div>
-
-          {/* Right side - Profile/login */}
-            <div className="flex items-center gap-4">
-            {user.role>=2 && (
-            	<div className="inline-block py-2 px-1 bg-background rounded-2xl whitespace-nowrap mr-20">
-                    <span>
-                    <input
-                        onChange={() => handleAdminStateChange(true)}
-                        type="radio"
-                        id="admin"
-                        className="hidden peer"
-                        checked={adminView}
-                    />
-                    <label
-                        htmlFor="admin"
-                        className="bg-background rounded-2xl py-1 px-3 select-none cursor-pointer peer-checked:bg-secondary peer-checked:text-white font-normal"
-                    >
-                        Admin view
-                    </label>
-                    </span>
-                    <span>
-                    <input
-                        onChange={() => handleAdminStateChange(false)}
-                        type="radio"
-                        id="user"
-                        className="hidden peer"
-                        checked={!adminView}
-                    />
-                    <label
-                        htmlFor="user"
-                        className="bg-background rounded-2xl py-1 px-3 select-none cursor-pointer peer-checked:bg-secondary peer-checked:text-white font-normal"
-                    >
-                        User View
-                    </label>
-                    </span>
-                </div>)}
-            <div className="relative ml-auto">
+  
+          {/* Right side - Profile/login and Language Selector */}
+          <div className="flex-wrap flex items-center justify-center space-x-8 mt-4 lg:mt-0 lg:flex-shrink-0">
+            <div className="min-w-[120px] lg:w-auto mt-2">
+              <LanguageSelector />
+            </div>
+  
+            {user.role >= 2 && (
+              <div className="inline-block py-2 px-1 bg-background rounded-2xl whitespace-nowrap">
+                <span>
+                  <input
+                    onChange={() => handleAdminStateChange(true)}
+                    type="radio"
+                    id="admin"
+                    className="hidden peer"
+                    checked={adminView}
+                  />
+                  <label
+                    htmlFor="admin"
+                    className="bg-background rounded-2xl py-1 px-3 select-none cursor-pointer peer-checked:bg-secondary peer-checked:text-white font-normal"
+                  >
+                    Admin view
+                  </label>
+                </span>
+                <span>
+                  <input
+                    onChange={() => handleAdminStateChange(false)}
+                    type="radio"
+                    id="user"
+                    className="hidden peer"
+                    checked={!adminView}
+                  />
+                  <label
+                    htmlFor="user"
+                    className="bg-background rounded-2xl py-1 px-3 select-none cursor-pointer peer-checked:bg-secondary peer-checked:text-white font-normal"
+                  >
+                    User View
+                  </label>
+                </span>
+              </div>
+            )}
+            <div className="relative">
               {userLoggedIn ? (
                 <div ref={profileDropdownRef}>
                   <button
@@ -151,15 +157,15 @@ const NavBar = () => {
                   >
                     <span className="sr-only">Open user menu</span>
                     <div className="h-8 w-8 rounded-full bg-blue-600 overflow-hidden border-2 border-transparent hover:border-primary transition-colors duration-200 cursor-pointer mr-2">
-                        <img
-                            src={user?.profile_picture || defaultProfilePicUrl}
-                            alt="User profile"
-                            className="h-full w-full object-cover"
-                        />
+                      <img
+                        src={user?.profile_picture || defaultProfilePicUrl}
+                        alt="User profile"
+                        className="h-full w-full object-cover"
+                      />
                     </div>
-                     <p> Hi, {user.name} <span className="text-sm text-muted-foreground">▾</span></p>
+                     <p className="truncate"> Hi, {user.name} <span className="text-sm text-muted-foreground">▾</span></p>
                   </button>
-
+  
                   {/* Profile dropdown */}
                   {isProfileOpen && (
                     <div
@@ -169,15 +175,15 @@ const NavBar = () => {
                       aria-labelledby="user-menu-button"
                     >
                       <div className="py-1" role="group">
-                        {profileOptions.map((item) => (
+                        {profileOptions.map((item) =>
                           item.path ? (
                             <Link
                               key={item.name}
                               to={item.path}
                               className={`block px-4 py-2 text-sm transition-colors ${
-                                location.pathname === item.path 
+                                location.pathname === item.path
                                   ? 'text-primary' : ''
-                              }`}
+                              } hover:bg-gray-200`}
                               role="menuitem"
                               tabIndex={-1}
                             >
@@ -187,14 +193,14 @@ const NavBar = () => {
                             <button
                               key={item.name}
                               onClick={() => {item.onClick?.();}}
-                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-200"
                               role="menuitem"
                               tabIndex={-1}
                             >
                               {item.name}
                             </button>
                           )
-                        ))}
+                        )}
                       </div>
                     </div>
                   )}
@@ -204,7 +210,7 @@ const NavBar = () => {
                   onClick={() => {
                     navigate('/login');
                   }}
-                  className="bg-blue-600 text-black px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
                 >
                   Login
                 </button>
@@ -215,15 +221,36 @@ const NavBar = () => {
       </div>
     </nav>
   );
-};
+});
 
 const Layout: React.FC = () => {
+  const navbarRef = useRef<HTMLElement>(null);
+  const [navbarHeight, setNavbarHeight] = useState(0);
+
+  useEffect(() => {
+    const updateNavbarHeight = () => {
+      if (navbarRef.current) {
+        setNavbarHeight(navbarRef.current.offsetHeight);
+      }
+    };
+
+    updateNavbarHeight();
+
+    window.addEventListener('resize', updateNavbarHeight);
+    return () => {
+      window.removeEventListener('resize', updateNavbarHeight);
+    };
+  }, [navbarRef]);
+
   return (
     <div className="min-h-screen flex flex-col">
-      <NavBar />
-      <main className="flex-1 pt-16 bg-background">
-          <Outlet />
-          <MobileVerificationPopup/>
+      <NavBar ref={navbarRef} />
+      <main
+        className="flex-1 bg-background"
+        style={{ paddingTop: `${navbarHeight}px` }}
+      >
+        <Outlet />
+        <MobileVerificationPopup />
       </main>
     </div>
   );
