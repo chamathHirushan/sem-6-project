@@ -6,6 +6,7 @@ import logoHr from "../assets/sewalk_horizontal_logo.png";
 import { Outlet } from 'react-router-dom';
 import MobileVerificationPopup from './MobileVerificationPopup';
 import LanguageSelector from './languageSelector/LanguageSelector';
+import {NotificationsIcon} from '../components/Notifications';
 
 const NavBar = forwardRef<HTMLElement>((props, ref) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -146,9 +147,12 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                 </span>
               </div>
             )}
-            <div className="relative">
+            <div className="relative flex items-center gap-4">
               {userLoggedIn ? (
-                <div ref={profileDropdownRef}>
+                <>
+                  <NotificationsIcon/>
+                  
+                  <div ref={profileDropdownRef}>
                   <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                     className="flex items-center text-sm focus:outline-none"
@@ -203,8 +207,9 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                         )}
                       </div>
                     </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                </>
               ) : (
                 <button
                   onClick={() => {
