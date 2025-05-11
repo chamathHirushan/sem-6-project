@@ -142,7 +142,7 @@ export const NotificationsIcon = () => {
         </button>
       </div>
       {isNotificationsOpen ? (
-        <div className="absolute top-11 right-[5px] z-50">
+        <div className="absolute top-11 right-[5px]">
           <NotificationsDropdown
             notifications={notifications}
             iconRef={bellIconRef}

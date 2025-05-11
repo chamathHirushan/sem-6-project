@@ -82,7 +82,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
   const defaultProfilePicUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff`;
 
   return (
-    <nav ref={ref} className="bg-white shadow-lg fixed w-full z-10">
+    <nav ref={ref} className="bg-white shadow-lg fixed w-full z-50">
       <div className="w-[90%] mx-auto py-4 lg:py-0">
         <div className="flex flex-col xl:flex-row justify-between items-center h-auto xl:h-16">
           {/* Left side - Logo and main nav */}
@@ -254,7 +254,10 @@ const Layout: React.FC = () => {
         className="flex-1 bg-background"
         style={{ paddingTop: `${navbarHeight}px` }}
       >
-        <Outlet />
+        <br/>
+        <div className="ml-2">
+          <Outlet />
+        </div>
         <MobileVerificationPopup />
       </main>
     </div>
