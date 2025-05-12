@@ -41,7 +41,7 @@ const JobTile: FC<JobTileProps> = ({
   };
   
   const TileContent = (
-    <div className={`job-tile ${view === "grid" ? "grid" : "list"}`}>
+    <div className={`job-tile ${view === "grid" ? "grid" : "list"}`} style={{ backgroundColor: "white" }}>
       {view === "grid" ? (
         <>
           <img src={image} alt="Job" className="job-tile-image" />

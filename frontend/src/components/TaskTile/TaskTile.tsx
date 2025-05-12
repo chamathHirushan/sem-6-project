@@ -41,7 +41,7 @@ const TaskTile: FC<TaskTileProps> = ({
   };
   
   const TileContent = (
-    <div className={`task-tile ${view === "grid" ? "grid" : "list"}`}>
+    <div className={`task-tile ${view === "grid" ? "grid" : "list"}`} style={{ backgroundColor: "white" }}>
       {view === "grid" ? (
         <>
           <img src={image} alt="Task" className="task-tile-image" />
