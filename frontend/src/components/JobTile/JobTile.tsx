@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./JobTile.css";
 
 interface JobTileProps {
@@ -22,7 +23,24 @@ const JobTile: FC<JobTileProps> = ({
   view,
   onBookmarkToggle,
 }) => {
-  return (
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // stop default link behavior
+    const scrollY = window.scrollY;
+    console.log("Navigating to job:", id, "ScrollY:", scrollY);
+
+    // Navigate manually with scroll position in state
+    navigate(`/work/${id}`, {
+      state: {
+        from: location,
+        scrollPosition: scrollY,
+      },
+    });
+  };
+  
+  const TileContent = (
     <div className={`job-tile ${view === "grid" ? "grid" : "list"}`}>
       {view === "grid" ? (
         <>
@@ -40,11 +58,13 @@ const JobTile: FC<JobTileProps> = ({
         </>
       ) : (
         <>
-            <div className="flex justify-start bg-gray-200 border-l-0 rounded-lg">
-              <img src={image} alt="Job" className="job-tile-image" />
+          <div className="image-wrapper w-1/3 bg-gray-200 flex items-center justify-center">
+            <div className="image-square aspect-square w-full h-full flex items-center justify-center">
+              <img src={image} alt="Job" className="max-w-full max-h-full object-contain" />
             </div>
-          
-          <div className="job-tile-content">
+          </div>
+
+          <div className="job-tile-content flex-grow">
             <h2 className="job-tile-title">Job Title</h2>
             <h3 className="job-tile-id">Job ID: {id}</h3>
             <p className="job-tile-type">Type: {jobType}</p>
@@ -62,6 +82,17 @@ const JobTile: FC<JobTileProps> = ({
 
     </div>
   );
+
+  return (
+    <a
+      href={`/work/${id}`}
+      onClick={handleClick}
+      className="job-tile-link"
+    >
+      {TileContent}
+    </a>
+  );
+  
 };
 
 export default JobTile;
