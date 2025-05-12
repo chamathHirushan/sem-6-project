@@ -18,13 +18,13 @@ interface Props {
   bottomTooltip?: boolean;
 }
 
-const PerformanceCard = (props: Props) => {
+const DataInfoCard = (props: Props) => {
   const {t} = useI18n("Analytics");
 
   const tooltipId = nanoid();
 
   return (
-    <div className="relative w-full h-full flex flex-col justify-center bg-white rounded-2xl border border-gray-50 overflow-hidden">
+    <div className="relative w-full h-full flex flex-col justify-center bg-white rounded-2xl border border-gray-50">
       {!props.value && !props.isFiltered && <NoDataWrapper noDataText={props.noDataText}/>}
       <div className="p-4 flex justify-between h-full text-black">
         <div className="flex gap-5 items-center">
@@ -58,4 +58,4 @@ const PerformanceCard = (props: Props) => {
   );
 };
 
-export default PerformanceCard;
+export default DataInfoCard;

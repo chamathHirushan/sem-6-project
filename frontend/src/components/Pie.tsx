@@ -149,7 +149,6 @@ const CustomTooltip: React.FC<{ active: boolean; payload: any[]; customLegendSty
     return null;
 };
 
-
 const renderPercentageLabel: React.FC<{
     cx: number;
     cy: number;
@@ -181,8 +180,8 @@ const RingPieChart: React.FC<Props> = ({
                                            style2label,
                                            data,
                                            paddingAngle = 10,
-                                           innerRadius = 90,
-                                           outerRadius = 120,
+                                           innerRadius = 40,
+                                           outerRadius = 80,
                                            showTitle = false,
                                            titleLabel,
                                            textSize = 'text-lg',
@@ -191,7 +190,8 @@ const RingPieChart: React.FC<Props> = ({
                                            hideValueInLegend
                                        }) => {
 
-    const defaultColors = getColourArr(data);
+    const sortedData = [...data].sort((a, b) => b.value - a.value);
+    const defaultColors = getColourArr(sortedData);
     // @ts-ignore
     return (
         <div className="relative h-full">
@@ -199,11 +199,11 @@ const RingPieChart: React.FC<Props> = ({
                 {
                     customLegendStyle == "style1" && layoutDirection == 'row' &&
                     <div className="w-1/3">
-                        <CustomLegendWithPercentage data={data}/>
+                        <CustomLegendWithPercentage data={sortedData}/>
                     </div>
                 }
                 <ResponsiveContainer width={customLegendStyle == "style1" ? "80%" : "50%"}
-                                     height={1.5 * outerRadius + 10}>
+                                     height={1.5 * outerRadius + 40}>
                     <PieChart>
                         {
                             showTitle &&
@@ -218,13 +218,12 @@ const RingPieChart: React.FC<Props> = ({
                         <Tooltip
                             // @ts-ignore
                             content={<CustomTooltip customLegendStyle={customLegendStyle}/>}/>
-                        {/*<Legend layout="vertical" verticalAlign="middle" align="right"/>*/}
                         <Pie
-                            data={data}
+                            data={sortedData}
                             cx="50%"
                             cy="50%"
-                            outerRadius={80}
-                            innerRadius={40}
+                            outerRadius={outerRadius}
+                            innerRadius={innerRadius}
                             paddingAngle={paddingAngle}
                             fill="#8884d8"
                             dataKey="value"
@@ -233,7 +232,7 @@ const RingPieChart: React.FC<Props> = ({
                             labelLine={false}
                             label={showPercentageLabel ? renderPercentageLabel : undefined}
                         >
-                            {data.map((entry, index) => (
+                            {sortedData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.color ? entry.color : defaultColors[index]}/>
                             ))}
                         </Pie>
@@ -242,14 +241,14 @@ const RingPieChart: React.FC<Props> = ({
                 {
                     customLegendStyle == "style2" &&
                     <div className={`${layoutDirection == 'row' ? 'w-1/2' : 'w-full px-12 mt-5'}`}>
-                        <CustomLegendWithTotal data={data} totalLabel={style2label} textSize={textSize}
+                        <CustomLegendWithTotal data={sortedData} totalLabel={style2label} textSize={textSize}
                                                hideValues={hideValueInLegend}/>
                     </div>
                 }
                 {
                     layoutDirection == 'column' && customLegendStyle == 'style1' &&
                     <div className="w-2/3 mt-5 flex justify-center">
-                        <CustomLegendWithPercentage layoutDirection="column" data={data}
+                        <CustomLegendWithPercentage layoutDirection="column" data={sortedData}
                                                     hideValues={hideValueInLegend}/>
                     </div>
                 }

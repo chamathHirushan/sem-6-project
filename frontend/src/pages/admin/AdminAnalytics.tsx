@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { apiClient } from "../../api/client";
-import PerformanceCard from "../../components/PerformanceCard";
+import DataInfoCard from "../../components/DataInfoCard";
 import usersImg from "../../assets/users.png";
 
 export default function AdminAnalytics() {
@@ -27,7 +27,7 @@ export default function AdminAnalytics() {
         <div className="flex flex-wrap gap-5 mb-5 justify-start">
                 {/* Each card container */}
                 <div className="flex-grow min-w-[250px] max-w-[calc(33%-1.25rem)] flex-1">
-                  <PerformanceCard
+                  <DataInfoCard
                     img={usersImg}
                     title={"text9"}
                     value={10}
