@@ -50,7 +50,11 @@ const JobTile: FC<JobTileProps> = ({
             <p className="job-tile-address">{address}</p>
             <button
               className={`job-tile-bookmark ${isBookmarked ? "bookmarked" : ""}`}
-              onClick={() => onBookmarkToggle(id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onBookmarkToggle(id);
+              }}
             >
               {isBookmarked ? "Unbookmark" : "Bookmark"}
             </button>
@@ -72,7 +76,11 @@ const JobTile: FC<JobTileProps> = ({
             <p className="job-tile-address">{address}</p>
             <button
               className={`job-tile-bookmark ${isBookmarked ? "bookmarked" : ""}`}
-              onClick={() => onBookmarkToggle(id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onBookmarkToggle(id);
+              }}
             >
               {isBookmarked ? "Unbookmark" : "Bookmark"}
             </button>
@@ -84,13 +92,9 @@ const JobTile: FC<JobTileProps> = ({
   );
 
   return (
-    <a
-      href={`/work/${id}`}
-      onClick={handleClick}
-      className="job-tile-link"
-    >
+    <div onClick={handleClick} className="job-tile-link cursor-pointer">
       {TileContent}
-    </a>
+    </div>
   );
   
 };

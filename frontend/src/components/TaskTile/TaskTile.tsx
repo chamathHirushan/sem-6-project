@@ -50,7 +50,11 @@ const TaskTile: FC<TaskTileProps> = ({
             <p className="task-tile-address">{address}</p>
             <button
               className={`task-tile-bookmark ${isBookmarked ? "bookmarked" : ""}`}
-              onClick={() => onBookmarkToggle(id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onBookmarkToggle(id);
+              }}
             >
               {isBookmarked ? "Unbookmark" : "Bookmark"}
             </button>
@@ -72,7 +76,11 @@ const TaskTile: FC<TaskTileProps> = ({
             <p className="task-tile-address">{address}</p>
             <button
               className={`task-tile-bookmark ${isBookmarked ? "bookmarked" : ""}`}
-              onClick={() => onBookmarkToggle(id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onBookmarkToggle(id);
+              }}
             >
               {isBookmarked ? "Unbookmark" : "Bookmark"}
             </button>
@@ -84,13 +92,9 @@ const TaskTile: FC<TaskTileProps> = ({
   );
 
   return (
-    <a
-      href={`/hire/${id}`}
-      onClick={handleClick}
-      className="task-tile-link"
-    >
+    <div onClick={handleClick} className="task-tile-link">
       {TileContent}
-    </a>
+    </div>
   );
   
 };
