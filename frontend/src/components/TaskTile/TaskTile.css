@@ -1,5 +1,5 @@
 /* Common styles for both views */
-.job-tile {
+.task-tile {
     display: flex;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -8,11 +8,11 @@
     transition: transform 0.2s;
 }
 
-.job-tile:hover {
+.task-tile:hover {
     transform: scale(1.02);
 }
 
-.job-tile-image {
+.task-tile-image {
     width: 200px;
     height: 200px;
     object-fit: cover;
@@ -20,7 +20,7 @@
 }
 
 /* grid view (portrait) */
-.job-tile.grid {
+.task-tile.grid {
     display: flex;
     flex-direction: column;
     min-width: 200px;
@@ -32,32 +32,32 @@
 }
 
 @media (max-width: 1300px) {
-    .job-tile.grid {
+    .task-tile.grid {
        width: 33.33%;
     }
 }
 
 
 @media (max-width: 1700px) {
-    .job-tile.grid {
+    .task-tile.grid {
         width: 20%;
     }
 }
 
 
-.job-tile.grid .job-tile-image {
+.task-tile.grid .task-tile-image {
     height: 100%;
     width: auto;
     object-fit: contain;
 }
 
-.job-tile.grid .job-tile-content {
+.task-tile.grid .task-tile-content {
     padding: 10px;
     text-align: center;
 }
 
 /* list view (landscape) */
-.job-tile.list {
+.task-tile.list {
     display: flex;
     flex-direction: row;
     width: fit-content;
@@ -73,7 +73,7 @@
     max-height: 200px;
 }
 
-.job-tile.list>* {
+.task-tile.list>* {
     height: auto;
     display: flex;
     flex-direction: column;
@@ -97,18 +97,18 @@
 
 
 @media (min-height: 100px) {
-    .job-tile.list {
+    .task-tile.list {
         /* height: 250px; */
         min-height: unset;
         height: auto;
     } 
 }
 
-.job-tile.list .job-tile-image {
+.task-tile.list .task-tile-image {
     object-fit: contain;
 }
 
-.job-tile.list .job-tile-content {
+.task-tile.list .task-tile-content {
     padding: 10px;
     margin-left: 20px;
     flex-grow: 1;
@@ -118,20 +118,20 @@
     align-items: baseline;
 }
 
-.job-tile-id {
+.task-tile-id {
     font-size: 16px;
     font-weight: bold;
     margin: 0;
 }
 
-.job-tile-address,
-.job-tile-days,
-.job-tile-type {
+.task-tile-address,
+.task-tile-days,
+.task-tile-type {
     font-size: 14px;
     margin: 5px 0;
 }
 
-.job-tile-bookmark {
+.task-tile-bookmark {
     background-color: #007bff;
     color: white;
     border: none;
@@ -141,10 +141,10 @@
     font-size: 14px;
 }
 
-.job-tile-bookmark.bookmarked {
+.task-tile-bookmark.bookmarked {
     background-color: #dc3545;
 }
 
-.job-tile-bookmark:hover {
+.task-tile-bookmark:hover {
     opacity: 0.9;
 }
