@@ -1,5 +1,6 @@
 import React, { FC, useState } from "react";
-import { FaAngleDown, FaAngleUp } from "react-icons/fa";
+import {ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
+
 import "./SideMenu.css";
 
 interface MenuItem {
@@ -89,7 +90,7 @@ const SideMenu: FC<Props> = ({
                 {item.label}
                 {item.subItems && (
                 <span>
-                    {expandedCategories.has(index) ? <FaAngleDown /> : <FaAngleUp />}
+                    {expandedCategories.has(index) ? <ChevronDownIcon className="w-4 h-4"/> : <ChevronUpIcon className="w-4 h-4"/>}
                 </span>
                 )}
             </div>
