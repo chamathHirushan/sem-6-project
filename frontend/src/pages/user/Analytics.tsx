@@ -118,7 +118,7 @@ export default function Analytics() {
 
       return (
         <>
-          <div className="flex flex-wrap gap-2 ml-5 justify-start">
+          <div className="flex flex-wrap gap-2 ml-5 mb-1 justify-start">
             <Select
               isSearchable={false}
               className="w-[300px] z-20"
@@ -197,7 +197,7 @@ export default function Analytics() {
             </div>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2 mb-5 mx-auto max-w-[1100px] w-full">
+          <div className="flex flex-wrap gap-2 mb-5 mx-auto justify-center max-w-[1100px]">
             <div className="mb-5">
               <h2 className="text-lg font-bold text-black mb-5 text-center">
                 Subscription analytics
