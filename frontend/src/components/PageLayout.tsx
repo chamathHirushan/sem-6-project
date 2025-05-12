@@ -221,7 +221,7 @@ const Layout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <NavBar />
-      <main className="flex-1 pt-16 bg-background" style={{ backgroundColor: 'white' }}>
+      <main className="flex-1 pt-16 bg-background">
           <Outlet />
           <MobileVerificationPopup/>
       </main>
