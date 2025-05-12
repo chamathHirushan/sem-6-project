@@ -1,0 +1,150 @@
+/* Common styles for both views */
+.task-tile {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.task-tile:hover {
+    transform: scale(1.02);
+}
+
+.task-tile-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    flex: auto;
+}
+
+/* grid view (portrait) */
+.task-tile.grid {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+@media (max-width: 1300px) {
+    .task-tile.grid {
+       width: 33.33%;
+    }
+}
+
+
+@media (max-width: 1700px) {
+    .task-tile.grid {
+        width: 20%;
+    }
+}
+
+
+.task-tile.grid .task-tile-image {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
+.task-tile.grid .task-tile-content {
+    padding: 10px;
+    text-align: center;
+}
+
+/* list view (landscape) */
+.task-tile.list {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    height: auto;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 1000px;
+    width: 100%;
+
+    align-items: stretch;
+    gap: 1rem;
+    min-height: 100px;
+    max-height: 200px;
+}
+
+.task-tile.list>* {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    /* flex-grow: 1; */
+}
+
+.image-wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+.image-square {
+   aspect-ratio: 1 / 1;
+    width: 100%;
+    max-height: 100%;
+    background-color: #e5e5e5; /* Make sure the gray shows even without image */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+@media (min-height: 100px) {
+    .task-tile.list {
+        /* height: 250px; */
+        min-height: unset;
+        height: auto;
+    } 
+}
+
+.task-tile.list .task-tile-image {
+    object-fit: contain;
+}
+
+.task-tile.list .task-tile-content {
+    padding: 10px;
+    margin-left: 20px;
+    flex-grow: 1;
+    flex-direction: column;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.task-tile-id {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.task-tile-address,
+.task-tile-days,
+.task-tile-type {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.task-tile-bookmark {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.task-tile-bookmark.bookmarked {
+    background-color: #dc3545;
+}
+
+.task-tile-bookmark:hover {
+    opacity: 0.9;
+}
