@@ -4,8 +4,7 @@ import { apiClient } from "../../api/client";
 // import { useNavigate } from "react-router-dom";
 import SideMenu from "../../components/SideMenu/SideMenu";
 import JobTile from "../../components/JobTile/JobTile";
-import { BsFillGridFill } from "react-icons/bs";
-import { FaThList } from "react-icons/fa";
+import {Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
 import jobImage from "../../assets/get-a-job-with-no-experience.png"
 import { useSearchParams, useLocation } from "react-router-dom";
 
@@ -142,7 +141,7 @@ export default function Works() {
                   cursor: "pointer",
                 }}
               >
-                <BsFillGridFill/>
+                <Squares2X2Icon className="w-5 h-5"/>
               </button>
 
               <button
@@ -154,7 +153,7 @@ export default function Works() {
                   cursor: "pointer",
                 }}
               >
-                <FaThList/>
+                <ListBulletIcon className="w-6 h-6"/>
               </button>
             </div>
         </div>
