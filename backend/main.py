@@ -7,11 +7,11 @@ import os
 import uvicorn
 from models.database import engine
 from models import Base
-from routes import gateway, auth, admin, user
+from routes import gateway, auth, admin, user, jobs, workers, favourites, notifications, conversations
 
 app = FastAPI()
 
-# create all tables in DB o startup
+# create all tables in DB on startup
 Base.metadata.create_all(bind=engine)
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
@@ -28,6 +28,11 @@ app.include_router(gateway.router, prefix="/api")
 app.include_router(auth.router, prefix="/auth")
 app.include_router(admin.router, prefix="/admin")
 app.include_router(user.router, prefix="/user")
+app.include_router(jobs.router, prefix="/api")
+app.include_router(workers.router, prefix="/api")
+app.include_router(favourites.router, prefix="/api")
+app.include_router(notifications.router, prefix="/api")
+app.include_router(conversations.router, prefix="/api")
 
 @app.get("/")
 def read_root():

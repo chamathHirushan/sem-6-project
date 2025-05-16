@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 # PostgreSQL connection string format
-DATABASE_URL = os.getenv("DATABASE_URL","postgresql://postgres:postgres@localhost:5432/sewalk")
+DATABASE_URL = os.getenv("DATABASE_URL","postgresql://postgres:postgres-pw@db:5432/sewalk")
 
 Base = declarative_base()
 
