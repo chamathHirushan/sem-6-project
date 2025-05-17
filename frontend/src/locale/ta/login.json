@@ -2,5 +2,16 @@
     "welcome" : "வணக்கம்!",
     "login" : "உள்நுழையவும்",
     "register" : "பதிவு செய்யவும்",
-    "or" : "or"
+    "or" : "or",
+    "email" : "Email",
+    "password" : "Password",
+    "forgotPassword" : "கடவுச்சொல் மறந்து விட்டது?",
+    "Phonenumber" : "Phone Number",
+    "google" : "Sign in with Google",
+    "magicLink" : "Sign in Magic Link",
+    "verificationEmailSent" : "Verification email sent. Please check your inbox.",
+    "signUpError" : "Sign up error",
+    "magicLinkSent" : "Magic link sent. Please check your inbox.",
+    "text1" :"From quick tasks to complex projects",
+    "text2" :"Find the Ideal person for your Job!"
 }

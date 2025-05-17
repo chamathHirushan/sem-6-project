@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "../../api/client";
 import {useAuth} from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function MyJobs() {
       const [backendData, setBackendData] = useState<string>("Loading...");
       const {user} = useAuth();
-    
+      const navigate = useNavigate();
+
       useEffect(() => {
         async function fetchData() {
           try {
@@ -19,10 +21,12 @@ export default function MyJobs() {
     
         fetchData();
       }, []);
+
     return (
       <>
         <p>Logged as level {user.role} user</p>
-        <p>MyJobs page content goes here.</p>
+        <p>Works page content goes here. Fuck you</p>
+        <button onClick={() => navigate("/")}>Go to dashboard</button>
         <p>{backendData}</p>
       </>
     );

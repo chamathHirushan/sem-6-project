@@ -24,6 +24,33 @@ async def session(
     authorization: str = Header(None)
 ):
     try:
+        # Development override: Skip authentication and return a dummy user
+        if os.getenv("DEV_MODE", "false").lower() == "true":
+            user_record = {
+                "email": "developer@example.com",
+                "role": 3,
+                "name": "Developer",
+                "phone_number": "+1234567890",
+                "profile_picture": "https://via.placeholder.com/150"
+            }
+            access_token = AuthService().create_access_token(user_record)
+            refresh_token = AuthService().create_refresh_token(user_record, "Development Region")
+
+            refresh_cookie_options = {
+                "httponly": True,
+                "secure": False,
+                "samesite": "Strict",
+                "path": "/auth/refresh",
+                "max_age": 86400 * REFRESH_TOKEN_EXPIRE_DAYS
+            }
+
+            response.set_cookie(key="refresh_token", value=refresh_token, **refresh_cookie_options)
+
+            return {
+                "user": user_record,
+                "token": access_token
+            }
+
         if authorization and authorization.startswith("Bearer "):
             access_token = authorization.split(" ")[1]
             decoded_token = AuthService().decode_access_token(access_token)
@@ -103,7 +130,7 @@ async def refresh_token(
         refresh_token = request.cookies.get("refresh_token")
         if not refresh_token:
             raise HTTPException(status_code=401, detail="No refresh token")
-
+    
         decoded_token = AuthService().decode_refresh_token(refresh_token)
         email = decoded_token.get("email")
         
@@ -139,7 +166,7 @@ async def refresh_token(
 
         return {"token": new_access_token}
 
-    except Exception:
+    except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
     
 @router.post("/signout")
@@ -151,3 +178,13 @@ async def signout(
         return {"message": "Logged out successfully"}
     except Exception:
         raise HTTPException(status_code=500, detail="Logout failed")
+    
+@router.post("/store-phone")
+async def store_phone(
+    request: Request
+):
+    # store the phone number in the database for the user
+    body = await request.json()
+    phone_number = body.get("phone_number")
+    email = body.get("email")
+    print("storing phone number for user:", email, "phone number:", phone_number)

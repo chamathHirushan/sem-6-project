@@ -7,7 +7,7 @@ import os
 ACCESS_SECRET = os.getenv("ACCESS_SECRET")
 REFRESH_SECRET = os.getenv("REFRESH_SECRET")
 ACCESS_TOKEN_EXPIRE_HOURS = int(os.getenv("ACCESS_TOKEN_EXPIRE_HOURS", 1))
-REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS"), 7)
+REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", 7))
 ALGORITHM = "HS256"
 
 class AuthService:    
@@ -32,12 +32,10 @@ class AuthService:
         to_encode = data.copy()
         now = datetime.now(timezone.utc)
         expire = now + expires_delta
-
         to_encode.update({
             "iat": now,
             "exp": expire
         })
-
         encoded_jwt = jwt.encode(to_encode, ACCESS_SECRET, algorithm=ALGORITHM)
         return encoded_jwt
     
