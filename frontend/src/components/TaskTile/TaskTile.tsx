@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {ClockIcon, MapPinIcon, TagIcon, StarIcon, ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
-import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid";
+import { StarIcon as SolidStarIcon, FireIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import "./TaskTile.css";
 
 interface TaskTileProps {
@@ -13,6 +13,8 @@ interface TaskTileProps {
   taskType: string;
   budget: string;   // budget can be a string(for negotiable services) or number
   isBookmarked: boolean;
+  isUrgent: boolean,
+  isTrending: boolean,
   view: "grid" | "list"; // Determines the tile layout
   onBookmarkToggle: (id: string) => void;
 }
@@ -25,6 +27,8 @@ const TaskTile: FC<TaskTileProps> = ({
   daysPosted,
   taskType,
   isBookmarked,
+  isUrgent,
+  isTrending,
   budget, 
   view,
   onBookmarkToggle,
@@ -55,7 +59,10 @@ const TaskTile: FC<TaskTileProps> = ({
             <div className="task-tile-title-wrapper" title={title}>
               <h3 className="task-tile-title truncate">{title}</h3>
             </div>
+
+            {/* Budget */}
             <h3 className="task-tile-id">Rs. {budget}</h3>
+
             
             <div className="flex items-center justify-between w-full">
               <div className="flex flex-col gap-0.5">
@@ -78,34 +85,52 @@ const TaskTile: FC<TaskTileProps> = ({
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1">
-                {/* Chat icon */}
-                <button
-                  className="task-tile-chat"
+              <div className="flex flex-col gap-1 w-20">
+                <div className="flex flex-col gap-0.5 place-items-end h-10">
+                  {/* Urgent icon */}
+                  {isUrgent && (
+                    <div className="flex items-center justify-center p-0.5">
+                      <ExclamationTriangleIcon className="w-4 h-4 mr-1" style={{ color: "red" }} />
+                    </div>
+                  )}
+
+                  {/* Trending icon */}
+                  {isTrending && (
+                      <div className="flex items-center justify-center p-0.5 px-1">
+                      <FireIcon className="w-4 h-4 mr-0.5" style={{ color: "orange" }} />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between w-full pl-3">
+                  {/* Chat icon */}
+                  <button
+                    className="task-tile-chat"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      navigate(`/chat/${id}`);
+                    }}
+                  >
+                    <ChatBubbleOvalLeftEllipsisIcon className="w-5 h-5" />
+                  </button>
+
+                  {/* Bookmark icon */}
+                  <button
+                  className={`task-tile-bookmark ${isBookmarked ? "bookmarked" : ""}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    navigate(`/chat/${id}`);
+                    onBookmarkToggle(id);
                   }}
-                >
-                  <ChatBubbleOvalLeftEllipsisIcon className="w-5 h-5" />
-                </button>
-
-                {/* Bookmark icon */}
-                <button
-                className={`task-tile-bookmark ${isBookmarked ? "bookmarked" : ""}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  onBookmarkToggle(id);
-                }}
-                >
-                {isBookmarked ? (
-                  <SolidStarIcon className="w-5 h-5" />
-                ) : (
-                  <StarIcon className="w-5 h-5" />
-                )}
-                </button>
+                  >
+                  {isBookmarked ? (
+                    <SolidStarIcon className="w-5 h-5" />
+                  ) : (
+                    <StarIcon className="w-5 h-5" />
+                  )}
+                  </button>
+                </div>
               </div>
             </div>
             
@@ -121,13 +146,41 @@ const TaskTile: FC<TaskTileProps> = ({
 
           <div className="task-tile-content flex-grow">
             <h2 className="line-clamp-2 text-neutral-700 font-medium text-lg" title={title}>{title}</h2>
-            <h3 className="task-tile-id">Rs. {budget}</h3>
-            <p className="task-tile-type">Type: {taskType}</p>
-           
-           {/* location */}
-            <div className="flex items-center">
-              <MapPinIcon className="w-4 h-4 mr-1" style={{ color: "#055dff" }}/>
-              <p className="task-tile-address">{location}</p>
+            
+            <div className="flex items-center justify-between w-full">
+              <div className="flex flex-col gap-0.5">
+                <h3 className="task-tile-id">Rs. {budget}</h3>
+
+                {/* Task type */}
+                <div className="flex items-center">
+                  <TagIcon className="w-4 h-4 mr-1" style={{ color: "red" }} />
+                  <p className="task-tile-type">{taskType}</p>
+                </div>
+
+                {/* location */}
+                <div className="flex items-center">
+                  <MapPinIcon className="w-4 h-4 mr-1" style={{ color: "#055dff" }}/>
+                  <p className="task-tile-address">{location}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1 w-20">
+                {/* Urgent icon */}
+                {isUrgent && (
+                  <div className="flex items-center justify-center bg-red-500 rounded-md p-0.5">
+                    <ExclamationTriangleIcon className="w-4 h-4 mr-1" style={{ color: "white" }} />
+                    <p className="text-white text-xs">Urgent</p>
+                  </div>
+                )}
+
+                {/* Trending icon */}
+                {isTrending && (
+                    <div className="flex items-center justify-center rounded-md border border-orange-500 p-0.5 px-1">
+                    <FireIcon className="w-4 h-4 mr-0.5" style={{ color: "orange" }} />
+                    <p className="text-black text-xs">Trending</p>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="flex items-center justify-between w-full">
@@ -147,7 +200,7 @@ const TaskTile: FC<TaskTileProps> = ({
                   <StarIcon className="w-5 h-5" />
                 )}
                 </button>
-                
+
                 {/* chat icon */}
                 <button
                 className="task-tile-chat"

@@ -173,13 +173,13 @@
 
 .task-tile-bookmark {
     border: none;
-    padding: 5px 10px;
+    padding: 0;
     cursor: pointer;
 }
 
 .task-tile-chat{
     border: none;
-    padding: 5px 10px;
+    padding: 0;
     cursor: pointer;
 }
 

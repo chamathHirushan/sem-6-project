@@ -69,6 +69,8 @@ export default function Hires() {
       taskType: "Plumbing",
       budget: 100,
       isBookmarked: true,
+      isUrgent: false,
+      isTrending: true,
     },
     {
       id: "J134",
@@ -79,6 +81,8 @@ export default function Hires() {
       taskType: "Painting",
       budget: 100,
       isBookmarked: true,
+      isUrgent: true,
+      isTrending: true,
     },
     {
       id: "J135",
@@ -89,6 +93,8 @@ export default function Hires() {
       taskType: "Repair",
       budget: 100,
       isBookmarked: true,
+      isUrgent: true,
+      isTrending: false,
     },
     {
       id: "J136",
@@ -99,6 +105,8 @@ export default function Hires() {
       taskType: "Repair",
       budget: 100,
       isBookmarked: true,
+      isUrgent: false,
+      isTrending: false,
     },
     {
       id: "J137",
@@ -109,6 +117,8 @@ export default function Hires() {
       taskType: "Woodwork",
       budget: 100,
       isBookmarked: true,
+      isUrgent: false,
+      isTrending: false,
     },
     {
       id: "J138",
@@ -119,6 +129,8 @@ export default function Hires() {
       taskType: "Repair",
       budget: 100,
       isBookmarked: true,
+      isUrgent: true,
+      isTrending: false,
     },
   ]);
 
