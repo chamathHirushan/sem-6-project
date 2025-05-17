@@ -90,14 +90,14 @@ const TaskTile: FC<TaskTileProps> = ({
                   {/* Urgent icon */}
                   {isUrgent && (
                     <div className="flex items-center justify-center p-0.5">
-                      <ExclamationTriangleIcon className="w-4 h-4 mr-1" style={{ color: "red" }} />
+                      <ExclamationTriangleIcon className="w-4 h-4" style={{ color: "red" }} />
                     </div>
                   )}
 
                   {/* Trending icon */}
                   {isTrending && (
                       <div className="flex items-center justify-center p-0.5 px-1">
-                      <FireIcon className="w-4 h-4 mr-0.5" style={{ color: "orange" }} />
+                      <FireIcon className="w-4 h-4 -mr-0.5" style={{ color: "orange" }} />
                     </div>
                   )}
                 </div>
