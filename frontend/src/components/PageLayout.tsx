@@ -26,17 +26,15 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
   if (adminView) {
     navigation = [
         { name: 'Admin analytics', path: '/admin' },
-        { name: 'Earnings', path: '/earnings' },
         { name: 'Users', path: '/users' },
-        { name: 'Conversations', path: '/conversations' },
+        { name: 'Chats', path: '/conversations' },
       ];
   } else{
     navigation = [
-        { name: 'To Work', path: '/work' },
-        { name: 'To Hire', path: '/hire' },
-        { name: 'My Jobs', path: '/my-jobs' },
-        { name: 'Conversations', path: '/conversations' },
-        { name: 'Analytics', path: '/analytics' },
+        { name: 'Available Jobs', path: '/work' },
+        { name: 'Hire Workers', path: '/hire' },
+        { name: 'My Works', path: '/my-jobs' },
+        { name: 'Chats', path: '/conversations' },
       ];
   }
 
@@ -56,6 +54,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
         { name: 'View Profile', path: '/profile' },
         { name: 'My Working Fields', path: '/job-fields' },
         { name: 'Favourites', path: '/favorites' },
+        { name: 'Analytics', path: '/analytics' },
         { 
           name: 'Logout',
           onClick: () => logoutUser(navigate)
