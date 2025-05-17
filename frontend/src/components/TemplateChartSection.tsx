@@ -54,7 +54,7 @@ const TemplateChartSection: React.FC<TemplateChartSectionProps> = ({
                                 />
                                 <ReactTooltip
                                     id={title}
-                                    className="w-60 bg-black backdrop-opacity-100 whitespace-pre-line"
+                                    className="w-60 bg-black backdrop-opacity-100 whitespace-pre-line z-20"
                                     place="top"
                                     delayHide={500}
                                 >
