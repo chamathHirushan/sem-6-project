@@ -52,7 +52,7 @@ export default function ServiceView() {
     budget: 5000,
     address: "123 Main St, New York, NY",
     description: "We are looking for a senior developer to join our team. The ideal candidate should have at least 5 years of experience in software development, with a strong background in JavaScript and React. I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done).",
-    jobPoster: "https://s3-ap-southeast-1.amazonaws.com/xpresslivedonotmess-live/Vacancies/DescriptionImage_181385", // poster of the job post if exist
+    taskPoster: "https://s3-ap-southeast-1.amazonaws.com/xpresslivedonotmess-live/Vacancies/DescriptionImage_181385", // poster of the job post if exist
     isBookmarked: false,
     image: [jobImage, jobImage, jobImage],
   };
@@ -146,11 +146,11 @@ export default function ServiceView() {
           <p className="mb-4">{task.description}</p>
 
           {/* Task Poster. If the task poster is not empty show it as an image. otherwise not showing anything atleast the header */}
-          {task.jobPoster && (       
+          {task.taskPoster && (       
             <div>
               <div className="border-t border-gray-300 my-4"></div>
               <h2 className="text-xl font-semibold mb-2">Task Poster</h2>
-              <img src={task.jobPoster} alt="Job Poster" className="w-full h-full mr-4" />
+              <img src={task.taskPoster} alt="Job Poster" className="w-full h-full mr-4" />
             </div>
           )}
 
@@ -172,7 +172,7 @@ export default function ServiceView() {
 
         {/* right side summary area */}
         <div className="w-full h-full lg:w-1/3 bg-white p-4 rounded-lg shadow-md">
-          {/* user info of the job poster */}
+          {/* user info of the task poster */}
           <div className="flex items-center mb-4">
             <img src={task.postedUserImage} alt="Job Poster" className="w-16 h-16 rounded-full mr-4" />
             <div>
