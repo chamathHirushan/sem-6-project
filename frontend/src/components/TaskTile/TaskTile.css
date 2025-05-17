@@ -26,9 +26,9 @@
     min-width: 200px;
     width: 100%;
     height: 100%;
-    box-sizing: border-box;
     margin-left: 8px;
     margin-right: 8px;
+    justify-items: unset;
 }
 
 @media (max-width: 1300px) {
@@ -49,12 +49,44 @@
     height: 100%;
     width: auto;
     object-fit: contain;
+    -webkit-box-pack: center;
 }
 
 .task-tile.grid .task-tile-content {
+    -webkit-box-orient: vertical;
     padding: 10px;
-    text-align: center;
+    /* text-align: center; */
+    -webkit-box-direction: normal;
+    flex-direction: column;
+    -webkit-box-flex: 1;
+    flex: 1;
 }
+
+.task-tile.grid .task-tile-address,
+.task-tile.grid .task-tile-days,
+.task-tile.grid .task-tile-type {
+    font-size: 12px;
+    margin: 0;
+}
+
+.task-tile-title-wrapper{
+    display: block; 
+    width: 100%; 
+    overflow: hidden;
+}
+
+.task-tile-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-size: 14px;
+    font-weight: 400;
+    color: #191919;
+    line-height: normal;
+
+}
+
 
 /* list view (landscape) */
 .task-tile.list {
@@ -77,12 +109,13 @@
     height: auto;
     display: flex;
     flex-direction: column;
-    /* flex-grow: 1; */
 }
 
 .image-wrapper {
-    display: flex;
-    align-items: stretch;
+    flex: 0 0 250px;
+    max-width: 250px;
+    width: 250px;
+    overflow: hidden;
 }
 
 .image-square {
@@ -98,7 +131,6 @@
 
 @media (min-height: 100px) {
     .task-tile.list {
-        /* height: 250px; */
         min-height: unset;
         height: auto;
     } 
@@ -109,7 +141,7 @@
 }
 
 .task-tile.list .task-tile-content {
-    padding: 10px;
+    padding: 12px 25px 12px 10px;
     margin-left: 20px;
     flex-grow: 1;
     flex-direction: column;
@@ -118,33 +150,41 @@
     align-items: baseline;
 }
 
-.task-tile-id {
+.task-tile.list .task-tile-title {
     font-size: 16px;
+    font-weight: 400;
+    color: #191919;
+    line-height: normal;
+
+}
+
+.task-tile-id {
+    font-size: 18px;
     font-weight: bold;
-    margin: 0;
+    margin-top: 10px;
 }
 
 .task-tile-address,
 .task-tile-days,
 .task-tile-type {
     font-size: 14px;
-    margin: 5px 0;
+    margin: 0;
 }
 
 .task-tile-bookmark {
-    background-color: #007bff;
-    color: white;
     border: none;
     padding: 5px 10px;
-    border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
 }
 
-.task-tile-bookmark.bookmarked {
-    background-color: #dc3545;
+.task-tile-chat{
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
 }
 
-.task-tile-bookmark:hover {
-    opacity: 0.9;
+.task-tile.list .task-tile-bookmark {
+    border: none;
+    padding: 5px 10px 5px 0;
+    cursor: pointer;
 }
