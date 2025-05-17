@@ -3,6 +3,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { apiClient } from "../../api/client";
 import DataInfoCard from "../../components/DataInfoCard";
 import usersImg from "../../assets/users.png";
+import {PostsChart} from "../../components/PostsChart";
 
 export default function AdminAnalytics() {
     const [backendData, setBackendData] = useState<string>("Loading...");
@@ -41,6 +42,12 @@ export default function AdminAnalytics() {
         <p>Logged as level {user.role} user</p>
         <p>Admin Analytics page content goes here.</p>
         <p>{backendData}</p>
+        <br />
+        <div className="flex flex-wrap gap-5 mb-5 justify-start">
+          <div className="flex-grow min-w-[250px] flex-1" style={{ maxWidth: '40vw' }}>
+            <PostsChart />
+          </div>
+        </div>
       </>
     );
   }

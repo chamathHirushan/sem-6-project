@@ -3,12 +3,12 @@ import { useAuth } from "../../contexts/AuthContext";
 import { apiClient } from "../../api/client";
 import { ChevronLeftIcon, ChevronRightIcon, EyeIcon, TrashIcon, PencilIcon  } from '@heroicons/react/24/solid';
 
-export interface Role {
+interface Role {
   level: number;
   name: string;
 }
 
-export const permissionLevelMap: Record<number, Role> = {
+const permissionLevelMap: Record<number, Role> = {
   1: { level: 1, name: "User(Unverified)" },
   2: { level: 2, name: "User" },
   3: { level: 3, name: "Moderator" },
@@ -57,7 +57,7 @@ const UserManagementTable = () => {
 
   // Sample user data
   const InitallUsers = [
-    { id: 1, name: "John Smith", permission_level: 4, email:"john2003@gmail.com", createdAt: "2024-11-15T10:30:00" },
+    { id: 1, name: "John Smith", permission_level: 4, email:"john2003@gmail.com", createdAt: new Date("2024-11-15T10:30:00") },
     { id: 2, name: "Sarah Johnson", permission_level: 3, email:"johnson@gmail.com", createdAt: "2025-01-22T08:45:00" },
     { id: 3, name: "Michael Chen", permission_level: 2, email:"mmichael@gmail.com", createdAt: "2025-02-14T14:15:00" },
     { id: 4, name: "Emma Wilson", permission_level: 3, email:"emma23@gmail.com", createdAt: "2025-03-05T09:20:00" },
@@ -79,10 +79,10 @@ const UserManagementTable = () => {
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
 
   const handleSort = (key: string) => {
-  const direction =
-    sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    const direction =
+      sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
 
-  const sorted = [...allUsers].sort((a, b) => {
+    const sorted = [...allUsers].sort((a, b) => {
       let aVal = a[key];
       let bVal = b[key];
 
@@ -112,7 +112,9 @@ const UserManagementTable = () => {
   
 
   const filteredUsers = allUsers.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    getRoleName(Number(user.permission_level)).toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   useEffect(() => {
@@ -163,7 +165,7 @@ const UserManagementTable = () => {
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <input
             type="text"
-            placeholder="Search by name..."
+            placeholder="Search by name, email or role"
             className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary text-black min-w-[400px]"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
