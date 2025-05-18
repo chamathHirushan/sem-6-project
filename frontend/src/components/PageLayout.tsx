@@ -1,65 +1,67 @@
 import { useEffect, useRef, useState, forwardRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import {logoutUser} from "../components/Logout";
+import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom';
+import { logoutUser } from "../components/Logout";
 import logoHr from "../assets/sewalk_horizontal_logo.png";
-import { Outlet } from 'react-router-dom';
 import MobileVerificationPopup from './MobileVerificationPopup';
 import LanguageSelector from './languageSelector/LanguageSelector';
-import {NotificationsIcon} from '../components/Notifications';
+import { NotificationsIcon } from '../components/Notifications';
+import PostJobPopup from '../components/PostForm/PostForm';
+
 
 const NavBar = forwardRef<HTMLElement>((props, ref) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { user,userLoggedIn } = useAuth();
+  const { user, userLoggedIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const [adminView, setAdminView] = useState(() => user?.role >= 3);
+  const [showPostPopup, setShowPostPopup] = useState(false);
 
   const handleAdminStateChange = (state: boolean) => {
     setAdminView(state);
     navigate(state ? "/admin" : "/work");
-  }
+  };
 
-  // Initialize navigation array
+  // Navigation links
   let navigation: { name: string; path: string }[] = [];
   if (adminView) {
     navigation = [
-        { name: 'Admin analytics', path: '/admin' },
-        { name: 'Users', path: '/users' },
-        { name: 'Chats', path: '/conversations' },
-      ];
-  } else{
+      { name: 'Admin analytics', path: '/admin' },
+      { name: 'Users', path: '/users' },
+      { name: 'Chats', path: '/conversations' },
+    ];
+  } else {
     navigation = [
-        { name: 'Available Jobs', path: '/work' },
-        { name: 'Hire Workers', path: '/hire' },
-        { name: 'My Works', path: '/my-jobs' },
-        { name: 'Chats', path: '/conversations' },
-      ];
+      { name: 'Available Jobs', path: '/work' },
+      { name: 'Hire Workers', path: '/hire' },
+      { name: 'My Works', path: '/my-jobs' },
+      { name: 'Chats', path: '/conversations' },
+    ];
   }
 
-  // Initialize profile options
+  // Profile dropdown options
   let profileOptions: { name: string; path?: string; onClick?: () => void }[] = [];
   if (adminView) {
     profileOptions = [
-        { name: 'View Profile', path: '/profile' },
-        { name: 'Favourites', path: '/favorites' },
-        { 
-          name: 'Logout',
-          onClick: () => logoutUser(navigate)
-        },
-      ];
+      { name: 'View Profile', path: '/profile' },
+      { name: 'Favourites', path: '/favorites' },
+      {
+        name: 'Logout',
+        onClick: () => logoutUser(navigate)
+      },
+    ];
   } else {
     profileOptions = [
-        { name: 'View Profile', path: '/profile' },
-        { name: 'My Working Fields', path: '/job-fields' },
-        { name: 'Favourites', path: '/favorites' },
-        { name: 'Analytics', path: '/analytics' },
-        { 
-          name: 'Logout',
-          onClick: () => logoutUser(navigate)
-        },
-      ];
+      { name: 'View Profile', path: '/profile' },
+      { name: 'My Working Fields', path: '/job-fields' },
+      { name: 'Favourites', path: '/favorites' },
+      { name: 'Analytics', path: '/analytics' },
+      {
+        name: 'Logout',
+        onClick: () => logoutUser(navigate)
+      },
+    ];
   }
 
   useEffect(() => {
@@ -72,7 +74,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -105,13 +107,26 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
               ))}
             </div>
           </div>
-  
+
           {/* Right side - Profile/login and Language Selector */}
           <div className="flex-wrap flex items-center justify-center space-x-8 mt-4 lg:mt-0 lg:flex-shrink-0">
-            <div className="min-w-[120px] lg:w-auto mt-2">
+            {/* Button for posting a job/service */}
+            {/* <div>
+                <button
+                className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 shadow-[0_0_10px_2px_rgba(239,68,68,0.7)] focus:outline-none focus:ring-2 focus:ring-red-400 transition-shadow"
+                onClick={() => setShowPostPopup(true)}
+                style={{
+                  boxShadow: '0 0 6px 2px rgba(239,68,68,0.7)',
+                }}
+                >
+                Post Job / Task
+                </button>
+            </div> */}
+
+            <div className="min-w-[100px] lg:w-auto mt-2">
               <LanguageSelector />
             </div>
-  
+
             {user.role >= 2 && (
               <div className="inline-block py-2 px-1 bg-background rounded-2xl whitespace-nowrap">
                 <span>
@@ -149,63 +164,63 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
             <div className="relative flex items-center gap-4">
               {userLoggedIn ? (
                 <>
-                  <NotificationsIcon/>
-                  
+                  <NotificationsIcon />
+
                   <div ref={profileDropdownRef}>
-                  <button
-                    onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="flex items-center text-sm focus:outline-none"
-                    aria-haspopup="true"
-                    aria-expanded={isProfileOpen}
-                  >
-                    <span className="sr-only">Open user menu</span>
-                    <div className="h-8 w-8 rounded-full bg-blue-600 overflow-hidden border-2 border-transparent hover:border-primary transition-colors duration-200 cursor-pointer mr-2">
-                      <img
-                        src={user?.profile_picture || defaultProfilePicUrl}
-                        alt="User profile"
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                     <p className="truncate"> Hi, {user.name} <span className="text-sm text-muted-foreground">▾</span></p>
-                  </button>
-  
-                  {/* Profile dropdown */}
-                  {isProfileOpen && (
-                    <div
-                      className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-                      role="menu"
-                      aria-orientation="vertical"
-                      aria-labelledby="user-menu-button"
+                    <button
+                      onClick={() => setIsProfileOpen(!isProfileOpen)}
+                      className="flex items-center text-sm focus:outline-none"
+                      aria-haspopup="true"
+                      aria-expanded={isProfileOpen}
                     >
-                      <div className="py-1" role="group">
-                        {profileOptions.map((item) =>
-                          item.path ? (
-                            <Link
-                              key={item.name}
-                              to={item.path}
-                              className={`block px-4 py-2 text-sm transition-colors ${
-                                location.pathname === item.path
-                                  ? 'text-primary' : ''
-                              } hover:bg-gray-200`}
-                              role="menuitem"
-                              tabIndex={-1}
-                            >
-                              {item.name}
-                            </Link>
-                          ) : (
-                            <button
-                              key={item.name}
-                              onClick={() => {item.onClick?.();}}
-                              className="block w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-200"
-                              role="menuitem"
-                              tabIndex={-1}
-                            >
-                              {item.name}
-                            </button>
-                          )
-                        )}
+                      <span className="sr-only">Open user menu</span>
+                      <div className="h-8 w-8 rounded-full bg-blue-600 overflow-hidden border-2 border-transparent hover:border-primary transition-colors duration-200 cursor-pointer mr-2">
+                        <img
+                          src={user?.profile_picture || defaultProfilePicUrl}
+                          alt="User profile"
+                          className="h-full w-full object-cover"
+                        />
                       </div>
-                    </div>
+                      <p className="truncate"> Hi, {user.name} <span className="text-sm text-muted-foreground">▾</span></p>
+                    </button>
+
+                    {/* Profile dropdown */}
+                    {isProfileOpen && (
+                      <div
+                        className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        role="menu"
+                        aria-orientation="vertical"
+                        aria-labelledby="user-menu-button"
+                      >
+                        <div className="py-1" role="group">
+                          {profileOptions.map((item) =>
+                            item.path ? (
+                              <Link
+                                key={item.name}
+                                to={item.path}
+                                className={`block px-4 py-2 text-sm transition-colors ${
+                                  location.pathname === item.path
+                                    ? 'text-primary' : ''
+                                } hover:bg-gray-200`}
+                                role="menuitem"
+                                tabIndex={-1}
+                              >
+                                {item.name}
+                              </Link>
+                            ) : (
+                              <button
+                                key={item.name}
+                                onClick={() => { item.onClick?.(); }}
+                                className="block w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-200"
+                                role="menuitem"
+                                tabIndex={-1}
+                              >
+                                {item.name}
+                              </button>
+                            )
+                          )}
+                        </div>
+                      </div>
                     )}
                   </div>
                 </>
@@ -223,6 +238,11 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
           </div>
         </div>
       </div>
+      {/* Popup for posting job */}
+      {/* {showPostPopup && (
+        <PostJobPopup open={true} onClose={() => setShowPostPopup(false)} />
+      )} */}
+      {/* <PostJobPopup open={showPostPopup} onClose={() => setShowPostPopup(false)} /> */}
     </nav>
   );
 });
@@ -253,7 +273,7 @@ const Layout: React.FC = () => {
         className="flex-1 bg-background"
         style={{ paddingTop: `${navbarHeight}px` }}
       >
-        <br/>
+        <br />
         <div className="ml-2">
           <Outlet />
         </div>
