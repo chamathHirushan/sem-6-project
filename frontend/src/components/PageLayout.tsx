@@ -111,7 +111,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
           {/* Right side - Profile/login and Language Selector */}
           <div className="flex-wrap flex items-center justify-center space-x-8 mt-4 lg:mt-0 lg:flex-shrink-0">
             {/* Button for posting a job/service */}
-            <div>
+            {/* <div>
                 <button
                 className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 shadow-[0_0_10px_2px_rgba(239,68,68,0.7)] focus:outline-none focus:ring-2 focus:ring-red-400 transition-shadow"
                 onClick={() => setShowPostPopup(true)}
@@ -121,7 +121,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                 >
                 Post Job / Task
                 </button>
-            </div>
+            </div> */}
 
             <div className="min-w-[100px] lg:w-auto mt-2">
               <LanguageSelector />
@@ -242,7 +242,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
       {/* {showPostPopup && (
         <PostJobPopup open={true} onClose={() => setShowPostPopup(false)} />
       )} */}
-      <PostJobPopup open={showPostPopup} onClose={() => setShowPostPopup(false)} />
+      {/* <PostJobPopup open={showPostPopup} onClose={() => setShowPostPopup(false)} /> */}
     </nav>
   );
 });
