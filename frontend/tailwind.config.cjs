@@ -119,5 +119,6 @@ module.exports = {
   variants: {
     fill: ["hover", "focus"], // this line does the trick in Svg component [path>]
   },
-  plugins: [require("@tailwindcss/aspect-ratio")],
+  plugins: [require("@tailwindcss/aspect-ratio"), 
+    require('@tailwindcss/line-clamp')],
 };
