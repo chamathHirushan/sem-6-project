@@ -14,3 +14,13 @@ export const verifyOTP = async (phone_number: string, otp: string) => {
     });
     return response;
   };  
+
+export const addTask = async (title: string, description: string, budget: number, location: string) => {
+    const response = await apiClient.post("/api/task/add", {
+      title: title,
+      description: description,
+      budget: budget,
+      location: location
+    });
+    return response;
+  }

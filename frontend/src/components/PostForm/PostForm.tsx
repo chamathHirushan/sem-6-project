@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import job_post_header_image from '../../assets/job_post_header_image.jpg';
+import {addTask} from "../../api/userAPI";
+import { toast } from "react-toastify";
 
 interface PostJobPopupProps {
   open: boolean;
@@ -30,6 +32,37 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
     e.preventDefault();
     // Handle form submission here
     // Optionally reset form or call onClose()
+    console.log({
+      title,
+      description,
+      budget,
+      location,
+    });
+    const budgetNumber = parseFloat(budget);
+
+    addTask(title, description, budgetNumber, location)
+      .then((response) => {
+        // Narrow the type of response to access status
+        if (typeof response === "object" && response !== null && "status" in response && typeof (response as any).status === "number") {
+          if ((response as any).status !== 200) {
+            toast.error("Failed to add task");
+            return;
+          }
+          console.log("Task added successfully:", response);
+          toast.success("Task added successfully");
+          setTitle('');
+          setDescription('');
+          setBudget('');
+          setLocation('');
+        } else {
+          toast.error("Unexpected response format");
+        }
+      })
+      .catch((error) => {
+        console.error("Error adding task:", error);
+        toast.error("Error adding task");
+      });
+    open && onClose();
   };
 
   return (
