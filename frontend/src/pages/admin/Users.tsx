@@ -160,7 +160,7 @@ const UserManagementTable = () => {
   return (
     <div className="flex flex-col bg-background p-6 max-w-full mx-auto">
        <div className="relative flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-[#205781]">Users Management</h1>
+        <h1 className="text-2xl font-bold text-primary">Users Management</h1>
 
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <input
@@ -176,7 +176,7 @@ const UserManagementTable = () => {
       <div className="overflow-x-auto rounded-lg shadow-md">
         <table className="min-w-full bg-white border-collapse">
           <thead>
-            <tr className="bg-[#205781] text-white">
+            <tr className="bg-primary text-white">
               <th className="py-3 px-4 text-left font-semibold" onClick={() => handleSort('name')}>Name {sortConfig.key === 'name' && (<span className="text-xs align-middle">
                 {sortConfig.direction === 'asc' ? '▲' : '▼'}
               </span>)}</th>
@@ -200,22 +200,22 @@ const UserManagementTable = () => {
                 key={user.id} 
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
               >
-                <td className="py-3 px-4 text-[#205781]">{user.name}</td>
-                <td className="py-3 px-4 text-[#205781]">{user.email}</td>
+                <td className="py-3 px-4 text-primary">{user.name}</td>
+                <td className="py-3 px-4 text-primary">{user.email}</td>
                 <td className="py-3 px-4">
                   <span 
                     className={`px-2 py-1 rounded-full text-xs font-semibold ${
                       Number(user.permission_level) === 4 
-                        ? "bg-[#205781] text-white" 
+                        ? "bg-primary text-white" 
                         : Number(user.permission_level) === 3 
-                          ? "bg-[#4F959D] text-white" 
-                          : "bg-[#98D2C0] text-[#205781]"
+                          ? "bg-secondary text-white" 
+                          : "bg-accent text-primary"
                     }`}
                   >
                     {getRoleName(Number(user.permission_level))}
                   </span>
                 </td>
-                <td className="py-3 px-4 text-[#205781]">{formatDate(user.createdAt)}</td>
+                <td className="py-3 px-4 text-primary">{formatDate(user.createdAt)}</td>
                 <td className="py-3 px-4 text-center">
                   <button
                     onClick={() => handleViewUser(user.id)}
@@ -257,7 +257,7 @@ const UserManagementTable = () => {
       
       {/* Pagination */}
       <div className="flex items-center justify-between mt-6">
-        <div className="text-sm text-[#205781]">
+        <div className="text-sm text-primary">
           Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} users
         </div>
 
@@ -266,12 +266,12 @@ const UserManagementTable = () => {
           <button
             onClick={() => paginate(currentPage > 1 ? currentPage - 1 : 1)}
             disabled={currentPage === 1}
-            className={`p-2 rounded-md flex items-center justify-center bg-[#4F959D] hover:opacity-80 transition-opacity ${
+            className={`p-2 rounded-md flex items-center justify-center bg-secondary hover:opacity-80 transition-opacity ${
               currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             title="Previous Page"
           >
-            <ChevronLeftIcon className="w-5 h-5" color="#F6F8D5" />
+            <ChevronLeftIcon className="w-5 h-5" color="background" />
           </button>
           
           {[...Array(Math.ceil(filteredUsers.length / usersPerPage))].map((_, i) => (
@@ -279,7 +279,7 @@ const UserManagementTable = () => {
               key={i}
               onClick={() => paginate(i + 1)}
               className={`w-8 h-8 flex items-center justify-center rounded-md ${
-                currentPage === i + 1 ? 'bg-[#205781] text-white' : 'bg-[#F6F8D5] text-[#205781] border border-[#4F959D]'
+                currentPage === i + 1 ? 'bg-primary text-white' : 'bg-background text-primary border border-secondary'
               }`}
             >
               {i + 1}
@@ -289,12 +289,12 @@ const UserManagementTable = () => {
           <button
             onClick={() => paginate(currentPage < Math.ceil(filteredUsers.length / usersPerPage) ? currentPage + 1 : currentPage)}
             disabled={currentPage === Math.ceil(filteredUsers.length / usersPerPage)}
-            className={`p-2 rounded-md flex items-center justify-center bg-[#4F959D] hover:opacity-80 transition-opacity ${
+            className={`p-2 rounded-md flex items-center justify-center bg-secondary hover:opacity-80 transition-opacity ${
               currentPage === Math.ceil(filteredUsers.length / usersPerPage) ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             title="Next Page"
           >
-            <ChevronRightIcon className="w-5 h-5" color="#F6F8D5" />
+            <ChevronRightIcon className="w-5 h-5" color="background" />
           </button>
         </div>)}
       </div>
