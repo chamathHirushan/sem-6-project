@@ -111,17 +111,17 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
           {/* Right side - Profile/login and Language Selector */}
           <div className="flex-wrap flex items-center justify-center space-x-8 mt-4 lg:mt-0 lg:flex-shrink-0">
             {/* Button for posting a job/service */}
-            {/* <div>
+            {!adminView &&(<div>
                 <button
-                className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 shadow-[0_0_10px_2px_rgba(239,68,68,0.7)] focus:outline-none focus:ring-2 focus:ring-red-400 transition-shadow"
+                className="bg-primary text-white px-3 py-1 rounded-2xl hover:bg-primary] focus:outline-none focus:ring-1 focus:ring-background transition-shadow"
                 onClick={() => setShowPostPopup(true)}
-                style={{
-                  boxShadow: '0 0 6px 2px rgba(239,68,68,0.7)',
-                }}
+                // style={{
+                //   boxShadow: '0 0 6px 2px rgba(239,68,68,0.7)',
+                // }}
                 >
-                Post Job / Task
+                Post a Task
                 </button>
-            </div> */}
+            </div>)}
 
             <div className="min-w-[100px] lg:w-auto mt-2">
               <LanguageSelector />
