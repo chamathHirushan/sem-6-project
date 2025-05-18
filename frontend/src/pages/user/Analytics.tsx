@@ -13,22 +13,22 @@ import TemplateChartSection from "../../components/TemplateChartSection";
 
 const DUMMY_PERIOD_DATA = {
   posted_tasks: [
-    { label: "Technician", value: 5 },
+    { label: "Electrician", value: 5 },
     { label: "Computer repair", value: 1 },
     { label: "Plumber", value: 2 },
-    { label: "Computer repair", value: 1 },
-    { label: "Plumber", value: 2 },
-    { label: "Computer repair", value: 1 },
-    { label: "Plumber", value: 2 },
+    { label: "Auto Mechanic", value: 1 },
+    { label: "House painiting", value: 2 },
+    { label: "Electronic Repairs", value: 1 },
+    { label: "CCTV", value: 2 },
   ],
   invites: [
-    { label: "Technician", value: 5 },
+    { label: "Technician", value: 3 },
     { label: "Computer repair", value: 1 },
-    { label: "Plumber", value: 2 },
-    { label: "Computer repair", value: 1 },
-    { label: "Plumber", value: 2 },
-    { label: "Computer repair", value: 1 },
-    { label: "Plumber", value: 2 },
+    { label: "CCTV", value: 2 },
+    { label: "Electronic Repairs", value: 4 },
+    { label: "Auto Mechanic", value: 2 },
+    { label: "Driver", value: 1 },
+    { label: "Electrician", value: 7 },
   ],
   total_subscription_views: 10,
   completed_invites: 20,
@@ -64,7 +64,7 @@ const generateHSLColor = (index: number, total: number): string => {
 };
 
 
-const assignColors = (data: DataItem[]): DataItem[] => {
+export const assignColors = (data: DataItem[]): DataItem[] => {
   const itemsWithoutColor = data.filter(item => !item.color);
   const total = itemsWithoutColor.length;
 
