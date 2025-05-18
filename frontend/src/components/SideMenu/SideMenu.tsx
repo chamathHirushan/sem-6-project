@@ -1,6 +1,5 @@
 import React, { FC, useState } from "react";
-import {ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
-
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
 import "./SideMenu.css";
 
 interface MenuItem {
@@ -89,8 +88,8 @@ const SideMenu: FC<Props> = ({
             >
                 {item.label}
                 {item.subItems && (
-                <span>
-                    {expandedCategories.has(index) ? <ChevronDownIcon className="w-4 h-4"/> : <ChevronUpIcon className="w-4 h-4"/>}
+                <span className="w-5 h-5 inline-block ml-2 text-gray-500">
+                    {expandedCategories.has(index) ? <ChevronDownIcon /> : <ChevronUpIcon />}
                 </span>
                 )}
             </div>

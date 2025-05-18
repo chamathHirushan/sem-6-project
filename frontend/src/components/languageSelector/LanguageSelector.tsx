@@ -16,10 +16,10 @@ const customStyles = {
   }),
   option: (provided: any, state: any) => ({
     ...provided,
-    backgroundColor: state.isSelected ? "hsla(216, 17.90%, 78.00%, 0.30)" : "white",
+    backgroundColor: "white",
     color: "black",
     '&:hover': {
-      backgroundColor: state.isSelected ? "hsla(216, 17.90%, 78.00%, 0.50)" : "hsla(0, 0%, 90%, 0.2)",
+      backgroundColor: "#e5e7eb",
     }
   }),
 };
@@ -61,10 +61,11 @@ const LanguageSelector: React.ForwardRefRenderFunction<{
       menuPlacement="top"
       defaultValue={LanguageSelectorData[0]}
       styles={customStyles}
+      getOptionValue={(e: any) => e.code}
       // @ts-ignore
       getOptionLabel={(e: any) => (
         <div className="flex gap-3">
-          <span className="hidden md:inline-block">{e.label}</span>
+          <span>{e.label}</span>
         </div>
       )}
     />

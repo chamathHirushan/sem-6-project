@@ -6,7 +6,6 @@ import LoginPage from "../pages/LoginPage";
 import Works from "../pages/user/Works";
 import AdminAnalytics from "../pages/admin/AdminAnalytics";
 import UnauthorizedPage from "../pages/Unauthorized";
-import Earnings from "../pages/admin/Earnings";
 import Users from "../pages/admin/Users";
 import Hires from "../pages/user/Hires";
 import MyJobs from "../pages/user/MyJobs";
@@ -49,7 +48,6 @@ export function AppRouter() {
         element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 3} isLoggedIn={userLoggedIn} />,
         children: [
           { path: "/admin", element: <AdminAnalytics /> },
-          { path: "/earnings", element: <Earnings /> },
           { path: "/users", element: <Users /> },
         ],
       },

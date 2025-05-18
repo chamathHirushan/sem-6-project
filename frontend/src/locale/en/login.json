@@ -7,10 +7,11 @@
     "password" : "Password",
     "forgotPassword" : "Forgot Password?",
     "Phonenumber" : "Phone Number",
-    "rememberMe" : "Remember Me",
     "google" : "Sign in with Google",
     "magicLink" : "Sign in Magic Link",
     "verificationEmailSent" : "Verification email sent. Please check your inbox.",
     "signUpError" : "Sign up error",
-    "magicLinkSent" : "Magic link sent. Please check your inbox."
+    "magicLinkSent" : "Magic link sent. Please check your inbox.",
+    "text1" :"From quick tasks to complex projects",
+    "text2" :"Find the Ideal person for your Job!"
   }

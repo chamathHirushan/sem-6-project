@@ -25,7 +25,7 @@ export default function MyJobs() {
     return (
       <>
         <p>Logged as level {user.role} user</p>
-        <p>Works page content goes here. Fuck you</p>
+        <p>Works page content goes here.</p>
         <button onClick={() => navigate("/")}>Go to dashboard</button>
         <p>{backendData}</p>
       </>

@@ -2,5 +2,16 @@
 "welcome" : "ආයුබෝවන්!",
 "login" : "ඇතුලුවන්න",
 "register" : "ලියාපදිංචි වන්න",
-"or" : "or"
+"or" : "or",
+"email" : "Email",
+"password" : "Password",
+"forgotPassword" : "මුරපදය අමතක වුණා ද?",
+"Phonenumber" : "Phone Number",
+"google" : "Sign in with Google",
+"magicLink" : "Sign in Magic Link",
+"verificationEmailSent" : "Verification email sent. Please check your inbox.",
+"signUpError" : "Sign up error",
+"magicLinkSent" : "Magic link sent. Please check your inbox.",
+"text1" :"ඕනෑම පරිමාණයක​​ කාර්යයන් සඳහා",
+"text2" :"ගැලපෙන පුද්ගලන් පහසුවෙන්ම සොයා ගන්න!"
 }

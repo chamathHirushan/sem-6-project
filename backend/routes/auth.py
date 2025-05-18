@@ -40,7 +40,7 @@ async def session(
                 "httponly": True,
                 "secure": False,
                 "samesite": "Strict",
-                "path": "/",
+                "path": "/auth/refresh",
                 "max_age": 86400 * REFRESH_TOKEN_EXPIRE_DAYS
             }
 
@@ -50,11 +50,6 @@ async def session(
                 "user": user_record,
                 "token": access_token
             }
-
-
-
-
-
 
         if authorization and authorization.startswith("Bearer "):
             access_token = authorization.split(" ")[1]
@@ -105,9 +100,9 @@ async def session(
             
             refresh_cookie_options = {
                 "httponly": True,
-                "secure": False,
+                "secure": True,
                 "samesite": "Strict",
-                "path": "/",
+                "path": "/auth/refresh",
                 "max_age": 86400 * REFRESH_TOKEN_EXPIRE_DAYS
             }
 
@@ -172,7 +167,6 @@ async def refresh_token(
         return {"token": new_access_token}
 
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
     
 @router.post("/signout")
@@ -184,3 +178,13 @@ async def signout(
         return {"message": "Logged out successfully"}
     except Exception:
         raise HTTPException(status_code=500, detail="Logout failed")
+    
+@router.post("/store-phone")
+async def store_phone(
+    request: Request
+):
+    # store the phone number in the database for the user
+    body = await request.json()
+    phone_number = body.get("phone_number")
+    email = body.get("email")
+    print("storing phone number for user:", email, "phone number:", phone_number)
