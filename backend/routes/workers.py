@@ -37,31 +37,41 @@ class WorkerProfileResponse(WorkerProfileBase):
         orm_mode = True
 
 class WorkerPostBase(BaseModel):
-    worker_id: int
-    title: str
+    user_id: int
+    category_id: int
+    location: str
     description: str
+    photos: str | None = None
+    boost_level: int = 0
 
 class WorkerPostCreate(WorkerPostBase):
     pass
 
 class WorkerPostResponse(WorkerPostBase):
     id: int
-    created_at: datetime
+    post_date: datetime
+    views: int
     
     class Config:
         orm_mode = True
 
-class ReviewResponse(BaseModel):
-    id: int
+class ReviewBase(BaseModel):
+    post_id: int
     worker_id: int
     commenter_id: int
     rating: float
     text_comment: str
-    photos: Optional[str]
+    photos: str | None = None
+
+class ReviewCreate(ReviewBase):
+    pass
+
+class ReviewResponse(ReviewBase):
+    id: int
     review_date: datetime
     commenter_name: str
     commenter_photo: str
-
+    
     class Config:
         orm_mode = True
 
@@ -80,7 +90,7 @@ class WorkerPostDetailResponse(BaseModel):
     category_name: str
     avg_rating: Optional[float]
     review_count: int
-    is_editable: bool  # Whether the requesting user can edit this post
+    is_editable: bool
 
     class Config:
         orm_mode = True

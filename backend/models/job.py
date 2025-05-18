@@ -37,6 +37,8 @@ class JobPost(Base):
     job = relationship("Job", back_populates="job_posts")
     user = relationship("User", back_populates="job_posts")
     comments = relationship("JobPostComment", back_populates="post")
+    applications = relationship("JobApplication", back_populates="job")
+    workers = relationship("Working", back_populates="job")
 
 class JobPostComment(Base):
     __tablename__ = "job_post_comments"

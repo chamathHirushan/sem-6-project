@@ -21,10 +21,19 @@ def get_db():
         db.close()
 
 # Pydantic models
-class MessageResponse(BaseModel):
-    id: int
+class MessageBase(BaseModel):
+    conversation_id: int
+    sender_id: int
     text: str
-    photos: Optional[str]
+    photos: str | None = None
+    source_entity: str | None = None
+    is_read: bool = False
+
+class MessageCreate(MessageBase):
+    pass
+
+class MessageResponse(MessageBase):
+    id: int
     created_at: datetime
     sender_name: str
     sender_photo: str

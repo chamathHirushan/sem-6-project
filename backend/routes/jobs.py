@@ -21,20 +21,63 @@ def get_db():
         db.close()
 
 # Pydantic models
+class JobBase(BaseModel):
+    user_id: int
+    category_id: int
+    job_title: str
+    budget: float
+    status: str = "posted"
+
+class JobCreate(JobBase):
+    pass
+
+class JobResponse(JobBase):
+    id: int
+    available: bool
+    service_received: Optional[datetime]
+
+    class Config:
+        orm_mode = True
+
 class JobPostBase(BaseModel):
-    title: str
-    description: str
+    job_id: int
+    user_id: int
+    post_title: str
     location: str
-    salary: float
-    employer_id: int
+    description: str
+    due_date: datetime
+    photos: str | None = None
+    boost_level: int = 0
 
 class JobPostCreate(JobPostBase):
     pass
 
 class JobPostResponse(JobPostBase):
     id: int
-    created_at: datetime
+    posted_date: datetime
+    views: int
     
+    class Config:
+        orm_mode = True
+
+class JobPostDetailResponse(BaseModel):
+    id: int
+    job_id: int
+    user_id: int
+    post_title: str
+    location: str
+    description: str
+    due_date: datetime
+    posted_date: datetime
+    photos: Optional[str]
+    views: int
+    boost_level: int
+    poster_name: str
+    poster_photo: str
+    category_name: str
+    budget: float
+    status: str
+
     class Config:
         orm_mode = True
 
@@ -65,31 +108,10 @@ class CommentResponse(BaseModel):
     class Config:
         orm_mode = True
 
-class JobPostDetailResponse(BaseModel):
-    id: int
-    job_id: int
-    user_id: int
-    post_title: str
-    location: str
-    description: str
-    due_date: datetime
-    posted_date: datetime
-    photos: Optional[str]
-    views: int
-    boost_level: int
-    poster_name: str
-    poster_photo: str
-    category_name: str
-    budget: float
-    status: str
-
-    class Config:
-        orm_mode = True
-
-# Job Post endpoints
-@router.post("/posts/", response_model=JobPostResponse)
-def create_job_post(job: JobPostCreate, db: Session = Depends(get_db)):
-    db_job = JobPost(**job.dict())
+# Job endpoints
+@router.post("/", response_model=JobResponse)
+def create_job(job: JobCreate, db: Session = Depends(get_db)):
+    db_job = Job(**job.dict())
     db.add(db_job)
     try:
         db.commit()
@@ -99,12 +121,30 @@ def create_job_post(job: JobPostCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
     return db_job
 
-@router.get("/posts/{job_id}", response_model=JobPostResponse)
-def get_job_post(job_id: int, db: Session = Depends(get_db)):
-    job = db.query(JobPost).filter(JobPost.id == job_id).first()
-    if job is None:
+# Job Post endpoints
+@router.post("/posts/", response_model=JobPostResponse)
+def create_job_post(job: JobPostCreate, db: Session = Depends(get_db)):
+    # Check if job exists
+    db_job = db.query(Job).filter(Job.id == job.job_id).first()
+    if not db_job:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    db_job_post = JobPost(**job.dict())
+    db.add(db_job_post)
+    try:
+        db.commit()
+        db.refresh(db_job_post)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    return db_job_post
+
+@router.get("/posts/{post_id}", response_model=JobPostResponse)
+def get_job_post(post_id: int, db: Session = Depends(get_db)):
+    job_post = db.query(JobPost).filter(JobPost.id == post_id).first()
+    if job_post is None:
         raise HTTPException(status_code=404, detail="Job post not found")
-    return job
+    return job_post
 
 @router.get("/posts/", response_model=List[JobPostResponse])
 def get_job_posts(
@@ -114,32 +154,57 @@ def get_job_posts(
     min_salary: Optional[float] = None,
     db: Session = Depends(get_db)
 ):
-    query = db.query(JobPost)
+    query = db.query(JobPost).join(Job)
     if location:
         query = query.filter(JobPost.location == location)
     if min_salary:
-        query = query.filter(JobPost.salary >= min_salary)
+        query = query.filter(Job.budget >= min_salary)
     jobs = query.offset(skip).limit(limit).all()
     return jobs
 
 @router.get("/posts/all", response_model=List[JobPostDetailResponse])
 def get_all_job_posts(db: Session = Depends(get_db)):
     """Get all job posts with poster details"""
-    posts = db.query(JobPost).join(Job).join(User).all()
-    
-    response = []
-    for post in posts:
-        post_dict = {
-            **post.__dict__,
-            'poster_name': f"{post.user.first_name} {post.user.last_name}",
-            'poster_photo': post.user.pro_pic,
-            'category_name': post.job.category.category_name,
-            'budget': post.job.budget,
-            'status': post.job.status
-        }
-        response.append(post_dict)
-    
-    return response
+    try:
+        posts = db.query(JobPost)\
+            .join(Job, JobPost.job_id == Job.id)\
+            .join(User, JobPost.user_id == User.id)\
+            .join(Working, Job.category_id == Working.id)\
+            .options(
+                joinedload(JobPost.job),
+                joinedload(JobPost.user),
+                joinedload(JobPost.job).joinedload(Job.category)
+            )\
+            .all()
+        
+        response = []
+        for post in posts:
+            post_dict = {
+                'id': post.id,
+                'job_id': post.job_id,
+                'user_id': post.user_id,
+                'post_title': post.post_title,
+                'location': post.location,
+                'description': post.description,
+                'due_date': post.due_date,
+                'posted_date': post.posted_date,
+                'photos': post.photos,
+                'views': post.views,
+                'boost_level': post.boost_level,
+                'poster_name': post.user.name,
+                'poster_photo': post.user.pro_pic,
+                'category_name': post.job.category.category_name,
+                'budget': post.job.budget,
+                'status': post.job.status
+            }
+            response.append(post_dict)
+        
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching job posts: {str(e)}"
+        )
 
 @router.get("/posts/recommended/{user_id}", response_model=List[JobPostDetailResponse])
 def get_recommended_jobs(user_id: int, db: Session = Depends(get_db)):
@@ -166,7 +231,7 @@ def get_recommended_jobs(user_id: int, db: Session = Depends(get_db)):
     for post in recommended_jobs:
         post_dict = {
             **post.__dict__,
-            'poster_name': f"{post.user.first_name} {post.user.last_name}",
+            'poster_name': post.user.name,  # Updated to use the combined name field
             'poster_photo': post.user.pro_pic,
             'category_name': post.job.category.category_name,
             'budget': post.job.budget,

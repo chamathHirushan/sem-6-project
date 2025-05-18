@@ -20,12 +20,18 @@ def get_db():
         db.close()
 
 # Pydantic models
-class NotificationResponse(BaseModel):
-    id: int
+class NotificationBase(BaseModel):
+    user_id: int
     notification_type: str
     source_entity_id: int
+    is_read: bool = False
+
+class NotificationCreate(NotificationBase):
+    pass
+
+class NotificationResponse(NotificationBase):
+    id: int
     created_at: datetime
-    is_read: bool
     message: str  # Computed message based on type
     link: str     # Computed link to the relevant page
 

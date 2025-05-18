@@ -23,6 +23,14 @@ def get_db():
         db.close()
 
 # Pydantic models
+class FavouriteBase(BaseModel):
+    user_id: int
+    source_entity_type: str  # "person" or "post"
+    source_entity_id: int
+
+class FavouriteCreate(FavouriteBase):
+    pass
+
 class FavouriteUserResponse(BaseModel):
     id: int
     user_id: int

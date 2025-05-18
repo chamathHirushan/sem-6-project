@@ -7,7 +7,7 @@ import os
 import uvicorn
 from models.database import engine
 from models import Base
-from routes import gateway, auth, admin, user, jobs, workers, favourites, notifications, conversations
+from routes import gateway, auth, admin, user, jobs, workers, favourites, notifications, conversations, working
 
 app = FastAPI()
 
@@ -33,6 +33,7 @@ app.include_router(workers.router, prefix="/api")
 app.include_router(favourites.router, prefix="/api")
 app.include_router(notifications.router, prefix="/api")
 app.include_router(conversations.router, prefix="/api")
+app.include_router(working.router)
 
 @app.get("/")
 def read_root():

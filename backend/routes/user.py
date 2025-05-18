@@ -23,12 +23,13 @@ def get_db():
 class UserBase(BaseModel):
     name: str
     email: str
-    mobile: str
-    address: str
-    user_level: UserLevelEnum
+    phone_number: str
+    town: str
+    permission_level: int
+    pro_pic: str | None = None
 
 class UserCreate(UserBase):
-    password: str
+    pass
 
 class UserResponse(UserBase):
     id: int
@@ -42,10 +43,11 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = User(
         name=user.name,
         email=user.email,
-        mobile=user.mobile,
-        address=user.address,
-        password=user.password,  # Note: In production, hash this password
-        user_level=user.user_level
+        phone_number=user.phone_number,
+        town=user.town,
+        permission_level=user.permission_level,
+        pro_pic=user.pro_pic,
+        last_active_time=datetime.utcnow()
     )
     db.add(db_user)
     try:
