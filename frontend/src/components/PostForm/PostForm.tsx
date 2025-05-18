@@ -24,6 +24,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
     }
   }, [open]);
 
+  if (!open) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
