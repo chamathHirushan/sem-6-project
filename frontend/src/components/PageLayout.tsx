@@ -239,9 +239,6 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
         </div>
       </div>
       {/* Popup for posting job */}
-      {/* {showPostPopup && (
-        <PostJobPopup open={true} onClose={() => setShowPostPopup(false)} />
-      )} */}
       <PostJobPopup open={showPostPopup} onClose={() => setShowPostPopup(false)} />
     </nav>
   );
