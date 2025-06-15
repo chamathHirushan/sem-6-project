@@ -7,7 +7,7 @@ import MobileVerificationPopup from './MobileVerificationPopup';
 import LanguageSelector from './languageSelector/LanguageSelector';
 import { NotificationsIcon } from '../components/Notifications';
 import PostJobPopup from '../components/PostForm/PostForm';
-
+import Footer from '../components/Footer/Footer';
 
 const NavBar = forwardRef<HTMLElement>((props, ref) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -29,14 +29,11 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
     navigation = [
       { name: 'Admin analytics', path: '/admin' },
       { name: 'Users', path: '/users' },
-      { name: 'Chats', path: '/conversations' },
     ];
   } else {
     navigation = [
       { name: 'Available Jobs', path: '/work' },
       { name: 'Hire Workers', path: '/hire' },
-      { name: 'My Works', path: '/my-jobs' },
-      { name: 'Chats', path: '/conversations' },
     ];
   }
 
@@ -46,6 +43,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
     profileOptions = [
       { name: 'View Profile', path: '/profile' },
       { name: 'Favourites', path: '/favorites' },
+      { name: 'Chats', path: '/conversations' },
       {
         name: 'Logout',
         onClick: () => logoutUser(navigate)
@@ -55,8 +53,10 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
     profileOptions = [
       { name: 'View Profile', path: '/profile' },
       { name: 'My Working Fields', path: '/job-fields' },
+      { name: 'My Works', path: '/my-jobs' },
       { name: 'Favourites', path: '/favorites' },
       { name: 'Analytics', path: '/analytics' },
+      { name: 'Chats', path: '/conversations' },
       {
         name: 'Logout',
         onClick: () => logoutUser(navigate)
@@ -83,50 +83,56 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
   const defaultProfilePicUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff`;
 
   return (
-    <nav ref={ref} className="bg-white shadow-lg fixed w-full z-50">
-      <div className="w-[90%] mx-auto py-4 lg:py-0">
-        <div className="flex flex-col xl:flex-row justify-between items-center h-auto xl:h-16">
+    <nav ref={ref} className="shadow-lg fixed w-full z-50" 
+      style={{ 
+        height: "72px", 
+        background: "linear-gradient(50deg, rgb(88,224,251), rgb(0,202,144))"
+      }}>
+      <div className="w-[95%] mx-auto py-2">
           {/* Left side - Logo and main nav */}
-          <div className="flex items-center flex-wrap justify-center xl:justify-start lg:flex-grow">
+          <div className="flex items-center flex-wrap justify-between">
             <div
-              className="h-20 w-40 bg-no-repeat bg-contain cursor-pointer mt-3"
+              className="bg-no-repeat bg-contain cursor-pointer"
               onClick={() => navigate(adminView ? "/admin" : "/work")}
-              style={{ backgroundImage: `url(${logoHr})` }}
+              style={{ 
+                width: "120px",
+                height: "60px",
+                marginTop: "-2px",
+                // backgroundSize: "120px 60px",
+                backgroundImage: `url(${logoHr})` 
+              }}
             />
-            <div className="flex flex-wrap items-center justify-center space-x-4">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 px-3">
               {navigation.map((item) => (
                 <Link
                   to={item.path}
                   key={item.path}
-                  className={`text-gray-700 hover:text-blue-600 px-3 py-1 lg:py-0 rounded-md text-sm font-medium ${
-                    location.pathname === item.path ? "text-primary" : ""
+                  className={`text-gray-900 hover:text-gray-200 lg:py-0 rounded-md text-sm font-normal ${
+                  location.pathname === item.path ? "text-gray-50 font-semibold" : ""
                   }`}
+                  style={{
+                  width: "110px",
+                  textAlign: "center",
+                  whiteSpace: "normal",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  wordBreak: "break-word",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  display: "-webkit-box",
+                  ...(location.pathname === item.path
+                    ? { textShadow: "0 1px 4px rgba(0, 0, 0, 0.5)" }
+                    : {}),
+                  }}
+                  title={item.name}
                 >
                   {item.name}
                 </Link>
               ))}
             </div>
-          </div>
 
           {/* Right side - Profile/login and Language Selector */}
-          <div className="flex-wrap flex items-center justify-center space-x-8 mt-4 lg:mt-0 lg:flex-shrink-0">
-            {/* Button for posting a job/service */}
-            {!adminView &&(<div>
-                <button
-                className="bg-primary text-white px-3 py-1 rounded-2xl hover:bg-primary] focus:outline-none focus:ring-1 focus:ring-background transition-shadow"
-                onClick={() => setShowPostPopup(true)}
-                // style={{
-                //   boxShadow: '0 0 6px 2px rgba(239,68,68,0.7)',
-                // }}
-                >
-                Post a Task
-                </button>
-            </div>)}
-
-            <div className="min-w-[100px] lg:w-auto mt-2">
-              <LanguageSelector />
-            </div>
-
+                    
             {user.role >= 2 && (
               <div className="inline-block py-2 px-1 bg-background rounded-2xl whitespace-nowrap">
                 <span>
@@ -161,7 +167,26 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                 </span>
               </div>
             )}
+
+            {/* <div className="min-w-[100px] lg:w-auto mt-2">
+              <LanguageSelector />
+            </div> */}
+
             <div className="relative flex items-center gap-4">
+              {/* Button for posting a job/service */}
+              {!adminView &&(<div>
+                  <button
+                  className="text-white bg-gradient-to-r from-cyan-600 via-cyan-800 to-cyan-950 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-4 py-2 text-center me-4"
+                  onClick={() => setShowPostPopup(true)}
+                  style={{
+                    boxShadow: '0 0 6px 4px rgba(74,255,195,0.7)',
+                  }}
+                  >
+                  Post a Task
+                  </button>
+              </div>)}
+
+              {/* Notifications and Profile dropdown */}
               {userLoggedIn ? (
                 <>
                   <NotificationsIcon />
@@ -181,7 +206,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                           className="h-full w-full object-cover"
                         />
                       </div>
-                      <p className="truncate"> Hi, {user.name} <span className="text-sm text-muted-foreground">▾</span></p>
+                      <p className="truncate"> Hi, {user.name} <span className="text-lg text-muted-foreground">▾</span></p>
                     </button>
 
                     {/* Profile dropdown */}
@@ -236,14 +261,14 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
               )}
             </div>
           </div>
-        </div>
+
+
       </div>
       {/* Popup for posting job */}
-      <PostJobPopup open={showPostPopup} onClose={() => setShowPostPopup(false)} />
-      {/* {showPostPopup && (
-        <PostJobPopup open={true} onClose={() => setShowPostPopup(false)} />
-      )} */}
       {/* <PostJobPopup open={showPostPopup} onClose={() => setShowPostPopup(false)} /> */}
+      {showPostPopup && (
+        <PostJobPopup open={true} onClose={() => setShowPostPopup(false)} />
+      )}
     </nav>
   );
 });
@@ -274,11 +299,11 @@ const Layout: React.FC = () => {
         className="flex-1 bg-background"
         style={{ paddingTop: `${navbarHeight}px` }}
       >
-        <br />
         <div className="ml-2">
           <Outlet />
         </div>
         <MobileVerificationPopup />
+        <Footer />
       </main>
     </div>
   );

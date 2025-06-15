@@ -1,0 +1,18 @@
+.footer {
+    background: linear-gradient(90deg, #205781 0%, #4F959D 100%);
+    color: #fff;
+    padding: 24px 20px 16px 20px;
+    /* margin-top: 0px; */
+    height: 260px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
