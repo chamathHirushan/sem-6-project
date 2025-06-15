@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { apiClient } from "../../api/client";
 import { ChevronLeftIcon, ChevronRightIcon, EyeIcon, TrashIcon, PencilIcon  } from '@heroicons/react/24/solid';
+import {DeleteConfirmationModal} from "../../components/UserPopup";
+import {EditConfirmationModal} from "../../components/UserPopup";
 
 interface Role {
   level: number;
@@ -49,6 +51,73 @@ export default function Users() {
 
 const UserManagementTable = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [toText, setToText] = useState<string>("");
+
+  const handleRequestDeleteUser = (userId: number) => {
+    setSelectedUserId(userId);
+    setShowDeletePopup(true);
+  };
+
+  const handleRequestEditUser = (userId: number) => {
+    console.log("Requesting edit for user ID:", userId);
+    const user = allUsers.find(user => user.id === userId);
+    if (user?.permission_level === 3) {
+      setToText("User");
+    } else if (user?.permission_level === 2) {
+      setToText("Moderator");
+    }
+    console.log("User permission level:", user?.permission_level);
+    console.log("To text:", toText);
+    setSelectedUserId(userId);
+    setShowEditPopup(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedUserId !== null) {
+      const updatedUsers = allUsers.filter(user => user.id !== selectedUserId);
+      setAllUsers(updatedUsers);
+      setShowDeletePopup(false);
+      setSelectedUserId(null);
+      // TODO: Replace with actual delete API call
+      alert(`Deleted user ID: ${selectedUserId}`);
+    }
+  };
+
+  const handleConfirmEdit = () => {
+  if (selectedUserId !== null) {
+    const updatedUsers = allUsers.map(user => {
+      if (user.id === selectedUserId) {
+        return {
+          ...user,
+          permission_level: user.permission_level === 3 ? 2 :
+                            user.permission_level === 2 ? 3 :
+                            user.permission_level // leave unchanged if not 2 or 3
+        };
+      }
+      return user;
+    });
+
+    setAllUsers(updatedUsers);
+    setShowEditPopup(false);
+    setSelectedUserId(null);
+    // TODO: Replace with actual update API call
+    alert(`Changed the permission of user ID: ${selectedUserId}`);
+  }
+};
+
+
+  const handleCloseDeleteModal = () => {
+    setShowDeletePopup(false);
+    setSelectedUserId(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditPopup(false);
+    setSelectedUserId(null);
+  };
   
   // const [allUsers, setAllUsers] = useState<any[]>([]);
   useEffect(() => {
@@ -144,19 +213,6 @@ const UserManagementTable = () => {
     alert(`View details for user ID: ${userId}`);
   };
 
-  // Function to handle delete user
-  const handleDeleteUser = (userId: number) => {
-    const updatedUsers = allUsers.filter(user => user.id !== userId);
-    setAllUsers(updatedUsers);
-    alert(`Delete user ID: ${userId}`);
-  };
-
-  // Function to handle change role
-  const handleChangeRole = (userId: number, currentRole: string) => {
-    const newRole = currentRole === "User" ? "Moderator" : "User";
-    alert(`Change role for user ID: ${userId} from ${currentRole} to ${newRole}`);
-  };
-
   return (
     <div className="flex flex-col bg-background p-6 max-w-full mx-auto">
        <div className="relative flex items-center justify-between mb-6">
@@ -226,9 +282,9 @@ const UserManagementTable = () => {
                   </button>
                 </td>
                 <td className="py-3 px-4 text-center">
-                  {Number(user.permission_level) !== 4 ? (
+                  {(Number(user.permission_level) !== 4 && Number(user.permission_level) > 1) ? (
                     <button
-                      onClick={() => handleChangeRole(user.id, getRoleName(Number(user.permission_level)))}
+                      onClick={() => handleRequestEditUser(user.id)}
                       title="Change Role"
                     >
                       <PencilIcon className="w-5 h-5 text-secondary hover:opacity-80 transition-opacity" />
@@ -240,7 +296,7 @@ const UserManagementTable = () => {
                 <td className="py-3 px-4 text-center">
                   {Number(user.permission_level) !== 4 ? (
                     <button
-                      onClick={() => handleDeleteUser(user.id)}
+                      onClick={() => handleRequestDeleteUser(user.id)}
                       title="Delete User"
                     >
                       <TrashIcon className="w-5 h-5 text-red-400 hover:opacity-80 transition-opacity" />
@@ -298,6 +354,17 @@ const UserManagementTable = () => {
           </button>
         </div>)}
       </div>
+      <DeleteConfirmationModal
+          isOpen={showDeletePopup}
+          onClose={handleCloseDeleteModal}
+          onConfirm={handleConfirmDelete}
+      />
+      <EditConfirmationModal
+          to = {toText}
+          isOpen={showEditPopup}
+          onClose={handleCloseEditModal}
+          onConfirm={handleConfirmEdit}
+        />
     </div>
   );
 };
