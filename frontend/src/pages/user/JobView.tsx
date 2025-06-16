@@ -38,6 +38,7 @@ export default function JobView() {
     id: "D153",
     title: "Senior Developer",
     category: "IT & Software",
+    subCategory: "Plumbing",
     jobType: "Full-Time",
     location: "New York, NY",
     isUrgent: true,
@@ -52,7 +53,7 @@ export default function JobView() {
     budget: 5000,
     address: "123 Main St, New York, NY",
     description: "We are looking for a senior developer to join our team. The ideal candidate should have at least 5 years of experience in software development, with a strong background in JavaScript and React. I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done).",
-    jobPoster: "https://s3-ap-southeast-1.amazonaws.com/xpresslivedonotmess-live/Vacancies/DescriptionImage_181385", // poster of the job post if exist
+    poster: "https://s3-ap-southeast-1.amazonaws.com/xpresslivedonotmess-live/Vacancies/DescriptionImage_181385", // poster of the job post if exist
     isBookmarked: false,
     image: [jobImage, jobImage, jobImage],
   };
@@ -147,11 +148,11 @@ export default function JobView() {
           <p className="mb-4">{job.description}</p>
 
           {/* Task Poster. If the job poster is not empty show it as an image. otherwise not showing anything atleast the header */}
-          {job.jobPoster && (       
+          {job.poster && (       
             <div>
               <div className="border-t border-gray-300 my-4"></div>
-              <h2 className="text-xl font-semibold mb-2">Task Poster</h2>
-              <img src={job.jobPoster} alt="Job Poster" className="w-full h-full mr-4" />
+              <h2 className="text-xl font-semibold mb-2">Job Poster</h2>
+              <img src={job.poster} alt="Job Poster" className="w-full h-full mr-4" />
             </div>
           )}
 
@@ -172,7 +173,7 @@ export default function JobView() {
         </div>
 
         {/* right side summary area */}
-        <div className="w-full h-full lg:w-1/3 bg-white p-4 rounded-lg shadow-md">
+        <div className="w-full h-full lg:w-1/3 bg-gray-100 p-4 rounded-lg shadow-md">
           {/* user info of the job poster */}
           <div className="flex items-center mb-4">
             <img src={job.postedUserImage} alt="Job Poster" className="w-16 h-16 rounded-full mr-4" />

@@ -13,6 +13,8 @@ export default function Hires() {
   // const {user} = useAuth();
   // const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  // const [selectedSubItem, setSelectedSubItem] = useState<string | null>(null);
+  const [selectedSubItems, setSelectedSubItems] = useState<string[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const defaultView = (searchParams.get("view") as "grid" | "list") || "grid";
   const [viewMode, setViewMode] = useState<"grid" | "list">(defaultView);
@@ -25,6 +27,21 @@ export default function Hires() {
     setSearchParams({ view: mode });  // Updates the URL
   };
   
+  const handleSubItemSelect = (subItem: string) => {
+    if (!selectedSubItems.includes(subItem)) {
+      setSelectedSubItems((prev) => [...prev, subItem]);
+    }
+  };
+  
+  const clearSelectedSubItem = (subItem: string) => {
+    setSelectedSubItems((prev) => prev.filter((item) => item !== subItem));
+  };
+  
+  const clearAllSelectedSubItems = () => {
+    setSelectedSubItems([]);
+  };
+
+
   useEffect(() => {
     // Restore scroll position if available
     console.log("Restoring scroll position: ", location.state?.scrollPosition);
@@ -88,12 +105,27 @@ export default function Hires() {
     { label: "Other", subItems: ["Other"] },
   ];
 
+  interface Task {
+    id: string;
+    title: string;
+    category: string;
+    subCategory: string;
+    image: string;
+    location: string;
+    daysPosted: number;
+    taskType: string;
+    budget: number;
+    isUrgent: boolean;
+    isTrending: boolean;
+    isBookmarked: boolean;
+  }
 
-
-  const [tasks, setTasks] = useState([
+  const [tasks, setTasks] = useState<Task[]>([
     {
       id: "J133",
       image: jobImage,
+      category: "Plumbing",
+      subCategory: "Plumbing",
       title: "Plumbing Services Near Galle Town and all house services that you need to repair your drainage system",
       location: "Galle",
       daysPosted: 3,
@@ -106,6 +138,8 @@ export default function Hires() {
     {
       id: "J134",
       image: jobImage,
+      category: "Painting",
+      subCategory: "House Painting",
       title: "Painting Houses and Offices",
       location: "Colombo-7",
       daysPosted: 3,
@@ -118,6 +152,8 @@ export default function Hires() {
     {
       id: "J135",
       image: jobImage,
+      category: "IT Support",
+      subCategory: "Computer Repair",
       title: "Computer Repair, IT Support, and Networking",
       location: "Negombo",
       daysPosted: 3,
@@ -130,6 +166,8 @@ export default function Hires() {
     {
       id: "J136",
       image: jobImage,
+      category: "Shoe Repair",
+      subCategory: "Shoe Polishing",
       title: "Shoe Repair & Polishing",
       location: "Matara",
       daysPosted: 3,
@@ -142,6 +180,8 @@ export default function Hires() {
     {
       id: "J137",
       image: jobImage,
+      category: "Woodwork",
+      subCategory: "Cupboard Repair",
       title: "Cupboard Repair & Polishing",
       location: "Anuradhapura",
       daysPosted: 3,
@@ -154,6 +194,8 @@ export default function Hires() {
     {
       id: "J138",
       image: jobImage,
+      category: "Vehicle Repair",
+      subCategory: "Car, Bike, and Vehicle Repair",
       title: "Car, Bike, and Vehicle Repair",
       location: "Jaffna",
       daysPosted: 3,
@@ -165,11 +207,22 @@ export default function Hires() {
     },
   ]);
 
-  const filteredTasks = tasks.filter((task) =>
-    task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    task.taskType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    task.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
+  const filteredTasks = tasks.filter((task) => {
+    if (selectedSubItems.length > 0) {
+      return selectedSubItems
+        .map((s) => s.toLowerCase())
+        .includes(task.subCategory.toLowerCase());
+    } else if (searchTerm.trim() !== "") {
+      return (
+        task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        task.taskType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        task.location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    return true;
+  });
+
 
   const toggleBookmark = (id: string) => {
     setTasks((prevTasks) =>
@@ -179,14 +232,30 @@ export default function Hires() {
     );
   };
 
+  // Pagination logic
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const paginatedTasks = filteredTasks.slice(indexOfFirstItem, indexOfLastItem);
+
 
 return (
   <div style={{ display: "flex" }}>
     <SideMenu 
-      menuItems={menuItems}
-      searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm} 
-    />
+          menuItems={menuItems}
+          selectedSubItems={selectedSubItems}
+          onSubItemSelect={handleSubItemSelect}
+          clearSelectedSubItem={clearSelectedSubItem}
+          clearAllSelectedSubItems={clearAllSelectedSubItems}
+          searchTerm={searchTerm}
+          setSearchTerm={(term) => {
+            setSearchTerm(term);
+            setCurrentPage(1); // Reset to first page on new search
+          }}
+          selectedSubItem={null}
+        />
     
     <div style={{ padding: "20px", width: "100%", display: "flex", flexDirection: "column" }}>
   
@@ -223,7 +292,8 @@ return (
         </div>
     </div>
 
-    <div>
+     {/* Main job listing area that takes all remaining height */}
+     <div style={{ flex: 1, overflowY: "auto" }}>
        <div
           style={{
             display: viewMode === "grid" ? "grid" : "flex",
@@ -238,7 +308,7 @@ return (
             margin: viewMode === "list" ? "0 auto" : undefined,
           }}
         >
-        {filteredTasks.map((task, index) => (
+        {paginatedTasks.map((task, index) => (
           <TaskTile
             key={`${task.id}_${index}`}
             {...task}
@@ -249,6 +319,39 @@ return (
         ))}
       </div>
     </div>
+    
+    {/* Tailwind Pagination Controls */}
+    <div className="flex justify-between items-center mt-8">
+      <div className="text-sm text-gray-600 font-medium">
+        {`Showing ${(currentPage - 1) * itemsPerPage + 1} to ${Math.min(currentPage * itemsPerPage, tasks.length)} of ${tasks.length} Entries`}
+      </div>
+      
+      <div className="flex space-x-1">
+        <button
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+          className={`px-3 py-1 rounded-l-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 transition ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200"}`}
+        >
+          Prev
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i + 1}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-3 py-1 border-t border-b border-gray-300 bg-white text-gray-700 hover:bg-blue-100 transition ${currentPage === i + 1 ? "bg-cyan-500 text-white font-bold" : "hover:bg-cyan-100"}`}
+          >
+            {i + 1}
+          </button>
+        ))}
+        <button
+          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+          className={`px-3 py-1 rounded-r-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 transition ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200"}`}
+        >
+          Next
+        </button>
+      </div>
+        </div>
 
     </div>
   </div>

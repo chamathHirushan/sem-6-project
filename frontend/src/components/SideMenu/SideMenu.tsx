@@ -13,6 +13,12 @@ interface Props {
   backgroundColor?: string;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
+  onSubItemSelect: (subItem: string) => void;
+  selectedSubItem: string | null;
+  // clearSelectedSubItem: () => void;
+  selectedSubItems: string[];
+  clearSelectedSubItem: (subItem: string) => void;
+  clearAllSelectedSubItems: () => void;
 }
 
 const SideMenu: FC<Props> = ({
@@ -21,8 +27,12 @@ const SideMenu: FC<Props> = ({
   backgroundColor = "#f4f4f4",
   searchTerm,
   setSearchTerm,
+  onSubItemSelect,
+  selectedSubItem,
+  selectedSubItems,
+  clearSelectedSubItem,
+  clearAllSelectedSubItems,
 }) => {
-  // const [searchTerm, setSearchTerm] = useState("");
   const [expandedCategories, setExpandedCategories] = useState<Set<number>>(
     new Set()
   );
@@ -40,6 +50,8 @@ const SideMenu: FC<Props> = ({
   const resetFilters = () => {
     setSearchTerm("");
     setExpandedCategories(new Set());
+    // clearSelectedSubItem();
+    clearAllSelectedSubItems();
   };
 
   // Filter menu items and subitems by search term
@@ -112,7 +124,12 @@ const SideMenu: FC<Props> = ({
             {item.subItems && expandedCategories.has(index) && (
                 <ul className="sidebar-subitems">
                 {item.subItems.map((subItem, subIndex) => (
-                    <li key={subIndex} className="sidebar-subitem">
+                    <li 
+                      key={subIndex} 
+                      className={`sidebar-subitem ${selectedSubItems.includes(subItem) ? 'selected' : ''}`}
+                      onClick={() => {
+                        onSubItemSelect(subItem)}}
+                      >
                     {subItem}
                     </li>
                 ))}
@@ -122,11 +139,32 @@ const SideMenu: FC<Props> = ({
         ))}
         </ul>
 
+        {selectedSubItems.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {selectedSubItems.map((item, idx) => (
+              <span
+                key={idx}
+                className="inline-flex items-center px-2 py-1 rounded-full sidebar-subitem selected"
+              >
+                {item}
+                <button
+                  onClick={() => clearSelectedSubItem(item)}
+                  className="ml-1 text-black hover:text-cyan-500 focus:outline-none"
+                >
+                  &times;
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
+
+
       {/* Reset Button */}
       <div>
         <button className="mt-2 w-full bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700"
             type="button"
-            onClick={() => alert(`Reset all selections`)}
+            onClick={resetFilters}
             >
                 Reset All
         </button>

@@ -73,8 +73,8 @@ export default function AdminAnalytics() {
     const [earningsData, setEarningsData] = React.useState(DUMMY_EARNINGS_DATA);
 
   return (
-      <>
-        <div className="flex flex-wrap gap-2 ml-4 justify-start">
+      <div className="mx-8">
+        <div className="flex flex-wrap gap-2 ml-4 mt-6 justify-end">
           <Select
             isSearchable={false}
             className="w-[300px] z-20"
@@ -239,6 +239,6 @@ export default function AdminAnalytics() {
           </div>
           </div>
         </div>
-      </>
+      </div>
     );
   }

@@ -11,7 +11,7 @@ module.exports = {
         primary: "#205781", // Dark blue color
         secondary: "#4F959D", // Teal color
         accent: "#98D2C0", // Light teal color
-        background: "#ffffff", // Light yellowish-green color
+        background: "#FBFCEB", // Light yellowish-green color
         black: { DEFAULT: "#000000" },
         gray: {
           light: "#F3EBE2",
