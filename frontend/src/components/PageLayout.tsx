@@ -237,7 +237,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                 <Link
                 to={item.path}
                 key={item.path}
-                className={`text-gray-900 hover:text-gray-200 text-sm font-normal
+                className={`hover:text-gray-200 text-sm font-normal
                   text-center px-2 break-words whitespace-normal leading-snug
                   w-auto min-w-[60px]
                   ${location.pathname === item.path ? 'text-white font-semibold' : ''}`}
