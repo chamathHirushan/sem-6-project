@@ -73,7 +73,7 @@ const UserManagementTable = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.get("/users/");
+      const response = await apiClient.get("/user/users/");
       setAllUsers(response.data || response); // Handle different response structures
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -86,7 +86,7 @@ const UserManagementTable = () => {
   // Delete user via API
   const deleteUser = async (userId: number) => {
     try {
-      await apiClient.delete(`/users/${userId}`);
+      await apiClient.delete(`/user/users/${userId}`);
       return true;
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -98,7 +98,7 @@ const UserManagementTable = () => {
   // Update user permission level via API
   const updateUserPermissionLevel = async (userId: number, newPermissionLevel: number) => {
     try {
-      await apiClient.patch(`/users/${userId}/level`, {
+      await apiClient.patch(`/user/users/${userId}/level`, {
         permission_level: newPermissionLevel
       });
       return true;
@@ -334,10 +334,10 @@ const UserManagementTable = () => {
                 <td className="py-3 px-4">
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-semibold ${user.permission_level === 4
-                        ? "bg-primary text-white"
-                        : user.permission_level === 3
-                          ? "bg-secondary text-white"
-                          : "bg-accent text-primary"
+                      ? "bg-primary text-white"
+                      : user.permission_level === 3
+                        ? "bg-secondary text-white"
+                        : "bg-accent text-primary"
                       }`}
                   >
                     {getRoleName(user.permission_level)}
