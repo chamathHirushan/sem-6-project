@@ -48,7 +48,7 @@ class ApiClient {
     const config: RequestInit = {
       method,
       headers,
-      // credentials: 'include', // uncomment if it kept asking to re-login
+      credentials: 'include', // uncomment if it kept asking to re-login
     };
 
     if (body) {

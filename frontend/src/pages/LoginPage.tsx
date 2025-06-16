@@ -12,6 +12,13 @@ import {useNavigate} from "react-router-dom";
 import {useAuth} from "../contexts/AuthContext";
 import { useTimedVisibility } from "../hooks/useTimeVisibility";
 import { storePhoneNumber } from "../api/authAPI";
+import sewalkLogo from "../assets/sewalk_horizontal_logo.png";
+import image1 from "../assets/bg1.jpg";
+import image2 from "../assets/bg2.jpg";
+import image3 from "../assets/bg3.jpg";
+
+
+const slideshowImages = [image1, image2, image3];
 
 function cleanErrorMessage(message: string): string {
   if (typeof message !== "string") {
@@ -179,28 +186,48 @@ export default function LoginPage() {
     }
   }, [userLoggedIn, user]);
 
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex(prev => (prev + 1) % slideshowImages.length);
+    }, 8000); // 8 seconds delay
+    return () => clearInterval(interval);
+  }, []);
+
+
+
   return(
   <div className="flex-col lg:flex-row flex ">
-    <div className="flex flex-col flex-1 mt-2">
-      <div className="flex flex-col mt-24 justify-center items-center">
-        <h1 className="text-6xl font-bold text-gray-600 text-center w-90">{t("welcome")}</h1>
-          <div className="flex w-80 mt-7 mb-4 border-b border-gray-200">
+    <div className="flex flex-1 justify-center items-center min-h-screen" style={{ background: "linear-gradient(90deg, #205781 0%, #4F959D 100%)" }}>
+      
+      {/* Left side login tile */}
+      <div className="bg-white rounded-lg border shadow px-8 py-6 w-full max-w-md">
+      {/* Logo and Title */}
+        <div className="flex items-center justify-center h-auto">
+            <img src={sewalkLogo} alt="Sewa.lk Logo" className="h-12 bg-white border-black border-solid border-2 rounded-md" />
+            <span className="text-cyan-800 text-3xl font-normal ml-3">Sewa.lk</span>
+        </div>
+
+        {/* <h1 className="text-6xl font-semibold text-gray-600 text-center w-90">{t("welcome")}</h1> */}
+          <div className="flex mt-5 mb-3 border-b border-gray-200">
             <button 
               onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 text-center font-medium ${isLogin ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+              className={`flex-1 py-2 text-center font-medium border-b-2 ${isLogin ? 'border-[#253add] text-[#205781]' : 'border-transparent text-[#205781]'}`}
             >
               {t('login')}
             </button>
             <button 
               onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 text-center font-medium ${!isLogin ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+              className={`flex-1 py-2 text-center font-medium border-b-2 ${!isLogin ? 'border-[#253add] text-[#205781]' : 'border-transparent text-[#205781]'}`}
             >
               {t('register')}
             </button>
           </div>
           <div 
             key={isLogin ? 'login' : 'signup'}
-            className="flex flex-col gap-3 w-80 mt-7 "
+            className="flex flex-col gap-3 mt-7 "
             style={{ 
               animation: isLogin 
                 ? 'slideFromLeft 300ms ease-in-out' 
@@ -292,7 +319,7 @@ export default function LoginPage() {
               <button
                 onClick={resetPassword}
                 disabled={!email}
-                className="text-xs font-normal text-gray-300 hover:underline text-left mb-1 ml-2 disabled:text-gray-200 disabled:cursor-not-allowed"
+                className="text-xs font-normal text-cyan-600 hover:underline text-left mb-1 ml-2 disabled:text-gray-400 disabled:cursor-not-allowed"
               >
                 {t('forgotPassword')}
               </button>
@@ -316,10 +343,10 @@ export default function LoginPage() {
           <div className="flex flex-col gap-3 mt-4">
             <div className="flex items-center">
               <div className="flex-grow border-t-2 border-gray-200"></div>
-              <span className="mx-2 text-sm font-normal text-gray-200">{t('or')}</span>
+              <span className="mx-2 text-sm font-normal text-gray-400">{t('or')}</span>
               <div className="flex-grow border-t-2 border-gray-200"></div>
             </div>
-            <div className="flex flex-col gap-3 w-80 mt-4 ">
+            <div className="flex flex-col gap-3 mt-4 ">
             <button
                 onClick={() => handleGoogle()}
                 className="w-full bg-black text-white m-auto disabled:cursor-not-allowed border-2 border-gray-light h-10 px-5 pl-8 rounded-lg text-sm focus:outline-none flex items-center justify-center"
@@ -346,22 +373,20 @@ export default function LoginPage() {
           </div>
         </div>
     </div>
-    <div
-        style={{backgroundImage: `url(${logoImg})`}}
-        className="flex-1 bg-cover lg:h-screen items-end flex hidden lg:flex"
-    >
-        <div className="ml-20 mb-14">
-          <div className="mt-2">
-            <h4 className="text-lg font-semibold text-gray-600 font-medium block mt-2">
-              {t('text1')}
-            </h4>
-            <span className="font-dm_sans text-2xl font-semibold text-gray-800 tracking-wide mt-2">
-              {t('text2')}
-            </span>
-          </div>
-        </div>
+    
+      {/* Right side logo image */}
+      <div className="flex-1 relative overflow-hidden hidden lg:flex items-end lg:h-screen">
+          {slideshowImages.map((img, idx) => (
+        <img
+          key={idx}
+          src={img}
+          alt={`Slide ${idx}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${currentImageIndex === idx ? 'opacity-100' : 'opacity-0'}`}
+          style={{ filter: "brightness(0.7)" }}
+        />
+          ))}
     </div>
-    <div className="absolute bottom-0">
+    <div className="absolute bottom-4 left-4">
         <LanguageSelector/>
     </div>
   </div>

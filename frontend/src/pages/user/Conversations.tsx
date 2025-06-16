@@ -20,11 +20,11 @@ export default function Conversations() {
         fetchData();
       }, []);
     return (
-      <>
+      <div className="flex flex-col flex-1 px-4 py-6">
         <p>Logged as level {user.role} user</p>
         <p>Conversations page content goes here.</p>
         <p>{backendData}</p>
-      </>
+    </div>
     );
   }
 

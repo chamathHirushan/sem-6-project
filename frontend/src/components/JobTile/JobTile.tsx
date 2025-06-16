@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {ClockIcon, MapPinIcon, TagIcon, StarIcon, ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import {ClockIcon, MapPinIcon, TagIcon, StarIcon } from "@heroicons/react/24/outline";
 import { StarIcon as SolidStarIcon, FireIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import "./JobTile.css";
 
@@ -102,18 +102,7 @@ const JobTile: FC<JobTileProps> = ({
                   )}
                 </div>
 
-                <div className="flex items-center justify-between w-full pl-3">
-                  {/* Chat icon */}
-                  <button
-                    className="job-tile-chat"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      navigate(`/chat/${id}`);
-                    }}
-                  >
-                    <ChatBubbleOvalLeftEllipsisIcon className="w-5 h-5" />
-                  </button>
+                <div className="flex items-center justify-end w-full pl-3">
 
                   {/* Bookmark icon */}
                   <button
@@ -200,19 +189,6 @@ const JobTile: FC<JobTileProps> = ({
                   <StarIcon className="w-5 h-5" />
                 )}
                 </button>
-
-                {/* chat icon */}
-                <button
-                className="job-tile-chat"
-                onClick={(e) => { 
-                  e.stopPropagation();
-                  e.preventDefault();
-                  navigate(`/chat/${id}`);
-                }}
-                > 
-                <ChatBubbleOvalLeftEllipsisIcon className="w-5 h-5" />
-                </button>
-
               </div>
               
               

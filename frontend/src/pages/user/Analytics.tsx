@@ -117,8 +117,8 @@ export default function Analytics() {
       // }, []);
 
       return (
-        <>
-          <div className="flex flex-wrap gap-2 ml-5 mb-1 justify-start">
+        <div className="mx-8">
+          <div className="flex flex-wrap gap-2 ml-4 mt-6 justify-end">
             <Select
               isSearchable={false}
               className="w-[300px] z-20"
@@ -267,7 +267,7 @@ export default function Analytics() {
           {/* <p>Logged as level {user.role} user</p>
           <p>Analytics page content goes here.</p>
           <p>{backendData}</p> */}
-        </>
+        </div>
       );
   }
 

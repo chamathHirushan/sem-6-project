@@ -11,7 +11,7 @@ module.exports = {
         primary: "#205781", // Dark blue color
         secondary: "#4F959D", // Teal color
         accent: "#98D2C0", // Light teal color
-        background: "#F6F8D5", // Light yellowish-green color
+        background: "#FBFCEB", // Light yellowish-green color
         black: { DEFAULT: "#000000" },
         gray: {
           light: "#F3EBE2",
@@ -93,7 +93,8 @@ module.exports = {
         skeletonLoading: "skeletonLoading 1s linear infinite alternate",
         pulse: "pulse 1.5s ease-in-out infinite",
         ripple: "rippler 2.5s ease-in-out infinite",
-        slideAndBounce: 'slideAndBounce 1s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        slideAndBounce:
+          "slideAndBounce 1s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
       },
       fontSize: {
         xxs: "0.60rem",
@@ -107,7 +108,8 @@ module.exports = {
       backgroundImage: {
         linen_gradient:
           "radial-gradient(50% 50% at 10% 20%, #f3e6d8 0%, #e9f2f821 100%),radial-gradient(50% 50% at 50% 70%, #efd2a763 0%, #e9f2f821 100%),radial-gradient(50% 50% at 70% 10%, #fff8f2 0%, #e9f2f821 100%)",
-        "custom-gradient": "radial-gradient(clamp(1000px, 50vw, 1200px) at clamp(150px, 10vw, 150px) clamp(150px, 10vh, 150px), rgba(255, 191, 94, 0.3), transparent 20%), radial-gradient(clamp(900px, 90vw, 1500px) at clamp(100px, 95vw, 1800px) clamp(650px, 90vh, 650px), rgba(253, 0, 84, 0.3), transparent 20%)"
+        "custom-gradient":
+          "radial-gradient(clamp(1000px, 50vw, 1200px) at clamp(150px, 10vw, 150px) clamp(150px, 10vh, 150px), rgba(255, 191, 94, 0.3), transparent 20%), radial-gradient(clamp(900px, 90vw, 1500px) at clamp(100px, 95vw, 1800px) clamp(650px, 90vh, 650px), rgba(253, 0, 84, 0.3), transparent 20%)",
       },
       fontFamily: {
         dm_sans: ["DM Sans", "sans-serif"],
@@ -119,6 +121,8 @@ module.exports = {
   variants: {
     fill: ["hover", "focus"], // this line does the trick in Svg component [path>]
   },
-  plugins: [require("@tailwindcss/aspect-ratio"), 
-    require('@tailwindcss/line-clamp')],
+  plugins: [
+    require("@tailwindcss/aspect-ratio"),
+    require("@tailwindcss/line-clamp"),
+  ],
 };
