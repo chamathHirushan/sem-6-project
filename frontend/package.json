@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.14.3",
+    "@cloudinary/url-gen": "^1.21.0",
     "@heroicons/react": "^2.2.0",
     "antd": "^5.24.4",
     "country-state-city": "^3.2.1",

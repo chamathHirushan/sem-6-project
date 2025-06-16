@@ -197,7 +197,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
           ×
         </button>
         {/* toggle buttons for selecting job or service */}
-        <div className="flex justify-center mx-8 my-2">
+        {/* <div className="flex justify-center mx-8 my-2">
             <button
                 type="button"
                 className={`w-full px-4 py-2 rounded-l-sm ${selectedType === 'job' ? 'bg-[#0f2656] text-white' : 'bg-gray-200 text-gray-700'}`}
@@ -212,7 +212,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 >
                 Task Post
             </button>
-        </div>
+        </div> */}
 
         {/* Scrollable Form Area */}
         <div className="overflow-y-auto pt-2 p-6 flex-1">
@@ -458,7 +458,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
             <button
                 onClick={onClose}
                 type="button"
-                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800"
+                className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-300 text-gray-800"
                 >
                 Cancel
             </button>
@@ -466,6 +466,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 onClick={handleSubmit}
                 type="submit"
                 className="px-6 py-2 rounded-lg bg-[#306ff7] hover:bg-[#1f3565] text-white"
+
                 >
                 Post
             </button>
