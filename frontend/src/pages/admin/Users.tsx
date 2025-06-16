@@ -159,16 +159,15 @@ const UserManagementTable = () => {
 
   return (
     <div className="flex flex-col bg-background p-6 max-w-full mx-auto">
-       <div className="relative flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 relative">
         <h1 className="text-2xl font-bold text-primary">Users Management</h1>
-
-        <div className="absolute left-1/2 transform -translate-x-1/2">
+        <div className="ml-auto">
           <input
-            type="text"
-            placeholder="Search by name, email or role"
-            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary text-black min-w-[400px]"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+        type="text"
+        placeholder="Search by name, email or role"
+        className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary text-black min-w-[300px]"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
