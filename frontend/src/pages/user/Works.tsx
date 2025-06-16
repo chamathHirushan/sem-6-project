@@ -13,6 +13,7 @@ export default function Works() {
       const [backendData, setBackendData] = useState<string>("Loading...");
       // const {user} = useAuth();
       // const navigate = useNavigate();
+      const [searchTerm, setSearchTerm] = useState("");
       const [searchParams, setSearchParams] = useSearchParams();
       const defaultView = (searchParams.get("view") as "grid" | "list") || "grid";
       const [viewMode, setViewMode] = useState<"grid" | "list">(defaultView);
@@ -54,11 +55,35 @@ export default function Works() {
 
 
       const menuItems = [
-        { label: "House", subItems: ["Painting", "Plumbing", "Electrical"] },
-        { label: "Office", subItems: ["Cleaning", "IT Support", "Security"] },
-        { label: "Freelance", subItems: ["Writing", "Graphic Design", "Web Development"] },
-        { label: "Other", subItems: ["Miscellaneous"] },
+        { label: "Technicians", subItems: [
+          "AC Repairs", "CCTV", "Constructions", "Electricians", "Electronic Repairs", "Glass & Aluminium", "Iron Works",
+          "Masonry", "Odd Jobs", "Pest Controllers", "Plumbing", "Wood Works"
+        ]},
+        { label: "Vehicles", subItems: [
+          "Auto Mechanic", "Car Wash", "Delivery", "Drivers", "Spare Parts", "Transport", "Vehicle Rental"
+        ]},
+        { label: "IT", subItems: [
+          "Computer Repairs", "Data Entry", "Design & Creative", "Phone Repairs", "Telecommunication", "Web, Mobile & Software"
+        ]},
+        { label: "Professional", subItems: [
+          "Accountancy", "Arts & Crafts", "Hotels & Hospitality", "IT Consultancy", "Insurance Agents", "Legal Advice",
+          "Loan Brokers", "Modeling", "Security", "Travel Agents", "Tuition"
+        ]},
+        { label: "Personalised Services", subItems: [
+          "Caretaker / Home Nurse", "Caretakers", "Fitness Training", "Housemaids", "Sports"
+        ]},
+        { label: "Printing", subItems: [   
+          "Printing", "T Shirts & Caps", "Type Setting"
+        ]},
+        { label: "House", subItems: [
+          "Architects", "Boarding Places", "House Painting", "House Rental", "House/Office Cleaning", "Interior Design", "Landscaping"
+        ]},
+        { label: "Beauty & Event", subItems: [
+          "Advertising & promotions", "Audio Hires", "Band, DJ & dancing", "Band, DJ & dancing", "Beauty Salon", "Catering & Food",
+          "Dress Makers","Event Planners", "Flowers & Decos", "Health & Beauty Spa", "Photography", "Videography"] },
+        { label: "Other", subItems: ["Other"] },
       ];
+    
 
       const [jobs, setJobs] = useState([
         {
@@ -133,7 +158,229 @@ export default function Works() {
           isTrending: true,
           isBookmarked: true,
         },
+        {
+          id: "J129",
+          title: "QA Engineer",
+          image: jobImage,
+          location: "789 Oak St, Chicago, IL",
+          daysPosted: 2,
+          jobType: "Full-Time",
+          budget: 4500,
+          isUrgent: false,
+          isTrending: true,
+          isBookmarked: false,
+        },
+        {
+          id: "J130",
+          title: "DevOps Engineer",
+          image: jobImage,
+          location: "321 Pine St, Seattle, WA",
+          daysPosted: 5,
+          jobType: "Full-Time",
+          budget: 6000,
+          isUrgent: true,
+          isTrending: false,
+          isBookmarked: false,
+        },
+        {
+          id: "J131",
+          title: "Mobile Developer",
+          image: jobImage,
+          location: "654 Maple St, Austin, TX",
+          daysPosted: 4,
+          jobType: "Part-Time",
+          budget: 4800,
+          isUrgent: false,
+          isTrending: true,
+          isBookmarked: true,
+        },
+        {
+          id: "J132",
+          title: "System Administrator",
+          image: jobImage,
+          location: "987 Cedar St, Boston, MA",
+          daysPosted: 6,
+          jobType: "Full-Time",
+          budget: 5200,
+          isUrgent: true,
+          isTrending: false,
+          isBookmarked: false,
+        },
+        {
+          id: "J133",
+          title: "Business Analyst",
+          image: jobImage,
+          location: "159 Spruce St, Denver, CO",
+          daysPosted: 1,
+          jobType: "Part-Time",
+          budget: 4700,
+          isUrgent: false,
+          isTrending: true,
+          isBookmarked: true,
+        },
+        {
+          id: "J134",
+          title: "Network Engineer",
+          image: jobImage,
+          location: "753 Willow St, Miami, FL",
+          daysPosted: 8,
+          jobType: "Full-Time",
+          budget: 5300,
+          isUrgent: true,
+          isTrending: false,
+          isBookmarked: false,
+        },
+        {
+          id: "J135",
+          title: "Content Writer",
+          image: jobImage,
+          location: "852 Birch St, Portland, OR",
+          daysPosted: 2,
+          jobType: "Part-Time",
+          budget: 3500,
+          isUrgent: false,
+          isTrending: true,
+          isBookmarked: false,
+        },
+        {
+          id: "J136",
+          title: "SEO Specialist",
+          image: jobImage,
+          location: "951 Aspen St, Dallas, TX",
+          daysPosted: 3,
+          jobType: "Full-Time",
+          budget: 4100,
+          isUrgent: true,
+          isTrending: false,
+          isBookmarked: true,
+        },
+        {
+          id: "J137",
+          title: "Product Owner",
+          image: jobImage,
+          location: "357 Redwood St, San Jose, CA",
+          daysPosted: 5,
+          jobType: "Full-Time",
+          budget: 7000,
+          isUrgent: false,
+          isTrending: true,
+          isBookmarked: false,
+        },
+        {
+          id: "J138",
+          title: "Support Engineer",
+          image: jobImage,
+          location: "258 Poplar St, Atlanta, GA",
+          daysPosted: 4,
+          jobType: "Part-Time",
+          budget: 3900,
+          isUrgent: true,
+          isTrending: false,
+          isBookmarked: true,
+        },
+        {
+          id: "J139",
+          title: "Cloud Architect",
+          image: jobImage,
+          location: "654 Magnolia St, Houston, TX",
+          daysPosted: 6,
+          jobType: "Full-Time",
+          budget: 8000,
+          isUrgent: false,
+          isTrending: true,
+          isBookmarked: false,
+        },
+        {
+          id: "J140",
+          title: "Database Administrator",
+          image: jobImage,
+          location: "147 Palm St, Orlando, FL",
+          daysPosted: 7,
+          jobType: "Part-Time",
+          budget: 5500,
+          isUrgent: true,
+          isTrending: false,
+          isBookmarked: true,
+        },
+        {
+          id: "J141",
+          title: "IT Consultant",
+          image: jobImage,
+          location: "369 Cypress St, San Diego, CA",
+          daysPosted: 2,
+          jobType: "Full-Time",
+          budget: 6200,
+          isUrgent: false,
+          isTrending: true,
+          isBookmarked: false,
+        },
+        {
+          id: "J142",
+          title: "Machine Learning Engineer",
+          image: jobImage,
+          location: "753 Olive St, San Francisco, CA",
+          daysPosted: 1,
+          jobType: "Full-Time",
+          budget: 9000,
+          isUrgent: true,
+          isTrending: true,
+          isBookmarked: true,
+        },
+        {
+          id: "J143",
+          title: "Frontend Developer",
+          image: jobImage,
+          location: "951 Walnut St, Charlotte, NC",
+          daysPosted: 3,
+          jobType: "Part-Time",
+          budget: 4700,
+          isUrgent: false,
+          isTrending: false,
+          isBookmarked: false,
+        },
+        {
+          id: "J144",
+          title: "Backend Developer",
+          image: jobImage,
+          location: "159 Chestnut St, Columbus, OH",
+          daysPosted: 5,
+          jobType: "Full-Time",
+          budget: 5100,
+          isUrgent: true,
+          isTrending: true,
+          isBookmarked: true,
+        },
+        {
+          id: "J145",
+          title: "Full Stack Developer",
+          image: jobImage,
+          location: "357 Hickory St, Indianapolis, IN",
+          daysPosted: 4,
+          jobType: "Full-Time",
+          budget: 7500,
+          isUrgent: false,
+          isTrending: false,
+          isBookmarked: false,
+        },
+        {
+          id: "J146",
+          title: "Technical Writer",
+          image: jobImage,
+          location: "258 Maple St, Nashville, TN",
+          daysPosted: 6,
+          jobType: "Part-Time",
+          budget: 3600,
+          isUrgent: true,
+          isTrending: true,
+          isBookmarked: true,
+        },
       ]);
+
+      const filteredJobs = jobs.filter((job) =>
+        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.jobType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
       const toggleBookmark = (id: string) => {
         setJobs((prevJobs) =>
@@ -143,16 +390,27 @@ export default function Works() {
         );
       };
 
+      // Pagination logic
+      const [currentPage, setCurrentPage] = useState(1);
+      const itemsPerPage = 20;
+      const totalPages = Math.ceil(jobs.length / itemsPerPage);
+      const paginatedJobs = jobs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
 
     return (
-      <div style={{ display: "flex" }}>
-        <SideMenu menuItems={menuItems} />
-        <div style={{ marginLeft: "270px", padding: "20px", width: "100%" }}>
-      
+      <div style={{ display: "flex"}}>
+        <SideMenu 
+          menuItems={menuItems}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm} 
+        />
+
+        <div style={{ padding: "20px", width: "100%", display: "flex", flexDirection: "column" }}>
+
         {/* Header bar. It includes total jobs found result & grid/table view buttons*/}
-        <div className="flex justify-between items-center mb-5">
-            <h2 style={{ fontSize: "16px" }}>
-              <strong>{jobs.length}</strong> jobs found.
+        <div className="flex justify-between items-center mb-5  bg-gray-200 rounded-lg">
+            <h2 style={{ fontSize: "16px", padding: "8px 16px" }}>
+              <strong>{filteredJobs.length}</strong> jobs found.
             </h2>
 
             <div className="flex items-center gap-2">
@@ -182,7 +440,8 @@ export default function Works() {
             </div>
         </div>
 
-        <div>
+        {/* Main job listing area that takes all remaining height */}
+        <div style={{ flex: 1, overflowY: "auto" }}>
            <div
               style={{
                 display: viewMode === "grid" ? "grid" : "flex",
@@ -194,18 +453,52 @@ export default function Works() {
                 flexDirection: "column",
                 justifyContent: viewMode === "list" ? "center" : undefined,
                 width: viewMode === "list" ? "100%" : "100%",
-                margin: viewMode === "list" ? "0 auto" : undefined, // <-- Add this line
+                margin: viewMode === "list" ? "0 auto" : undefined,
               }}
             >
-            {jobs.map((job) => (
+            {filteredJobs.map((job, index) => (
               <JobTile
-                key={job.id}
+                key={`${job.id}_${index}`}
                 {...job}
                 view={viewMode}
                 onBookmarkToggle={toggleBookmark}
+                budget={String(job.budget)}
               />
             ))}
           </div>
+        </div>
+        {/* Tailwind Pagination Controls */}
+        <div className="flex justify-between items-center mt-8">
+          <div className="text-sm text-gray-600 font-medium">
+            {`Showing ${(currentPage - 1) * itemsPerPage + 1} to ${Math.min(currentPage * itemsPerPage, jobs.length)} of ${jobs.length} Entries`}
+          </div>
+          
+          <div className="flex space-x-1">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 rounded-l-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 transition ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200"}`}
+            >
+              Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`px-3 py-1 border-t border-b border-gray-300 bg-white text-gray-700 hover:bg-blue-100 transition ${currentPage === i + 1 ? "bg-cyan-500 text-white font-bold" : "hover:bg-cyan-100"}`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1 rounded-r-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 transition ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200"}`}
+            >
+              Next
+            </button>
+          </div>
+          
         </div>
 
         </div>

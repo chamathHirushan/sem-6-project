@@ -12,10 +12,12 @@ export default function Hires() {
   const [backendData, setBackendData] = useState<string>("Loading...");
   // const {user} = useAuth();
   // const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const defaultView = (searchParams.get("view") as "grid" | "list") || "grid";
   const [viewMode, setViewMode] = useState<"grid" | "list">(defaultView);
   const location = useLocation();
+
 
   // When user changes view, update URL param too
   const handleViewChange = (mode: "grid" | "list") => {
@@ -52,12 +54,41 @@ export default function Hires() {
   }, []);
 
 
+  
+
+
+
   const menuItems = [
-    { label: "House", subItems: ["Painting", "Plumbing", "Electrical"] },
-    { label: "Office", subItems: ["Cleaning", "IT Support", "Security"] },
-    { label: "Freelance", subItems: ["Writing", "Graphic Design", "Web Development"] },
-    { label: "Other", subItems: ["Miscellaneous"] },
+    { label: "Technicians", subItems: [
+      "AC Repairs", "CCTV", "Constructions", "Electricians", "Electronic Repairs", "Glass & Aluminium", "Iron Works",
+      "Masonry", "Odd Jobs", "Pest Controllers", "Plumbing", "Wood Works"
+    ]},
+    { label: "Vehicles", subItems: [
+      "Auto Mechanic", "Car Wash", "Delivery", "Drivers", "Spare Parts", "Transport", "Vehicle Rental"
+    ]},
+    { label: "IT", subItems: [
+      "Computer Repairs", "Data Entry", "Design & Creative", "Phone Repairs", "Telecommunication", "Web, Mobile & Software"
+    ]},
+    { label: "Professional", subItems: [
+      "Accountancy", "Arts & Crafts", "Hotels & Hospitality", "IT Consultancy", "Insurance Agents", "Legal Advice",
+      "Loan Brokers", "Modeling", "Security", "Travel Agents", "Tuition"
+    ]},
+    { label: "Personalised Services", subItems: [
+      "Caretaker / Home Nurse", "Caretakers", "Fitness Training", "Housemaids", "Sports"
+    ]},
+    { label: "Printing", subItems: [   
+      "Printing", "T Shirts & Caps", "Type Setting"
+    ]},
+    { label: "House", subItems: [
+      "Architects", "Boarding Places", "House Painting", "House Rental", "House/Office Cleaning", "Interior Design", "Landscaping"
+    ]},
+    { label: "Beauty & Event", subItems: [
+      "Advertising & promotions", "Audio Hires", "Band, DJ & dancing", "Band, DJ & dancing", "Beauty Salon", "Catering & Food",
+      "Dress Makers","Event Planners", "Flowers & Decos", "Health & Beauty Spa", "Photography", "Videography"] },
+    { label: "Other", subItems: ["Other"] },
   ];
+
+
 
   const [tasks, setTasks] = useState([
     {
@@ -134,6 +165,12 @@ export default function Hires() {
     },
   ]);
 
+  const filteredTasks = tasks.filter((task) =>
+    task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    task.taskType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    task.location.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const toggleBookmark = (id: string) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
@@ -145,13 +182,18 @@ export default function Hires() {
 
 return (
   <div style={{ display: "flex" }}>
-    <SideMenu menuItems={menuItems} />
-    <div style={{ marginLeft: "270px", padding: "20px", width: "100%" }}>
+    <SideMenu 
+      menuItems={menuItems}
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm} 
+    />
+    
+    <div style={{ padding: "20px", width: "100%", display: "flex", flexDirection: "column" }}>
   
     {/* Header bar. It includes total tasks found result & grid/table view buttons*/}
-    <div className="flex justify-between items-center mb-5">
-        <h2 style={{ fontSize: "16px" }}>
-          <strong>{tasks.length}</strong> tasks found.
+    <div className="flex justify-between items-center mb-5 bg-gray-200 rounded-lg">
+        <h2 style={{ fontSize: "16px", padding: "8px 16px" }}>
+        <strong>{filteredTasks.length}</strong> tasks found.
         </h2>
 
         <div className="flex items-center gap-2">
@@ -196,12 +238,13 @@ return (
             margin: viewMode === "list" ? "0 auto" : undefined,
           }}
         >
-        {tasks.map((task) => (
+        {filteredTasks.map((task, index) => (
           <TaskTile
-            key={task.id}
+            key={`${task.id}_${index}`}
             {...task}
             view={viewMode}
             onBookmarkToggle={toggleBookmark}
+            budget={String(task.budget)}
           />
         ))}
       </div>
