@@ -123,7 +123,7 @@ return (
             }}
           >
             <img
-              src={jobIcon}
+              src={job.imageUrl}
               alt={job.title}
               style={{
                 width: "80px",
