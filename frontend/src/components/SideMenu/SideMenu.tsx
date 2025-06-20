@@ -19,6 +19,7 @@ interface Props {
   selectedSubItems: string[];
   clearSelectedSubItem: (subItem: string) => void;
   clearAllSelectedSubItems: () => void;
+  showAdvertisement?: boolean; // Add this line
 }
 
 const SideMenu: FC<Props> = ({
@@ -32,6 +33,7 @@ const SideMenu: FC<Props> = ({
   selectedSubItems,
   clearSelectedSubItem,
   clearAllSelectedSubItems,
+  showAdvertisement = false, // Add this line
 }) => {
   const [expandedCategories, setExpandedCategories] = useState<Set<number>>(
     new Set()
@@ -171,11 +173,13 @@ const SideMenu: FC<Props> = ({
       </div>
 
       {/* Small space for advertisements */}
-      <div style={{ marginTop: "20px", marginBottom: "50px", padding: "10px", backgroundColor: "#e0e0e0", borderRadius: "5px", height: "260px", textAlign: "center", alignContent: "center" }}>
-        <p style={{ fontSize: "14px", color: "#555" }}>Space Available</p>
-        <p style={{ fontSize: "12px", color: "#777" }}>for</p>
-        <p style={{ fontSize: "14px", color: "#777", fontWeight:"bold" }}>Your Advertisements</p>
-      </div>
+      {showAdvertisement && (
+        <div style={{ marginTop: "20px", marginBottom: "50px", padding: "10px", backgroundColor: "#e0e0e0", borderRadius: "5px", height: "260px", textAlign: "center", alignContent: "center" }}>
+          <p style={{ fontSize: "14px", color: "#555" }}>Space Available</p>
+          <p style={{ fontSize: "12px", color: "#777" }}>for</p>
+          <p style={{ fontSize: "14px", color: "#777", fontWeight:"bold" }}>Your Advertisements</p>
+        </div>
+      )}
 
     </div>
   );
