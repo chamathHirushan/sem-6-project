@@ -1,0 +1,16 @@
+{
+    "deactivate" : {
+        "title": "Are you sure you want to deactivate this user?",
+        "warn": "Warning",
+        "sub_text": "Deactivating this user will remove their account and data permenently",
+        "text1" : "Yes",
+        "text2" : "No"
+    },
+    "edit" : {
+        "title": "Are you sure you want to change their role to",
+        "warn": "Warning",
+        "sub_text": "Changing a user's role will change their permissions",
+        "text1" : "Yes",
+        "text2" : "No"
+    }
+}
