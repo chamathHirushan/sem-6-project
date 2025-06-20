@@ -4,7 +4,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import AzureAISearchTool, ConnectionType
 from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 project_connection_string = os.getenv("PROJECT_CONNECTION_STRING")
 model = os.getenv("MODEL_DEPLOYMENT_NAME")
 index_name=os.getenv("AI_SEARCH_INDEX_NAME")

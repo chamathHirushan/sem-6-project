@@ -270,6 +270,7 @@ export default function JobView() {
             {/* Apply for Job button */ }
             <button className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 w-full">Apply for Job</button>
             {/* Save for later button */ }
+            <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full">Chat</button>
             <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full">Save for Later</button>
           </div>            
         </div>
