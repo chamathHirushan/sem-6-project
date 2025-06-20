@@ -70,3 +70,41 @@
   padding: 8px 12px;
   cursor: pointer;
 }
+
+.chat-message {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 8px;
+  max-width: 80%;
+  word-break: break-word;
+}
+
+.user-message {
+  background: #e0f2fe;
+  color: #2563eb;
+  margin-left: auto;
+  text-align: right;
+}
+
+.bot-message {
+  background: #f3f4f6;
+  color: #222;
+  margin-right: auto;
+  text-align: left;
+}
+
+.chat-message h3 {
+  margin: 8px 0 4px 0;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+.chat-message ul {
+  padding-left: 18px;
+  margin: 4px 0;
+}
+.chat-message li {
+  margin-bottom: 2px;
+}
+.chat-message strong {
+  font-weight: bold;
+}
