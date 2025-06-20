@@ -8,30 +8,73 @@ interface Job {
   id: string;
   title: string;
   description: string;
+  imageUrl: string;
 }
 
 export default function MyJobs() {
-      const [jobs, setJobs] = useState<Job[]>([]);
-      const [backendMessage, setBackendMessage] = useState<string>("Loading...");
-      const { user } = useAuth();
-      const navigate = useNavigate();
+  // const [jobs, setJobs] = useState<Job[]>([]);
+  // const [backendMessage, setBackendMessage] = useState<string>("Loading...");
+  // const { user } = useAuth();
+  const navigate = useNavigate();
 
-      useEffect(() => {
-        async function fetchData() {
-          try {
-            const response = await apiClient.get("/");
+  // Example job list (Delete the following when connecting the backend)
+  const jobs = [
+    {
+      id: "1",
+      title: "Software Developer",
+      description:
+        "Join our dynamic team to build innovative web applications and solve real-world problems.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=80&q=80",
+    },
+    {
+      id: "2",
+      title: "UI/UX Designer",
+      description:
+        "Craft intuitive user experiences and elegant interfaces for our growing product suite.",
+      imageUrl:
+        "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
+    },
+    {
+      id: "3",
+      title: "Marketing Intern",
+      description:
+        "Assist in creating digital marketing campaigns and analyzing engagement metrics.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=80&q=80",
+    },
+    {
+      id: "4",
+      title: "Data Analyst",
+      description:
+        "Analyze data trends and generate actionable insights to improve business performance.",
+      imageUrl:
+        "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
+    },
+    {
+      id: "5",
+      title: "DevOps Engineer",
+      description:
+        "Streamline deployment pipelines and maintain infrastructure for high availability systems.",
+      imageUrl:
+        "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
+    },
+  ];
 
-            // Add the API call here.
-            // setJobs(response.APICALL || []);
-            setBackendMessage(response.message || "Jobs loaded");
-          } catch (error) {
-            console.error("API Error:", error);
-            setBackendMessage("Error fetching jobs");
-            setJobs([]);
-          }
-        }
-        fetchData();
-      }, []);
+      // useEffect(() => {
+      //   async function fetchData() {
+      //     try {
+      //       const response = await apiClient.get("/");
+      //       setBackendMessage(response.message || "Jobs loaded");
+      //     } catch (error) {
+      //       console.error("API Error:", error);
+      //       setBackendMessage("Error fetching jobs");
+      //       setJobs([]);
+      //     }
+      //   }
+      //   fetchData();
+      // }, 
+      // []);
 
 // Jobs is a list of jobs which taken from the back end.. This should be a list and after getting that the page will generate for each of the jobs as a drop down.
 return (
