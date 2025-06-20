@@ -7,6 +7,7 @@ import MobileVerificationPopup from './MobileVerificationPopup';
 import { NotificationsIcon } from '../components/Notifications';
 import PostJobPopup from '../components/PostForm/PostForm';
 import Footer from '../components/Footer/Footer';
+import ChatBotWidget from './ChatBot/ChatBotWidget';
 
 const NavBar = forwardRef<HTMLElement>((props, ref) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -470,6 +471,7 @@ const Layout: React.FC = () => {
           <div className="flex-1 flex flex-col">
             <Outlet />
           </div>
+          <ChatBotWidget/>
           <MobileVerificationPopup />
           <Footer />
       </main>
