@@ -504,6 +504,7 @@ export default function Works() {
             setCurrentPage(1); // Reset to first page on new search
           }}
           selectedSubItem={null}
+          showAdvertisement={true} // Hide advertisement for this page
         />
 
         <div style={{ padding: "20px", width: "100%", display: "flex", flexDirection: "column" }}>
