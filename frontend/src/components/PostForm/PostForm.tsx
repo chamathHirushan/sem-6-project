@@ -37,6 +37,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [loading, setLoading] = useState(true);
+  const [boostType, setBoostType] = useState(0);
 
   // Load all countries on mount
   useEffect(() => {
@@ -82,6 +83,11 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
       setPostedDate(new Date());
     }
   }, [open]);
+
+    const boostTypes = [
+    { label: "Standard Boost", value: 1 },
+    { label: "Premium Boost", value: 2 },
+  ];
   
   // Reset form when popup opens
   useEffect(() => {
@@ -101,7 +107,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
       setPostedDate(new Date());
       setImage([]);
       setPoster(null);
-
+      setBoostType(0);
       setSelectedCountry('');
       setSelectedCity('');
       setCities([]);
@@ -539,6 +545,22 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                     </label>
                 </div>
             )}
+
+                            <div className="mb-3">
+                  <label className="block mb-1 font-medium">Boost</label>
+                  <select
+                    className="w-full border rounded px-2 py-1"
+                    value={boostType}
+                    onChange={e => setBoostType(e.target.value)}
+                  >
+                    <option value="">Select boost type</option>
+                   {boostTypes.map((item, index) => (
+                      <option key={index} value={item.label}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
             </form>
         </div>
