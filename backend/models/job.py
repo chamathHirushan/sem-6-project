@@ -32,6 +32,7 @@ class JobPost(Base):
     photos = Column(String)  # Comma-separated list of image URLs or JSON array
     views = Column(Integer, default=0)
     boost_level = Column(Integer, default=0)
+    subcategory = Column(String)  # Specific subcategory like "AC Repairs", "CCTV", etc.
 
     # Relationships
     job = relationship("Job", back_populates="job_posts")
