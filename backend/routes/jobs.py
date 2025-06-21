@@ -121,6 +121,7 @@ class FrontendJobResponse(BaseModel):
     daysPosted: int
     budget: float
     isUrgent: bool
+    isTrending: bool
     isBookmarked: bool
 
     class Config:
