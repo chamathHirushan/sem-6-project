@@ -36,7 +36,7 @@ export const getUserBookmarks = async () => {
 }
 
 export const addBookmark = async (jobId: string, state: boolean) => {
-  const response = await apiClient.post(`/api/user/bookmarks/add/${jobId}`,{});
+  const response = await apiClient.post(`/api/user/bookmarks/add/${jobId}`,{"state": state});
   return response.data;
 }
 
@@ -102,5 +102,10 @@ export const getServiceDetails = async (serviceId: string) => {
 
 export const addService = async (serviceData: any) => {
   const response = await apiClient.post(`/api/user/services/add`, serviceData);
+  return response.data;
+}
+
+export const addJob = async (jobData: any) => {
+  const response = await apiClient.post(`/api/user/jobs/add`, jobData);
   return response.data;
 }

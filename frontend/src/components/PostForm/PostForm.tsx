@@ -7,6 +7,7 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import { X } from "lucide-react";
 import "react-datepicker/dist/react-datepicker.css";
+import {addService, addJob} from '../../api/userAPI'; // Adjust the import path as necessary
 
 
 interface PostJobPopupProps {
@@ -37,7 +38,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [loading, setLoading] = useState(true);
-  const [boostType, setBoostType] = useState(0);
+  const [boostLevel, setBoostType] = useState(0);
 
   // Load all countries on mount
   useEffect(() => {
@@ -122,10 +123,71 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
 
   if (!open) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission here
     // Optionally reset form or call onClose()
+    if (selectedType === 'job'){
+      // console.log("Job Post Submitted:", {
+      //   title,
+      //   description,
+      //   miniDescription,
+      //   budget,
+      //   location,
+      //   urgent,
+      //   selectedCategory,
+      //   selectedSubCategory,
+      //   dueDate,
+      //   postedDate,
+      //   images: image,
+      //   poster,
+      //   boostLevel
+      // });
+      await addJob(
+        {
+          "title": title,
+          "description": description,
+          "mini_description": miniDescription,
+          "budget": budget ? parseFloat(budget) : null,
+          "location": location,
+          "urgent": urgent,
+          "category": selectedCategory,
+          "subcategory": selectedSubCategory,
+          "due_date": dueDate ? dueDate.toISOString() : null,
+          "posted_date": postedDate ? postedDate.toISOString() : null,
+          "images": image,
+          "poster": poster || null,
+          "boost_level": boostLevel
+        }
+      );
+    }else{
+      // console.log("Service Post Submitted:", {
+      //   title,
+      //   description,
+      //   miniDescription,
+      //   location,
+      //   selectedCategory,
+      //   selectedSubCategory,
+      //   dueDate,
+      //   postedDate,
+      //   images: image,
+      //   poster
+      // });
+      await addService(
+        {
+          "title": title,
+          "description": description,
+          "mini_description": miniDescription,
+          "location": location,
+          "category": selectedCategory,
+          "subcategory": selectedSubCategory,
+          "due_date": dueDate ? dueDate.toISOString() : null,
+          "posted_date": postedDate ? postedDate.toISOString() : null,
+          "images": image,
+          "poster": poster || null
+        }
+      )
+    }
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -333,7 +395,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 </div>
 
                 {/* Address */}
-                <div className="mb-3">
+                {/* <div className="mb-3">
                     <label className="block mb-1 font-medium">Address</label>
                     <input
                     className="w-full border rounded px-2 py-1"
@@ -342,10 +404,10 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                     value={address}
                     onChange={e => setLocation(e.target.value)}
                     />
-                </div>
+                </div> */}
 
                 {/* Job Type - Full time/ Part time*/}
-                {selectedType === 'job' && (
+                {/* {selectedType === 'job' && (
                   <div className="mb-3">
                     <label className="block mb-1 font-medium">Job Type</label>
                     <select
@@ -357,7 +419,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                       <option value="Part Time">Part Time</option>
                     </select>
                   </div>
-                )}
+                )} */}
 
                 {/* Category Selection */}
                 <div className="mb-3">
@@ -546,11 +608,11 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 </div>
             )}
 
-                            <div className="mb-3">
+              {selectedType === 'job' &&  (<div className="mb-3">
                   <label className="block mb-1 font-medium">Boost</label>
                   <select
                     className="w-full border rounded px-2 py-1"
-                    value={boostType}
+                    value={boostLevel}
                     onChange={e => setBoostType(e.target.value)}
                   >
                     <option value="">Select boost type</option>
@@ -560,7 +622,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                       </option>
                     ))}
                   </select>
-                </div>
+                </div>)}
 
             </form>
         </div>
