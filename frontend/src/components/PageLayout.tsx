@@ -167,7 +167,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                     fontSize: '12px', 
                   }}
                   >
-                  Post Job/Task
+                  Post Tasks / Service
                   </button>
               </div>
 
@@ -336,7 +336,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                     boxShadow: '0 0 6px 0.5px rgba(74,255,195,0.7)',
                   }}
                   >
-                  Post Task / Job
+                  Post Tasks / Service
                   </button>
               </div>
 
