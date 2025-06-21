@@ -59,19 +59,19 @@ export default function Works() {
       }, []);
 
 
-      useEffect(() => {
-        async function fetchData() {
-          try {
-            const response = await apiClient.get("/user/dashboard");
-            setBackendData(response.message || "No data received");
-          } catch (error) {
-            setBackendData("Error fetching data");
-            console.error("API Error:", error);
-          }
-        }
+      // useEffect(() => {
+      //   async function fetchData() {
+      //     try {
+      //       const response = await apiClient.get("/user/dashboard");
+      //       setBackendData(response.message || "No data received");
+      //     } catch (error) {
+      //       setBackendData("Error fetching data");
+      //       console.error("API Error:", error);
+      //     }
+      //   }
     
-        fetchData();
-      }, []);
+      //   fetchData();
+      // }, []);
 
 
       const menuItems = [
@@ -113,7 +113,7 @@ export default function Works() {
         image: string;
         location: string;
         daysPosted: number;
-        jobType: string;
+        jobType?: string;
         budget: number;
         isUrgent: boolean;
         isTrending?: boolean;
@@ -123,7 +123,7 @@ export default function Works() {
       useEffect(() => {
         async function fetchJobs() {
           try {
-            const fetchedjobs = await getAvailableJobs();
+            const fetchedjobs = await getAvailableJobs();//TODO
             if (!fetchedjobs || fetchedjobs.length === 0) {
               //toast.error("Please try again.");
               return;
