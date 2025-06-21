@@ -95,11 +95,11 @@ const TaskTile: FC<TaskTileProps> = ({
                   )}
 
                   {/* Trending icon */}
-                  {isTrending && (
+                  {/* {isTrending && (
                       <div className="flex items-center justify-center p-0.5 px-1">
                       <FireIcon className="w-4 h-4 -mr-0.5" style={{ color: "orange" }} />
                     </div>
-                  )}
+                  )} */}
                 </div>
 
                 <div className="flex items-center justify-end w-full pl-3">

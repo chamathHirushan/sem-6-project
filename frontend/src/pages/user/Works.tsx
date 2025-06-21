@@ -113,7 +113,7 @@ export default function Works() {
         jobType: string;
         budget: number;
         isUrgent: boolean;
-        isTrending: boolean;
+        isTrending?: boolean;
         isBookmarked: boolean;
       }
       

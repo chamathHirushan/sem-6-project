@@ -13,9 +13,9 @@ interface JobTileProps {
   jobType: string;
   budget: string;   // budget can be a string(for negotiable services) or number
   isBookmarked: boolean;
-  isUrgent: boolean,
-  isTrending: boolean,
+  isUrgent: boolean;
   view: "grid" | "list"; // Determines the tile layout
+  isTrending?: boolean;
   onBookmarkToggle: (id: string) => void;
 }
 
@@ -29,7 +29,6 @@ const JobTile: FC<JobTileProps> = ({
   budget,
   isBookmarked,
   isUrgent,
-  isTrending,
   view,
   onBookmarkToggle,
 }) => {
@@ -95,11 +94,11 @@ const JobTile: FC<JobTileProps> = ({
                   )}
 
                   {/* Trending icon */}
-                  {isTrending && (
+                  {/* {isTrending && (
                       <div className="flex items-center justify-center p-0.5 px-1">
                       <FireIcon className="w-4 h-4 -mr-0.5" style={{ color: "orange" }} />
                     </div>
-                  )}
+                  )} */}
                 </div>
 
                 <div className="flex items-center justify-end w-full pl-3">
@@ -163,12 +162,12 @@ const JobTile: FC<JobTileProps> = ({
                 )}
 
                 {/* Trending icon */}
-                {isTrending && (
+                {/* {isTrending && (
                     <div className="flex items-center justify-center rounded-md border border-orange-500 p-0.5 px-1">
                     <FireIcon className="w-4 h-4 mr-0.5" style={{ color: "orange" }} />
                     <p className="text-black text-xs">Trending</p>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
 

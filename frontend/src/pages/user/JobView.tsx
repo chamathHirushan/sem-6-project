@@ -130,12 +130,12 @@ export default function JobView() {
               )}
 
               {/* Trending icon */}
-              {job.isTrending && (
+              {/* {job.isTrending && (
                   <div className="flex items-center justify-center rounded-md border border-orange-500 p-0.5 px-1">
                   <FireIcon className="w-4 h-4 mr-0.5" style={{ color: "orange" }} />
                   <p className="text-black text-xs">Trending</p>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
           
