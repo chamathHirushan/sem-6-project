@@ -4,8 +4,9 @@ from typing import List, Optional
 from models.database import SessionLocal
 from models.job import Job, JobPost, JobPostComment, JobApplication, Working
 from models.user import User
+from models.working import WorkingCategory
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, timedelta
 
 router = APIRouter(
     prefix="/jobs",
@@ -48,6 +49,7 @@ class JobPostBase(BaseModel):
     due_date: datetime
     photos: str | None = None
     boost_level: int = 0
+    subcategory: str | None = None
 
 class JobPostCreate(JobPostBase):
     pass
@@ -104,6 +106,22 @@ class CommentResponse(BaseModel):
     comment_date: datetime
     commenter_name: str
     commenter_photo: str
+
+    class Config:
+        orm_mode = True
+
+# Frontend Job Response Model
+class FrontendJobResponse(BaseModel):
+    id: str
+    title: str
+    category: str
+    subCategory: str
+    image: str
+    location: str
+    daysPosted: int
+    budget: float
+    isUrgent: bool
+    isBookmarked: bool
 
     class Config:
         orm_mode = True
@@ -367,3 +385,89 @@ def get_user_jobs(user_id: int, db: Session = Depends(get_db)):
         'applied_jobs': applied_jobs_data,
         'invited_jobs': invited_jobs
     } 
+
+@router.get("/frontend/all", response_model=List[FrontendJobResponse])
+def get_frontend_jobs(
+    category: Optional[str] = None,
+    subCategory: Optional[str] = None,
+    location: Optional[str] = None,
+    search: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """Get all jobs in the format expected by the frontend Works component"""
+    try:
+        # Start with a query that joins JobPost with Job and related tables
+        query = db.query(JobPost)\
+            .join(Job, JobPost.job_id == Job.id)\
+            .join(User, JobPost.user_id == User.id)\
+            .join(WorkingCategory, Job.category_id == WorkingCategory.id)\
+            .filter(Job.available == True)\
+            .options(
+                joinedload(JobPost.job),
+                joinedload(JobPost.user),
+                joinedload(JobPost.job).joinedload(Job.category)
+            )
+        
+        # Apply filters
+        if category:
+            query = query.filter(WorkingCategory.category_name.ilike(f"%{category}%"))
+        if subCategory:
+            query = query.filter(JobPost.subcategory.ilike(f"%{subCategory}%"))
+        if location:
+            query = query.filter(JobPost.location.ilike(f"%{location}%"))
+        if search:
+            search_term = f"%{search}%"
+            query = query.filter(
+                (JobPost.post_title.ilike(search_term)) |
+                (JobPost.location.ilike(search_term)) |
+                (Job.job_title.ilike(search_term))
+            )
+        
+        # Order by boost level (urgency) and posted date
+        query = query.order_by(JobPost.boost_level.desc(), JobPost.posted_date.desc())
+        
+        posts = query.all()
+        
+        response = []
+        current_date = datetime.now()
+        
+        for post in posts:
+            # Calculate days posted - handle timezone differences
+            if post.posted_date.tzinfo is not None:
+                # If posted_date has timezone info, make current_date timezone-aware
+                current_date_tz = current_date.replace(tzinfo=post.posted_date.tzinfo)
+                days_posted = (current_date_tz - post.posted_date).days
+            else:
+                # If posted_date is naive, use naive current_date
+                days_posted = (current_date - post.posted_date.replace(tzinfo=None)).days
+            
+            # Determine if job is urgent (boost_level > 0 or posted within last 3 days)
+            is_urgent = post.boost_level > 0 or days_posted <= 3
+            
+            # For now, isBookmarked is False (this would need to be implemented with user favorites)
+            is_bookmarked = False
+            
+            # Get the first photo as image, or use a default
+            image_url = post.photos.split(',')[0] if post.photos else "default_job_image.jpg"
+            
+            job_dict = {
+                'id': str(post.id),
+                'title': post.post_title,
+                'category': post.job.category.category_name,
+                'subCategory': post.subcategory or post.job.category.category_name,  # Use actual subcategory or fallback to category
+                'image': image_url,
+                'location': post.location,
+                'daysPosted': days_posted,
+                'budget': post.job.budget,
+                'isUrgent': is_urgent,
+                'isBookmarked': is_bookmarked
+            }
+            response.append(job_dict)
+        
+        return response
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching frontend jobs: {str(e)}"
+        ) 
