@@ -47,32 +47,3 @@
 /backend/**/__pycache__/
 /backend/**.py[cod]
 /backend/config
-
-# Python virtual environment
-venv/
-env/
-.env/
-.venv/
-
-# Python cache files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Distribution / packaging
-dist/
-build/
-*.egg-info/
-
-# IDE settings
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Environment variables
-.env
-.env.local
-
-# Logs
-*.log
