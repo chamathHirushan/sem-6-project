@@ -101,7 +101,7 @@ return (
 
         <div
           style={{
-            backgroundColor: "#F6F8D5",
+            backgroundColor: "white",
             borderRadius: "12px",
             padding: "1rem",
             marginTop: "1rem",
