@@ -38,8 +38,8 @@
 
 ##################################### Backtend ######################################
 
-#env
-/backend/.env
+# #env
+# /backend/.env
 
 # venv cache
 /backend/.venv/

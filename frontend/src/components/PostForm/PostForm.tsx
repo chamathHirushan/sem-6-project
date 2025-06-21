@@ -24,6 +24,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
   const [urgent, setUrgent] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  const [boostType, setBoostType] = useState(0);
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [postedDate, setPostedDate] = useState<Date | null>(null);
   const [image, setImage] = useState<string[]>([]);
@@ -94,6 +95,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
       setUrgent(false);
       setSelectedCategory('');
       setSelectedSubCategory('');
+      setBoostType('');
       setDueDate(null);
       setPostedDate(new Date());
       setImage([]);
@@ -112,6 +114,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
     e.preventDefault();
     // Handle form submission here
     // Optionally reset form or call onClose()
+
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,6 +125,10 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
     setImage([]);
   };
 
+  const boostTypes = [
+    { label: "Standard Boost", value: 1 },
+    { label: "Premium Boost", value: 2 },
+  ];
   
   const menuItems = [
     { label: "Technicians", subItems: [
@@ -324,7 +331,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 </div>
 
                 {/* Job Type - Full time/ Part time*/}
-                {selectedType === 'job' && (
+                {/* {selectedType === 'job' && (
                   <div className="mb-3">
                     <label className="block mb-1 font-medium">Job Type</label>
                     <select
@@ -336,7 +343,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                       <option value="Part Time">Part Time</option>
                     </select>
                   </div>
-                )}
+                )} */}
 
                 {/* Category Selection */}
                 <div className="mb-3">
@@ -448,6 +455,22 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                         />
                         <span className="ml-2">Urgent Post</span>
                     </label>
+                </div>
+
+                <div className="mb-3">
+                  <label className="block mb-1 font-medium">Boost</label>
+                  <select
+                    className="w-full border rounded px-2 py-1"
+                    value={boostType}
+                    onChange={e => setBoostType(e.target.value)}
+                  >
+                    <option value="">Select boost type</option>
+                   {boostTypes.map((item, index) => (
+                      <option key={index} value={item.label}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
             </form>
