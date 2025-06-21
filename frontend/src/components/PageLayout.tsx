@@ -75,7 +75,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
   profileOptions = [
     { name: 'View Profile', path: '/profile' },
     { name: 'Working Fields', path: '/job-fields' },
-    { name: 'Works', path: '/my-jobs' },
+    { name: 'My Jobs', path: '/my-jobs' },
     { name: 'Favourites', path: '/favorites' },
     { name: 'Analytics', path: '/analytics' },
     {
