@@ -1,0 +1,36 @@
+# Ignore the Dockerfile itself
+Dockerfile*
+
+# Ignore Git artifacts
+.git
+
+# Ignore local environment variables file if not copied explicitly
+# If you COPY .env specifically in your Dockerfile, keep this line.
+# If you rely on env_file in docker-compose, you might still ignore it here.
+.env
+
+# Ignore Python cache and virtual environments
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+venv/
+.venv/
+
+# Ignore specific development or temporary files
+*.swp
+*.bak
+*.tmp
+
+# Ignore IDE specific files
+.idea/
+.vscode/
+*.iml
+
+# Ignore coverage reports
+.coverage
+htmlcov/
+
+# Ignore dist and build directories if your backend has them
+dist/
+build/
