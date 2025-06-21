@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
 import {ClockIcon, MapPinIcon, TagIcon, CalendarDaysIcon, BriefcaseIcon, IdentificationIcon } from "@heroicons/react/24/outline";
 import { StarIcon as SolidStarIcon, FireIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
@@ -7,36 +7,10 @@ import StarRatings from 'react-star-ratings';
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./ServiceView.css";
-import {getJobDetails} from "../../api/userAPI";
 
 import jobImage from "../../assets/get-a-job-with-no-experience.png";
 
-interface Job {
-  id: string;
-  title: string;
-  category: string;
-  subCategory: string;
-  location: string;
-  isUrgent: boolean;
-  daysPosted: string; // e.g., "2 days", "1 month", "3 years"
-  dueDate: string; // ISO date string: "YYYY-MM-DD"
-  postedDate: string; // ISO date string: "YYYY-MM-DD"
-  postedUserName: string;
-  postedUserImage: string;
-  postedUserRating: number; // e.g., 3.5
-  miniDescription: string;
-  budget: number;
-  address: string;
-  description: string;
-  poster: string;
-  isBookmarked: boolean;
-  image: string[]; // array of image URLs
-}
-
 export default function JobView() {
-  // Make sure your route is defined as /hire/:id in your router!
-  const params = useParams();
-  const id = params.id;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -45,9 +19,8 @@ export default function JobView() {
 
     console.log("Opened JobView. Came from:", location.state?.from);
     console.log("Stored scroll position:", location.state?.scrollPosition);
-    console.log("Job ID from URL:", id);
 
-  }, [id, location.state]);
+  }, []);
   
   const handleBack = () => {
     const from = location.state?.from || { pathname: "/work" };
@@ -61,13 +34,15 @@ export default function JobView() {
   };
   
 
-  const samplejob = {
-    id: id || "D153",
+  const job = {
+    id: "D153",
     title: "Senior Developer",
     category: "IT & Software",
     subCategory: "Plumbing",
+    jobType: "Full-Time",
     location: "New York, NY",
     isUrgent: true,
+    isTrending: true,
     daysPosted: "2 days",   // no of days, months or years since posted
     dueDate: "2023-12-31",
     postedDate: "2023-10-01",  // date when posted
@@ -83,25 +58,6 @@ export default function JobView() {
     image: [jobImage, jobImage, jobImage],
   };
 
-  const [job, setJob] = useState<Job>(samplejob);
-
-  useEffect(() => {
-    async function fetchJobs() {
-      try {
-        if (!id) { return; } // If no ID, do not fetch
-        const fetchedJob = await getJobDetails(id);//TODO
-        if (!fetchedJob) {
-          //toast.error("Please try again.");
-          return;
-        }
-        setJob(fetchedJob);
-      } catch (error) {
-        //toast.error(error instanceof Error ? error.message : "An unknown error occurred.");
-        console.error("Error fetching job details:", error);
-      }
-    }
-    fetchJobs();
-  }, [id]);
 
   // Social media share URLs
   const shareUrl = `https://sewa.lk/hire/${job.id}`;
@@ -174,12 +130,12 @@ export default function JobView() {
               )}
 
               {/* Trending icon */}
-              {/* {job.isTrending && (
+              {job.isTrending && (
                   <div className="flex items-center justify-center rounded-md border border-orange-500 p-0.5 px-1">
                   <FireIcon className="w-4 h-4 mr-0.5" style={{ color: "orange" }} />
                   <p className="text-black text-xs">Trending</p>
                 </div>
-              )} */}
+              )}
             </div>
           </div>
           
@@ -266,7 +222,7 @@ export default function JobView() {
               {/* Task Type */ }
               <div className="flex items-center">
                 <TagIcon className="w-4 h-4 mr-1" style={{ color: "red" }}/>
-                <p className="text-gray-600 text-sm">{job.subCategory}</p>
+                <p className="text-gray-600 text-sm">{job.jobType}</p>
               </div>                         
             </div>
 
@@ -314,7 +270,6 @@ export default function JobView() {
             {/* Apply for Job button */ }
             <button className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 w-full">Apply for Job</button>
             {/* Save for later button */ }
-            <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full">Chat</button>
             <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full">Save for Later</button>
           </div>            
         </div>

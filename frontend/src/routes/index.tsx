@@ -41,7 +41,6 @@ export function AppRouter() {
           { path: "/job-fields", element: <MyFields /> },
           { path: "/favorites", element: <Fav /> },
           { path: "/profile", element: <Profile /> },
-          
         ],
       },
 

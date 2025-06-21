@@ -20,6 +20,10 @@ class ApiClient {
     return this.request('POST', endpoint, body, params);
   }
 
+  async patch(endpoint: string, body: any, params?: Record<string, string>) {
+    return this.request('PATCH', endpoint, body, params);
+  }
+
   async put(endpoint: string, body: any, params?: Record<string, string>) {
     return this.request('PUT', endpoint, body, params);
   }
@@ -93,10 +97,10 @@ class ApiClient {
   }
 
   private redirectToLogin() {
-      window.history.pushState({}, '', '/login');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-      toast.warn("Please login again!", { toastId: "login-warning" });
-    }
+    window.history.pushState({}, '', '/login');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    toast.warn("Please login again!", { toastId: "login-warning" });
   }
+}
 
 export const apiClient = new ApiClient();

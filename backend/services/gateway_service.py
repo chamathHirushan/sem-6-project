@@ -7,7 +7,7 @@ TEXT_LK_API_TOKEN = os.getenv("TEXT_LK_API_TOKEN")
 UPSTASH_TOKEN = os.getenv("UPSTASH_REDIS_REST_TOKEN")
 
 TEXT_LK_API_URL = "https://app.text.lk/api/v3/sms/send"
-UPSTASH_REDIS_REST_URL="https://mutual-jaybird-63336.upstash.io"
+UPSTASH_REDIS_REST_URL="https://quality-joey-11854.upstash.io"
 
 RETRY_PERIOD = 3600  # 1 hour (3600 seconds)
 MAX_VALIDATE_TRIES = 5

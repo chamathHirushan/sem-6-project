@@ -192,7 +192,7 @@ export default function LoginPage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex(prev => (prev + 1) % slideshowImages.length);
-    }, 5000); // 5 seconds delay for change the pictires
+    }, 8000); // 8 seconds delay
     return () => clearInterval(interval);
   }, []);
 

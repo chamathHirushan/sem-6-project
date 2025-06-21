@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState} from 'react';
 import {BellIcon } from "@heroicons/react/24/outline";
 import { BellIcon as BellIconSolid } from "@heroicons/react/24/solid";
-import {getUserNotifications, markNotificationAsRead, markAllNotificationsAsRead} from '../api/userAPI';
 
 interface Notification {
   id: number;
@@ -99,41 +98,28 @@ const mockNotifications = [
 
 export const NotificationsIcon = () => {
   const bellIconRef = useRef<HTMLDivElement>(null);
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [notifications, setNotifications] = useState(mockNotifications);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   useEffect(() => {
     // Fetch notifications from the backend
-    const fetchNotifications = async () => {
-      try {
-        const fetchedNotifications = await getUserNotifications();
-        if (!fetchedNotifications || fetchedNotifications.length === 0) {
-          return;
-        }
-        setNotifications(fetchedNotifications);
-      } catch (error) {
-        console.error("Failed to fetch notifications:", error);
-      }
-    };
-    fetchNotifications();
+    // setNotifications(fetchedNotifications);
   }, []);
 
-  const handleRead = async (id: string | number) => {
+  const handleRead = (id: number) => {
     // call the backend to mark as read
     setNotifications(prevNotifications =>
       prevNotifications.map(notification => 
         notification.id === id ? { ...notification, read: true } : notification
       )
     );
-    await markNotificationAsRead(id.toString())
   };
 
-  const handleReadAll = async () => {
+  const handleReadAll = () => {
     // call the backend
     setNotifications(prevNotifications => 
       prevNotifications.map(notification => ({ ...notification, read: true }))
     );
-    await markAllNotificationsAsRead();
   };
 
   return(

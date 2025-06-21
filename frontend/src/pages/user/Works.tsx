@@ -7,8 +7,6 @@ import JobTile from "../../components/JobTile/JobTile";
 import {Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
 import jobImage from "../../assets/get-a-job-with-no-experience.png"
 import { useSearchParams, useLocation } from "react-router-dom";
-import {getAvailableJobs} from "../../api/userAPI";
-import { toast } from "react-toastify";
 
 
 export default function Works() {
@@ -59,19 +57,19 @@ export default function Works() {
       }, []);
 
 
-      // useEffect(() => {
-      //   async function fetchData() {
-      //     try {
-      //       const response = await apiClient.get("/user/dashboard");
-      //       setBackendData(response.message || "No data received");
-      //     } catch (error) {
-      //       setBackendData("Error fetching data");
-      //       console.error("API Error:", error);
-      //     }
-      //   }
+      useEffect(() => {
+        async function fetchData() {
+          try {
+            const response = await apiClient.get("/user/dashboard");
+            setBackendData(response.message || "No data received");
+          } catch (error) {
+            setBackendData("Error fetching data");
+            console.error("API Error:", error);
+          }
+        }
     
-      //   fetchData();
-      // }, []);
+        fetchData();
+      }, []);
 
 
       const menuItems = [
@@ -103,7 +101,6 @@ export default function Works() {
           "Dress Makers","Event Planners", "Flowers & Decos", "Health & Beauty Spa", "Photography", "Videography"] },
         { label: "Other", subItems: ["Other"] },
       ];
-
       
       interface Job {
         id: string;
@@ -113,34 +110,17 @@ export default function Works() {
         image: string;
         location: string;
         daysPosted: number;
-        jobType?: string;
+        jobType: string;
         budget: number;
         isUrgent: boolean;
-        isTrending?: boolean;
+        isTrending: boolean;
         isBookmarked: boolean;
       }
-
-      useEffect(() => {
-        async function fetchJobs() {
-          try {
-            const fetchedjobs = await getAvailableJobs();//TODO
-            if (!fetchedjobs || fetchedjobs.length === 0) {
-              //toast.error("Please try again.");
-              return;
-            }
-            setJobs(fetchedjobs);
-          } catch (error) {
-            //toast.error(error instanceof Error ? error.message : "An unknown error occurred.");
-            console.error("Error fetching jobs:", error);
-          }
-        }
-        fetchJobs();
-      }, []);
       
       const [jobs, setJobs] = useState<Job[]>([
         {
           id: "J123",
-          title: "Reparement for the ceiling",
+          title: "Software Engineer",
           category: "IT",
           subCategory: "Web, Mobile & Software",
           image: jobImage,
@@ -484,6 +464,7 @@ export default function Works() {
         } else if (searchTerm.trim() !== "") {
           return (
             job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            job.jobType.toLowerCase().includes(searchTerm.toLowerCase()) ||
             job.location.toLowerCase().includes(searchTerm.toLowerCase())
           );
         }
@@ -523,7 +504,6 @@ export default function Works() {
             setCurrentPage(1); // Reset to first page on new search
           }}
           selectedSubItem={null}
-          showAdvertisement={true} // Hide advertisement for this page
         />
 
         <div style={{ padding: "20px", width: "100%", display: "flex", flexDirection: "column" }}>
