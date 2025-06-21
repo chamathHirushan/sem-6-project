@@ -10,7 +10,7 @@ interface JobTileProps {
   title: string;
   location: string;
   daysPosted: number;
-  jobType: string;
+  subCategory: string;
   budget: string;   // budget can be a string(for negotiable services) or number
   isBookmarked: boolean;
   isUrgent: boolean;
@@ -25,7 +25,7 @@ const JobTile: FC<JobTileProps> = ({
   title,
   location,
   daysPosted,
-  jobType,
+  subCategory,
   budget,
   isBookmarked,
   isUrgent,
@@ -68,7 +68,7 @@ const JobTile: FC<JobTileProps> = ({
                 {/* Job type */}
                 <div className="flex items-center">
                   <TagIcon className="w-4 h-4 mr-1" style={{ color: "red" }} />
-                  <p className="job-tile-type">{jobType}</p>
+                  <p className="job-tile-type">{subCategory}</p>
                 </div>
 
                 {/* Location */}
@@ -142,7 +142,7 @@ const JobTile: FC<JobTileProps> = ({
                 {/* Job type */}
                 <div className="flex items-center">
                   <TagIcon className="w-4 h-4 mr-1" style={{ color: "red" }} />
-                  <p className="job-tile-type">{jobType}</p>
+                  <p className="job-tile-type">{subCategory}</p>
                 </div>
 
                 {/* location */}

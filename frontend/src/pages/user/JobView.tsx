@@ -222,7 +222,7 @@ export default function JobView() {
               {/* Task Type */ }
               <div className="flex items-center">
                 <TagIcon className="w-4 h-4 mr-1" style={{ color: "red" }}/>
-                <p className="text-gray-600 text-sm">{job.jobType}</p>
+                <p className="text-gray-600 text-sm">{job.subCategory}</p>
               </div>                         
             </div>
 
