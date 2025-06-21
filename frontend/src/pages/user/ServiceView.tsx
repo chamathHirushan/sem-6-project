@@ -1,16 +1,18 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
 import {ClockIcon, MapPinIcon, TagIcon, CalendarDaysIcon, BriefcaseIcon, IdentificationIcon } from "@heroicons/react/24/outline";
 import { StarIcon as SolidStarIcon, FireIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
-import StarRatings from 'react-star-ratings';
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./ServiceView.css";
+import {getServiceDetails} from "../../api/userAPI";
 
 import jobImage from "../../assets/get-a-job-with-no-experience.png";
 
 export default function ServiceView() {
+  const params = useParams();
+  const id = params.id;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -32,9 +34,31 @@ export default function ServiceView() {
       },
     });
   };
-  
 
-  const task = {
+  interface Task {
+  id: string;
+  title: string;
+  category: string;
+  taskType?: string;
+  location: string;
+  isUrgent: boolean;
+  isTrending?: boolean;
+  daysPosted: string; // e.g., "2 days", "3 months"
+  dueDate: string; // format: "YYYY-MM-DD"
+  postedDate: string; // format: "YYYY-MM-DD"
+  postedUserName: string;
+  postedUserImage: string;
+  postedUserRating?: number;
+  miniDescription: string;
+  budget: number;
+  address: string;
+  description: string;
+  poster: string;
+  isBookmarked: boolean;
+  image: string[];
+}  
+
+  const sampleTask = {
     id: "D153",
     title: "Senior Developer",
     category: "IT & Software",
@@ -56,6 +80,26 @@ export default function ServiceView() {
     isBookmarked: false,
     image: [jobImage, jobImage, jobImage],
   };
+
+  const [task, setTask] = useState<Task>(sampleTask);
+
+    useEffect(() => {
+      async function fetchJobs() {
+        try {
+          if (!id) { return; } // If no ID, do not fetch
+          const fetchedJob = await getServiceDetails(id);//TODO
+          if (!fetchedJob) {
+            //toast.error("Please try again.");
+            return;
+          }
+          setTask(fetchedJob);
+        } catch (error) {
+          //toast.error(error instanceof Error ? error.message : "An unknown error occurred.");
+          console.error("Error fetching job details:", error);
+        }
+      }
+      fetchJobs();
+    }, [id]);
 
   // Social media share URLs
   const shareUrl = `https://sewa.lk/hire/${task.id}`;
@@ -100,10 +144,10 @@ export default function ServiceView() {
           <div className="flex justify-between">
             <div>
               {/* Task id */ }
-              <div className="flex items-center my-1">
+              {/* <div className="flex items-center my-1">
                 <IdentificationIcon className="w-4 h-4 mr-1" style={{ color: "black" }}/>
                 <p className="text-gray-600 text-sm"><span className="font-bold">Task ID: </span>{task.id}</p>
-              </div>
+              </div> */}
               
               {/* task category*/ }
               <div className="flex items-center my-1">
@@ -119,11 +163,19 @@ export default function ServiceView() {
             </div>
             
             <div className="flex flex-col gap-2 justify-start mr-3">
+              {/* No. of applies so far */}          
+              <div className="flex items-center justify-center p-0.5 px-1">
+                <p className="text-cyan-700 text-sm font-bold">7 applicants</p>
+              </div>
+
+
               {/* Urgent icon */}
               {task.isUrgent && (
-                <div className="flex items-center justify-center bg-red-500 rounded-md p-0.5">
-                  <ExclamationTriangleIcon className="w-4 h-4 mr-1" style={{ color: "white" }} />
-                  <p className="text-white text-xs">Urgent</p>
+                <div className="flex items-center justify-end ">
+                  <div className="flex items-center w-auto bg-red-500 rounded-md p-0.5">
+                    <ExclamationTriangleIcon className="w-4 h-4 mr-1" style={{ color: "white" }} />
+                    <p className="text-white text-xs pr-1">Urgent</p>
+                  </div>
                 </div>
               )}
 
@@ -173,31 +225,19 @@ export default function ServiceView() {
         {/* right side summary area */}
         <div className="w-full h-full lg:w-1/3 bg-gray-100 p-4 rounded-lg shadow-md">
           {/* user info of the task poster */}
-          <div className="flex items-center mb-4">
+          <div className="flex items-center mb-4 w-full">
             <img src={task.postedUserImage} alt="Job Poster" className="w-16 h-16 rounded-full mr-4" />
-            <div>
-              <h3 className="text-lg font-semibold">{task.postedUserName}</h3>
-                <div className="flex items-center">
-                  <StarRatings
-                    rating={task.postedUserRating}
-                    starRatedColor="#FACC15"
-                    numberOfStars={5}
-                    name="rating"
-                    starDimension="20px"
-                    starSpacing="2px"
-                  />
-                  
-                  <span className="ml-1.5 text-gray-600">{task.postedUserRating}</span>
-                </div>
+            <div className="flex justify-center items-start pl-4">
+              <h2 className="text-xl font-semibold">{task.postedUserName}</h2>
             </div>
           </div>
           
           <div>
             <div className="flex flex-col gap-0.5">
-              {/* Budget */ }
-              <div className="flex items-center justify-center my-2">
+              {/* Budget - NO BUDGET FOR TASKS */ }
+              {/* <div className="flex items-center justify-center my-2">
                 <p className="text-black text-2xl font-bold">Rs. {task.budget}</p>
-              </div>
+              </div> */}
 
               {/* Location */ }
               <div className="flex items-center">
@@ -205,11 +245,11 @@ export default function ServiceView() {
                 <p className="text-gray-600 text-sm">{task.location}</p>
               </div>
 
-              {/* Due Date */ }
-              <div className="flex items-center">
+              {/* Due Date - NO DUE DATE FOR TASKS*/ }
+              {/* <div className="flex items-center">
                 <CalendarDaysIcon className="w-4 h-4 mr-1" style={{ color: "orange" }}/>
                 <p className="text-gray-600 text-sm">Due Date: {task.dueDate}</p>
-              </div>
+              </div> */}
 
               {/* Posted Date */ }
               <div className="flex items-center">
