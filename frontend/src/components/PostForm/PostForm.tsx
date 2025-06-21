@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import job_post_header_image from '../../assets/job_post_header_image.jpg';
 import { Country, City } from "country-state-city";
 import type { ICountry, ICity } from "country-state-city";
-import { handleImageUpload as uploadToCloudinary } from '../../utils/cloudinary'; // adjust path if needed
+import { handleImageUpload as uploadToCloudinary } from '../../utils/Cloudinary';
 import Select from "react-select";
 import DatePicker from "react-datepicker";
+import { X } from "lucide-react";
 import "react-datepicker/dist/react-datepicker.css";
 
 
@@ -28,7 +29,8 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [postedDate, setPostedDate] = useState<Date | null>(null);
   const [image, setImage] = useState<string[]>([]);
-  const [poster, setPoster] = useState<string | null>(null);
+  const [uploadingImages, setUploadingImages] = useState<number>(0);
+  const [poster, setPoster] = useState<{ name: string, previewUrl: string, isImage: boolean } | null>(null);
 
   const [countries, setCountries] = useState<ICountry[]>([]);
   const [cities, setCities] = useState<ICity[]>([]);
@@ -104,6 +106,11 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
       setSelectedCity('');
       setCities([]);
       setCountries(Country.getAllCountries());
+    }else{
+      // Clean up on close
+      setImage([]);
+      setUploadingImages(0);
+      setPoster(null);
     }
   }, [open]);
 
@@ -410,26 +417,42 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
-                    if (file.type.startsWith("image/")) {
-                      setPoster(URL.createObjectURL(file));
-                    } else {
-                      setPoster(file.name);
-                    }
+                      const isImage = file.type.startsWith("image/");
+                      const previewUrl = isImage ? URL.createObjectURL(file) : "";
+                      setPoster({
+                        name: file.name,
+                        previewUrl,
+                        isImage,
+                      });
                     }
                   }}
+                  
                   className="w-full border rounded px-2 py-1"
                   />
                   {poster && (
-                  <div className="mt-2">
-                    {poster.startsWith("blob:") ? (
-                    <img src={poster} alt="Poster" className="w-full h-auto rounded" />
+                  <div className="relative mt-2 w-36 h-24 border border-gray-300 rounded overflow-hidden bg-gray-50">
+                    {poster.isImage ? (
+                      <img
+                        src={poster.previewUrl}
+                        alt="Poster"
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-700">{poster}</span>
-                    </div>
+                      <div className="flex items-center justify-center w-full h-full text-sm text-gray-700 px-2">
+                        {poster.name}
+                      </div>
                     )}
+
+                    {/* Remove icon */}
+                    <button
+                      type="button"
+                      className="absolute top-0 right-0 bg-white bg-opacity-80 rounded-bl px-1 text-sm text-red-600 hover:text-red-800"
+                      onClick={() => setPoster(null)}
+                    >
+                      <X size={16} />
+                    </button>
                   </div>
-                  )}
+                )}
                 </div>
                 
 
@@ -440,20 +463,61 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                     type="file"
                     accept="image/*"
                     multiple
-                    onChange={handleImageUpload}
+                    onChange={async (e) => {
+                      const files = e.target.files;
+                      if (!files || files.length === 0) return;
+
+                      setUploadingImages(prev => prev + files.length);
+
+                      try {
+                        const urls = await uploadToCloudinary(files);
+                        setImage(prev => [...prev, ...urls]);
+                      } catch (err) {
+                        console.error("Upload failed:", err);
+                      } finally {
+                        setUploadingImages(0);
+                      }
+                    }}
                     className="w-full border rounded px-2 py-1"
                   />
 
-                  {/* Show image thumbnails if uploaded */}
+                  {/* Spinner grid during uploading */}
+                  {uploadingImages > 0 && (
+                    <div className="grid grid-cols-3 gap-2 mt-2">
+                      {Array(uploadingImages).fill(null).map((_, idx) => (
+                        <div
+                          key={`spinner-${idx}`}
+                          className="w-full h-24 bg-gray-100 flex items-center justify-center rounded border border-gray-300"
+                        >
+                          <svg className="animate-spin h-6 w-6 text-cyan-700" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                          </svg>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Show uploaded images with remove icon */}
                   {image.length > 0 && (
                     <div className="grid grid-cols-3 gap-2 mt-2">
                       {image.map((imgUrl, idx) => (
-                        <img
-                          key={idx}
-                          src={imgUrl}
-                          alt={`Uploaded ${idx}`}
-                          className="w-full h-24 object-cover rounded"
-                        />
+                        <div key={idx} className="relative w-full h-24">
+                          <img
+                            src={imgUrl}
+                            alt={`Uploaded ${idx}`}
+                            className="w-full h-full object-cover rounded"
+                          />
+                          <button
+                            type="button"
+                            className="absolute top-0 right-0 bg-white bg-opacity-80 rounded-bl px-1 text-sm text-red-600 hover:text-red-800"
+                            onClick={() =>
+                              setImage(prev => prev.filter((_, i) => i !== idx))
+                            }
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
                       ))}
                     </div>
                   )}
