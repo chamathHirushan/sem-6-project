@@ -17,6 +17,7 @@ import Fav from "../pages/user/Fav";
 import Profile from "../pages/user/Profile";
 import Layout from "../components/PageLayout";
 import ServiceView from "../pages/user/ServiceView";
+// import Message from "../pages/Message/Message";
 
 export function AppRouter() {
   const { user, userLoggedIn } = useAuth();

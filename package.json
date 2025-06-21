@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@tanstack/react-query": "^5.80.10",
+    "axios": "^1.10.0"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.89.2"
+  }
+}
