@@ -7,6 +7,7 @@ import TaskTile from "../../components/TaskTile/TaskTile";
 import {Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
 import jobImage from "../../assets/get-a-job-with-no-experience.png"
 import { useSearchParams, useLocation } from "react-router-dom";
+import {getAllAvailableServices} from "../../api/userAPI";
 
 export default function Hires() {
   const [backendData, setBackendData] = useState<string>("Loading...");
@@ -59,14 +60,13 @@ export default function Hires() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await apiClient.get("/user/dashboard");
-        setBackendData(response.message || "No data received");
+        const fetchedServices = await getAllAvailableServices();
+        setTasks(fetchedServices);
       } catch (error) {
-        setBackendData("Error fetching data");
+        //setTasks(fetchedServices);
         console.error("API Error:", error);
       }
     }
-
     fetchData();
   }, []);
 
@@ -113,10 +113,10 @@ export default function Hires() {
     image: string;
     location: string;
     daysPosted: number;
-    taskType: string;
+    taskType?: string;
     budget: number;
     isUrgent: boolean;
-    isTrending: boolean;
+    isTrending?: boolean;
     isBookmarked: boolean;
   }
 
@@ -216,7 +216,6 @@ export default function Hires() {
     } else if (searchTerm.trim() !== "") {
       return (
         task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.taskType.toLowerCase().includes(searchTerm.toLowerCase()) ||
         task.location.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -255,6 +254,7 @@ return (
             setCurrentPage(1); // Reset to first page on new search
           }}
           selectedSubItem={null}
+          showAdvertisement={true} // Hide advertisement for this page
         />
     
     <div style={{ padding: "20px", width: "100%", display: "flex", flexDirection: "column" }}>

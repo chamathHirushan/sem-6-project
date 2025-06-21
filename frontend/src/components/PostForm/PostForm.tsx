@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import job_post_header_image from '../../assets/job_post_header_image.jpg';
 import { Country, City } from "country-state-city";
 import type { ICountry, ICity } from "country-state-city";
+import { handleImageUpload as uploadToCloudinary } from '../../utils/cloudinary'; // adjust path if needed
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -145,13 +146,18 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
     open && onClose();
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files) return;
-
-    // const newUrls = Array.from(files).map(file => URL.createObjectURL(file));
-    setImage([]);
+    if (!files || files.length === 0) return;
+  
+    try {
+      const urls = await uploadToCloudinary(files);
+      setImage(urls); // save the array of image URLs to state
+    } catch (error) {
+      console.error("Error uploading images:", error);
+    }
   };
+  
 
 
   const menuItems = [
@@ -244,7 +250,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
           ×
         </button>
         {/* toggle buttons for selecting job or service */}
-        {/* <div className="flex justify-center mx-8 my-2">
+        <div className="flex justify-center mx-8 my-2">
             <button
                 type="button"
                 className={`w-full px-4 py-2 rounded-l-sm ${selectedType === 'job' ? 'bg-[#0f2656] text-white' : 'bg-gray-200 text-gray-700'}`}
@@ -259,7 +265,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 >
                 Task Post
             </button>
-        </div> */}
+        </div>
 
         {/* Scrollable Form Area */}
         <div className="overflow-y-auto pt-2 p-6 flex-1">
@@ -470,53 +476,64 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                     </div>
                   )}
                 </div>
-              )}
-            </div>
+                
 
+                {/* images related to the job post */}
+                <div className="mb-3">
+                  <label className="block mb-1 font-medium">Upload Images</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUpload}
+                    className="w-full border rounded px-2 py-1"
+                  />
 
-            {/* images related to the job post */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">Upload Images</label>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageUpload}
-                className="w-full border rounded px-2 py-1"
-              />
-            </div>
+                  {/* Show image thumbnails if uploaded */}
+                  {image.length > 0 && (
+                    <div className="grid grid-cols-3 gap-2 mt-2">
+                      {image.map((imgUrl, idx) => (
+                        <img
+                          key={idx}
+                          src={imgUrl}
+                          alt={`Uploaded ${idx}`}
+                          className="w-full h-24 object-cover rounded"
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-            {/* Urgent check box */}
-            <div className="mb-3">
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  className="form-checkbox h-4 w-4 text-blue-600"
-                />
-                <span className="ml-2">Urgent Post</span>
-              </label>
-            </div>
+                {/* Urgent check box */}
+                <div className="mb-3">
+                    <label className="inline-flex items-center">
+                        <input
+                            type="checkbox"
+                            className="form-checkbox h-4 w-4 text-blue-600"
+                        />
+                        <span className="ml-2">Urgent Post</span>
+                    </label>
+                </div>
 
-          </form>
+            </form>
         </div>
 
         {/* Footer */}
         <div className="border-t rounded-b-2xl px-6 py-3 flex justify-end gap-4 bg-cyan-800">
-          <button
-            onClick={onClose}
-            type="button"
-            className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-300 text-gray-800"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            type="submit"
-            className="px-6 py-2 rounded-lg bg-[#306ff7] hover:bg-[#1f3565] text-white"
-
-          >
-            Post
-          </button>
+            <button
+                onClick={onClose}
+                type="button"
+                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800"
+                >
+                Cancel
+            </button>
+            <button
+                onClick={handleSubmit}
+                type="submit"
+                className="px-6 py-2 rounded-lg bg-[#306ff7] hover:bg-[#1f3565] text-white"
+                >
+                Post
+            </button>
         </div>
       </div>
     </div>
