@@ -1,15 +1,18 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
 import {ClockIcon, MapPinIcon, TagIcon, CalendarDaysIcon, BriefcaseIcon, IdentificationIcon } from "@heroicons/react/24/outline";
 import { StarIcon as SolidStarIcon, FireIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./ServiceView.css";
+import {getServiceDetails} from "../../api/userAPI";
 
 import jobImage from "../../assets/get-a-job-with-no-experience.png";
 
 export default function ServiceView() {
+  const params = useParams();
+  const id = params.id;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -31,9 +34,31 @@ export default function ServiceView() {
       },
     });
   };
-  
 
-  const task = {
+  interface Task {
+  id: string;
+  title: string;
+  category: string;
+  taskType?: string;
+  location: string;
+  isUrgent: boolean;
+  isTrending?: boolean;
+  daysPosted: string; // e.g., "2 days", "3 months"
+  dueDate: string; // format: "YYYY-MM-DD"
+  postedDate: string; // format: "YYYY-MM-DD"
+  postedUserName: string;
+  postedUserImage: string;
+  postedUserRating?: number;
+  miniDescription: string;
+  budget: number;
+  address: string;
+  description: string;
+  poster: string;
+  isBookmarked: boolean;
+  image: string[];
+}  
+
+  const sampleTask = {
     id: "D153",
     title: "Senior Developer",
     category: "IT & Software",
@@ -55,6 +80,26 @@ export default function ServiceView() {
     isBookmarked: false,
     image: [jobImage, jobImage, jobImage],
   };
+
+  const [task, setTask] = useState<Task>(sampleTask);
+
+    useEffect(() => {
+      async function fetchJobs() {
+        try {
+          if (!id) { return; } // If no ID, do not fetch
+          const fetchedJob = await getServiceDetails(id);//TODO
+          if (!fetchedJob) {
+            //toast.error("Please try again.");
+            return;
+          }
+          setTask(fetchedJob);
+        } catch (error) {
+          //toast.error(error instanceof Error ? error.message : "An unknown error occurred.");
+          console.error("Error fetching job details:", error);
+        }
+      }
+      fetchJobs();
+    }, [id]);
 
   // Social media share URLs
   const shareUrl = `https://sewa.lk/hire/${task.id}`;

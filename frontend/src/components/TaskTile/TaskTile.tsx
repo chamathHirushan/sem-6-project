@@ -10,7 +10,7 @@ interface TaskTileProps {
   title: string;
   location: string;
   daysPosted: number;
-  taskType: string;
+  subCategory: string;
   budget: string;   // budget can be a string(for negotiable services) or number
   isBookmarked: boolean;
   isUrgent: boolean,
@@ -25,10 +25,9 @@ const TaskTile: FC<TaskTileProps> = ({
   title,
   location,
   daysPosted,
-  taskType,
+  subCategory,
   isBookmarked,
   isUrgent,
-  isTrending,
   budget, 
   view,
   onBookmarkToggle,
@@ -69,7 +68,7 @@ const TaskTile: FC<TaskTileProps> = ({
                 {/* Task type */}
                 <div className="flex items-center">
                   <TagIcon className="w-4 h-4 mr-1" style={{ color: "red" }} />
-                  <p className="task-tile-type">{taskType}</p>
+                  <p className="task-tile-type">{subCategory}</p>
                 </div>
 
                 {/* Location */}
@@ -142,7 +141,7 @@ const TaskTile: FC<TaskTileProps> = ({
                 {/* Task type */}
                 <div className="flex items-center">
                   <TagIcon className="w-4 h-4 mr-1" style={{ color: "red" }} />
-                  <p className="task-tile-type">{taskType}</p>
+                  <p className="task-tile-type">{subCategory}</p>
                 </div>
 
                 {/* location */}
@@ -162,12 +161,12 @@ const TaskTile: FC<TaskTileProps> = ({
                 )}
 
                 {/* Trending icon */}
-                {isTrending && (
+                {/* {isTrending && (
                     <div className="flex items-center justify-center rounded-md border border-orange-500 p-0.5 px-1">
                     <FireIcon className="w-4 h-4 mr-0.5" style={{ color: "orange" }} />
                     <p className="text-black text-xs">Trending</p>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
 

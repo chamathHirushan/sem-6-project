@@ -36,7 +36,7 @@ export const getUserBookmarks = async () => {
 }
 
 export const addBookmark = async (jobId: string, state: boolean) => {
-  const response = await apiClient.post(`/api/user/bookmarks/add/${jobId}`);
+  const response = await apiClient.post(`/api/user/bookmarks/add/${jobId}`,{});
   return response.data;
 }
 
@@ -51,12 +51,12 @@ export const getUserNotifications = async () => { //socket?
 }
 
 export const markNotificationAsRead = async (notificationId: string) => {
-  const response = await apiClient.post(`/api/user/notifications/read/${notificationId}`);
+  const response = await apiClient.post(`/api/user/notifications/read/${notificationId}`,{});
   return response.data;
 }
 
 export const markAllNotificationsAsRead = async () => {
-  const response = await apiClient.post(`/api/user/notifications/read/all`);
+  const response = await apiClient.post(`/api/user/notifications/read/all`,{});
   return response.data;
 }
 
@@ -71,7 +71,7 @@ export const getJobDetails = async (jobId: string) => {
 }
 
 export const applyForJob = async (jobId: string) => {
-  const response = await apiClient.post(`/api/user/jobs/${jobId}/apply`, applicationData);
+  const response = await apiClient.post(`/api/user/jobs/${jobId}/apply`, {});
   return response.data;
 }
 
