@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import job_post_header_image from '../../assets/job_post_header_image.jpg';
 import { Country, City } from "country-state-city";
 import type { ICountry, ICity } from "country-state-city";
+import { handleImageUpload as uploadToCloudinary } from '../../utils/cloudinary'; // adjust path if needed
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -24,7 +25,6 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
   const [urgent, setUrgent] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
-  const [boostType, setBoostType] = useState(0);
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [postedDate, setPostedDate] = useState<Date | null>(null);
   const [image, setImage] = useState<string[]>([]);
@@ -95,7 +95,6 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
       setUrgent(false);
       setSelectedCategory('');
       setSelectedSubCategory('');
-      setBoostType('');
       setDueDate(null);
       setPostedDate(new Date());
       setImage([]);
@@ -114,21 +113,21 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
     e.preventDefault();
     // Handle form submission here
     // Optionally reset form or call onClose()
-
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files) return;
+    if (!files || files.length === 0) return;
   
-    // const newUrls = Array.from(files).map(file => URL.createObjectURL(file));
-    setImage([]);
+    try {
+      const urls = await uploadToCloudinary(files);
+      setImage(urls); // save the array of image URLs to state
+    } catch (error) {
+      console.error("Error uploading images:", error);
+    }
   };
+  
 
-  const boostTypes = [
-    { label: "Standard Boost", value: 1 },
-    { label: "Premium Boost", value: 2 },
-  ];
   
   const menuItems = [
     { label: "Technicians", subItems: [
@@ -204,7 +203,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
           ×
         </button>
         {/* toggle buttons for selecting job or service */}
-        {/* <div className="flex justify-center mx-8 my-2">
+        <div className="flex justify-center mx-8 my-2">
             <button
                 type="button"
                 className={`w-full px-4 py-2 rounded-l-sm ${selectedType === 'job' ? 'bg-[#0f2656] text-white' : 'bg-gray-200 text-gray-700'}`}
@@ -219,7 +218,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 >
                 Task Post
             </button>
-        </div> */}
+        </div>
 
         {/* Scrollable Form Area */}
         <div className="overflow-y-auto pt-2 p-6 flex-1">
@@ -331,7 +330,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 </div>
 
                 {/* Job Type - Full time/ Part time*/}
-                {/* {selectedType === 'job' && (
+                {selectedType === 'job' && (
                   <div className="mb-3">
                     <label className="block mb-1 font-medium">Job Type</label>
                     <select
@@ -343,7 +342,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                       <option value="Part Time">Part Time</option>
                     </select>
                   </div>
-                )} */}
+                )}
 
                 {/* Category Selection */}
                 <div className="mb-3">
@@ -444,6 +443,20 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                     onChange={handleImageUpload}
                     className="w-full border rounded px-2 py-1"
                   />
+
+                  {/* Show image thumbnails if uploaded */}
+                  {image.length > 0 && (
+                    <div className="grid grid-cols-3 gap-2 mt-2">
+                      {image.map((imgUrl, idx) => (
+                        <img
+                          key={idx}
+                          src={imgUrl}
+                          alt={`Uploaded ${idx}`}
+                          className="w-full h-24 object-cover rounded"
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Urgent check box */}
@@ -457,22 +470,6 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                     </label>
                 </div>
 
-                <div className="mb-3">
-                  <label className="block mb-1 font-medium">Boost</label>
-                  <select
-                    className="w-full border rounded px-2 py-1"
-                    value={boostType}
-                    onChange={e => setBoostType(e.target.value)}
-                  >
-                    <option value="">Select boost type</option>
-                   {boostTypes.map((item, index) => (
-                      <option key={index} value={item.label}>
-                        {item.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
             </form>
         </div>
 
@@ -481,7 +478,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
             <button
                 onClick={onClose}
                 type="button"
-                className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-300 text-gray-800"
+                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800"
                 >
                 Cancel
             </button>
@@ -489,7 +486,6 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 onClick={handleSubmit}
                 type="submit"
                 className="px-6 py-2 rounded-lg bg-[#306ff7] hover:bg-[#1f3565] text-white"
-
                 >
                 Post
             </button>
