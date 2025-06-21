@@ -24,6 +24,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
   const [urgent, setUrgent] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  const [boostType, setBoostType] = useState(0);
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [postedDate, setPostedDate] = useState<Date | null>(null);
   const [image, setImage] = useState<string[]>([]);
@@ -46,16 +47,16 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
     const loadInitialData = async () => {
       const countryList = Country.getAllCountries();
       setCountries(countryList);
-
+  
       // Simulate any other async data loading here (e.g., images, etc.)
       await new Promise(resolve => setTimeout(resolve, 500)); // optional artificial delay
-
+  
       setLoading(false);
     };
-
+  
     loadInitialData();
   }, []);
-
+  
 
   // Load cities whenever a country is selected
   useEffect(() => {
@@ -79,7 +80,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
       setPostedDate(new Date());
     }
   }, [open]);
-
+  
   // Reset form when popup opens
   useEffect(() => {
     if (open) {
@@ -94,6 +95,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
       setUrgent(false);
       setSelectedCategory('');
       setSelectedSubCategory('');
+      setBoostType('');
       setDueDate(null);
       setPostedDate(new Date());
       setImage([]);
@@ -112,91 +114,49 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
     e.preventDefault();
     // Handle form submission here
     // Optionally reset form or call onClose()
-    console.log({
-      title,
-      description,
-      budget,
-      location,
-    });
-    const budgetNumber = parseFloat(budget);
 
-    addTask(title, description, budgetNumber, location)
-      .then((response) => {
-        // Narrow the type of response to access status
-        if (typeof response === "object" && response !== null && "status" in response && typeof (response as any).status === "number") {
-          if ((response as any).status !== 200) {
-            toast.error("Failed to add task");
-            return;
-          }
-          console.log("Task added successfully:", response);
-          toast.success("Task added successfully");
-          setTitle('');
-          setDescription('');
-          setBudget('');
-          setLocation('');
-        } else {
-          toast.error("Unexpected response format");
-        }
-      })
-      .catch((error) => {
-        console.error("Error adding task:", error);
-        toast.error("Error adding task");
-      });
-    open && onClose();
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-
+  
     // const newUrls = Array.from(files).map(file => URL.createObjectURL(file));
     setImage([]);
   };
 
-
+  const boostTypes = [
+    { label: "Standard Boost", value: 1 },
+    { label: "Premium Boost", value: 2 },
+  ];
+  
   const menuItems = [
-    {
-      label: "Technicians", subItems: [
-        "AC Repairs", "CCTV", "Constructions", "Electricians", "Electronic Repairs", "Glass & Aluminium", "Iron Works",
-        "Masonry", "Odd Jobs", "Pest Controllers", "Plumbing", "Wood Works"
-      ]
-    },
-    {
-      label: "Vehicles", subItems: [
-        "Auto Mechanic", "Car Wash", "Delivery", "Drivers", "Spare Parts", "Transport", "Vehicle Rental"
-      ]
-    },
-    {
-      label: "IT", subItems: [
-        "Computer Repairs", "Data Entry", "Design & Creative", "Phone Repairs", "Telecommunication", "Web, Mobile & Software"
-      ]
-    },
-    {
-      label: "Professional", subItems: [
-        "Accountancy", "Arts & Crafts", "Hotels & Hospitality", "IT Consultancy", "Insurance Agents", "Legal Advice",
-        "Loan Brokers", "Modeling", "Security", "Travel Agents", "Tuition"
-      ]
-    },
-    {
-      label: "Personalised Services", subItems: [
-        "Caretaker / Home Nurse", "Caretakers", "Fitness Training", "Housemaids", "Sports"
-      ]
-    },
-    {
-      label: "Printing", subItems: [
-        "Printing", "T Shirts & Caps", "Type Setting"
-      ]
-    },
-    {
-      label: "House", subItems: [
-        "Architects", "Boarding Places", "House Painting", "House Rental", "House/Office Cleaning", "Interior Design", "Landscaping"
-      ]
-    },
-    {
-      label: "Beauty & Event", subItems: [
-        "Advertising & promotions", "Audio Hires", "Band, DJ & dancing", "Band, DJ & dancing", "Beauty Salon", "Catering & Food",
-        "Dress Makers", "Event Planners", "Flowers & Decos", "Health & Beauty Spa", "Photography", "Videography"]
-    },
+    { label: "Technicians", subItems: [
+      "AC Repairs", "CCTV", "Constructions", "Electricians", "Electronic Repairs", "Glass & Aluminium", "Iron Works",
+      "Masonry", "Odd Jobs", "Pest Controllers", "Plumbing", "Wood Works"
+    ]},
+    { label: "Vehicles", subItems: [
+      "Auto Mechanic", "Car Wash", "Delivery", "Drivers", "Spare Parts", "Transport", "Vehicle Rental"
+    ]},
+    { label: "IT", subItems: [
+      "Computer Repairs", "Data Entry", "Design & Creative", "Phone Repairs", "Telecommunication", "Web, Mobile & Software"
+    ]},
+    { label: "Professional", subItems: [
+      "Accountancy", "Arts & Crafts", "Hotels & Hospitality", "IT Consultancy", "Insurance Agents", "Legal Advice",
+      "Loan Brokers", "Modeling", "Security", "Travel Agents", "Tuition"
+    ]},
+    { label: "Personalised Services", subItems: [
+      "Caretaker / Home Nurse", "Caretakers", "Fitness Training", "Housemaids", "Sports"
+    ]},
+    { label: "Printing", subItems: [   
+      "Printing", "T Shirts & Caps", "Type Setting"
+    ]},
+    { label: "House", subItems: [
+      "Architects", "Boarding Places", "House Painting", "House Rental", "House/Office Cleaning", "Interior Design", "Landscaping"
+    ]},
+    { label: "Beauty & Event", subItems: [
+      "Advertising & promotions", "Audio Hires", "Band, DJ & dancing", "Band, DJ & dancing", "Beauty Salon", "Catering & Food",
+      "Dress Makers","Event Planners", "Flowers & Decos", "Health & Beauty Spa", "Photography", "Videography"] },
     { label: "Other", subItems: ["Other"] },
   ];
 
@@ -263,260 +223,276 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
 
         {/* Scrollable Form Area */}
         <div className="overflow-y-auto pt-2 p-6 flex-1">
-          <form onSubmit={handleSubmit}>
-            {/* Title */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">
-                {selectedType === 'job' ? 'Job Title' : 'Task Title'}
-              </label>
-              <input
-                className="w-full border rounded px-2 py-1"
-                type="text"
-                placeholder={selectedType === 'job' ? 'Job title' : 'Task title'}
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-              />
-            </div>
-
-            {  /* Short Description */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">
-                {selectedType === 'job' ? 'Short Description' : 'Task Description'}
-              </label>
-              <input
-                className="w-full border rounded px-2 py-1"
-                type="text"
-                placeholder={selectedType === 'job' ? 'Short job description' : 'Short task description'}
-                value={miniDescription}
-                onChange={e => setMiniDescription(e.target.value)}
-              />
-            </div>
-
-            {/* Long Description */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">Description</label>
-              <textarea
-                className="w-full border rounded px-2 py-1"
-                placeholder="Job description"
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-              />
-            </div>
-
-            {/* Budget*/}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">Budget</label>
-              <input
-                className="w-full border rounded px-2 py-1"
-                type="number"
-                placeholder="Budget"
-                value={budget}
-                onChange={e => setBudget(e.target.value)}
-              />
-            </div>
-
-            {/* Location */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">Location</label>
-
-              <div className="flex gap-2">
-                {/* Country Select */}
-                <div className="w-1/2">
-                  <Select
-                    options={countries.map(c => ({ value: c.isoCode, label: c.name }))}
-                    value={countries.find(c => c.isoCode === selectedCountry) && {
-                      value: selectedCountry,
-                      label: countries.find(c => c.isoCode === selectedCountry)?.name,
-                    }}
-                    onChange={(selectedOption) => {
-                      setSelectedCountry(selectedOption?.value || "");
-                      setSelectedCity("");
-                      setLocation("");
-                    }}
-                    placeholder="Select Country"
-                    isClearable
-                  />
+            <form onSubmit={handleSubmit}>
+                {/* Title */}
+                <div className="mb-3">
+                    <label className="block mb-1 font-medium">
+                    {selectedType === 'job' ? 'Job Title' : 'Task Title'}
+                    </label>
+                    <input
+                    className="w-full border rounded px-2 py-1"
+                    type="text"
+                    placeholder={selectedType === 'job' ? 'Job title' : 'Task title'}
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                    />
                 </div>
 
-                {/* City Select */}
-                <div className="w-1/2">
-                  <Select
-                    options={cities.map(city => ({ value: city.name, label: city.name }))}
-                    value={selectedCity ? { value: selectedCity, label: selectedCity } : null}
-                    onChange={(selectedOption) => {
-                      const cityName = selectedOption?.value || "";
-                      setSelectedCity(cityName);
-
-                      const countryName = countries.find(c => c.isoCode === selectedCountry)?.name || "";
-                      setLocation(`${countryName}, ${cityName}`);
-                    }}
-                    placeholder="Select City"
-                    isDisabled={!cities.length}
-                    isClearable
-                  />
+                {  /* Short Description */}
+                <div className="mb-3">
+                    <label className="block mb-1 font-medium">
+                    {selectedType === 'job' ? 'Short Description' : 'Task Description'}
+                    </label>
+                    <input
+                    className="w-full border rounded px-2 py-1"
+                    type="text"
+                    placeholder={selectedType === 'job' ? 'Short job description' : 'Short task description'}
+                    value={miniDescription}
+                    onChange={e => setMiniDescription(e.target.value)}
+                    />
                 </div>
-              </div>
-            </div>
 
-            {/* Address */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">Address</label>
-              <input
-                className="w-full border rounded px-2 py-1"
-                type="text"
-                placeholder="Location"
-                value={address}
-                onChange={e => setLocation(e.target.value)}
-              />
-            </div>
+                {/* Long Description */}
+                <div className="mb-3">
+                    <label className="block mb-1 font-medium">Description</label>
+                    <textarea
+                    className="w-full border rounded px-2 py-1"
+                    placeholder="Job description"
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                    />
+                </div>
+                
+                {/* Budget*/}
+                <div className="mb-3">
+                    <label className="block mb-1 font-medium">Budget</label>
+                    <input
+                    className="w-full border rounded px-2 py-1"
+                    type="number"
+                    placeholder="Budget"
+                    value={budget}
+                    onChange={e => setBudget(e.target.value)}
+                    />
+                </div>
 
-            {/* Job Type - Full time/ Part time*/}
-            {selectedType === 'job' && (
-              <div className="mb-3">
-                <label className="block mb-1 font-medium">Job Type</label>
-                <select
-                  className="w-full border rounded px-2 py-1"
-                  value={jobType}
-                  onChange={e => setJobType(e.target.value as 'Full Time' | 'Part Time')}
-                >
-                  <option value="Full Time">Full Time</option>
-                  <option value="Part Time">Part Time</option>
-                </select>
-              </div>
-            )}
+               {/* Location */}
+                <div className="mb-3">
+                  <label className="block mb-1 font-medium">Location</label>
 
-            {/* Category Selection */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">Category</label>
-              <select
-                className="w-full border rounded px-2 py-1"
-                value={selectedCategory}
-                onChange={e => {
-                  setSelectedCategory(e.target.value);
-                  setSelectedSubCategory('');
-                }}
-              >
-                <option value="">Select Category</option>
-                {menuItems.map((item, index) => (
-                  <option key={index} value={item.label}>
-                    {item.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+                  <div className="flex gap-2">
+                    {/* Country Select */}
+                    <div className="w-1/2">
+                      <Select
+                        options={countries.map(c => ({ value: c.isoCode, label: c.name }))}
+                        value={countries.find(c => c.isoCode === selectedCountry) && {
+                          value: selectedCountry,
+                          label: countries.find(c => c.isoCode === selectedCountry)?.name,
+                        }}
+                        onChange={(selectedOption) => {
+                          setSelectedCountry(selectedOption?.value || "");
+                          setSelectedCity("");
+                          setLocation("");
+                        }}
+                        placeholder="Select Country"
+                        isClearable
+                      />
+                    </div>
 
-            {/* Subcategory Selection */}
-            {selectedCategory && (
-              <div className="mb-3">
-                <label className="block mb-1 font-medium">Subcategory</label>
-                <select
-                  className="w-full border rounded px-2 py-1"
-                  value={selectedSubCategory}
-                  onChange={e => setSelectedSubCategory(e.target.value)}
-                >
-                  <option value="">Select Subcategory</option>
-                  {menuItems
+                    {/* City Select */}
+                    <div className="w-1/2">
+                      <Select
+                        options={cities.map(city => ({ value: city.name, label: city.name }))}
+                        value={selectedCity ? { value: selectedCity, label: selectedCity } : null}
+                        onChange={(selectedOption) => {
+                          const cityName = selectedOption?.value || "";
+                          setSelectedCity(cityName);
+
+                          const countryName = countries.find(c => c.isoCode === selectedCountry)?.name || "";
+                          setLocation(`${countryName}, ${cityName}`);
+                        }}
+                        placeholder="Select City"
+                        isDisabled={!cities.length}
+                        isClearable
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Address */}
+                <div className="mb-3">
+                    <label className="block mb-1 font-medium">Address</label>
+                    <input
+                    className="w-full border rounded px-2 py-1"
+                    type="text"
+                    placeholder="Location"
+                    value={address}
+                    onChange={e => setLocation(e.target.value)}
+                    />
+                </div>
+
+                {/* Job Type - Full time/ Part time*/}
+                {/* {selectedType === 'job' && (
+                  <div className="mb-3">
+                    <label className="block mb-1 font-medium">Job Type</label>
+                    <select
+                      className="w-full border rounded px-2 py-1"
+                      value={jobType}
+                      onChange={e => setJobType(e.target.value as 'Full Time' | 'Part Time')}
+                    >
+                      <option value="Full Time">Full Time</option>
+                      <option value="Part Time">Part Time</option>
+                    </select>
+                  </div>
+                )} */}
+
+                {/* Category Selection */}
+                <div className="mb-3">
+                  <label className="block mb-1 font-medium">Category</label>
+                  <select
+                    className="w-full border rounded px-2 py-1"
+                    value={selectedCategory}
+                    onChange={e => {
+                      setSelectedCategory(e.target.value);
+                      setSelectedSubCategory('');
+                    }}
+                  >
+                    <option value="">Select Category</option>
+                    {menuItems.map((item, index) => (
+                      <option key={index} value={item.label}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Subcategory Selection */}
+                {selectedCategory && (
+                  <div className="mb-3">
+                  <label className="block mb-1 font-medium">Subcategory</label>
+                  <select
+                    className="w-full border rounded px-2 py-1"
+                    value={selectedSubCategory}
+                    onChange={e => setSelectedSubCategory(e.target.value)}
+                  >
+                    <option value="">Select Subcategory</option>
+                    {menuItems
                     .find(item => item.label === selectedCategory)
                     ?.subItems.map((sub, idx) => (
                       <option key={idx} value={sub}>
-                        {sub}
+                      {sub}
                       </option>
                     ))}
-                </select>
-              </div>
-            )}
+                  </select>
+                  </div>
+                )}
 
-            {/* Due date selection calander */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">Due Date</label>
-              <DatePicker
-                selected={dueDate}
-                onChange={(date) => setDueDate(date)}
-                dateFormat="yyyy-MM-dd"
-                minDate={new Date()}
-                placeholderText="Select a due date"
-                className="w-full border rounded px-2 py-1"
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-              />
-            </div>
+                {/* Due date selection calander */}
+                <div className="mb-3">
+                  <label className="block mb-1 font-medium">Due Date</label>
+                  <DatePicker
+                    selected={dueDate}
+                    onChange={(date) => setDueDate(date)}
+                    dateFormat="yyyy-MM-dd"
+                    minDate={new Date()}
+                    placeholderText="Select a due date"
+                    className="w-full border rounded px-2 py-1"
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                  />
+                </div>
 
-            {/* Job poster if file available */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">Poster</label>
-              <input
-                type="file"
-                accept="image/*,.pdf,.doc,.docx,.txt"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
+                {/* Job poster if file available */}
+                <div className="mb-3">
+                  <label className="block mb-1 font-medium">Poster</label>
+                  <input
+                  type="file"
+                  accept="image/*,.pdf,.doc,.docx,.txt"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
                     if (file.type.startsWith("image/")) {
                       setPoster(URL.createObjectURL(file));
                     } else {
                       setPoster(file.name);
                     }
-                  }
-                }}
-                className="w-full border rounded px-2 py-1"
-              />
-              {poster && (
-                <div className="mt-2">
-                  {poster.startsWith("blob:") ? (
+                    }
+                  }}
+                  className="w-full border rounded px-2 py-1"
+                  />
+                  {poster && (
+                  <div className="mt-2">
+                    {poster.startsWith("blob:") ? (
                     <img src={poster} alt="Poster" className="w-full h-auto rounded" />
-                  ) : (
+                    ) : (
                     <div className="flex items-center gap-2">
                       <span className="text-gray-700">{poster}</span>
                     </div>
+                    )}
+                  </div>
                   )}
                 </div>
-              )}
-            </div>
+                
 
+                {/* images related to the job post */}
+                <div className="mb-3">
+                  <label className="block mb-1 font-medium">Upload Images</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUpload}
+                    className="w-full border rounded px-2 py-1"
+                  />
+                </div>
 
-            {/* images related to the job post */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">Upload Images</label>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageUpload}
-                className="w-full border rounded px-2 py-1"
-              />
-            </div>
+                {/* Urgent check box */}
+                <div className="mb-3">
+                    <label className="inline-flex items-center">
+                        <input
+                            type="checkbox"
+                            className="form-checkbox h-4 w-4 text-blue-600"
+                        />
+                        <span className="ml-2">Urgent Post</span>
+                    </label>
+                </div>
 
-            {/* Urgent check box */}
-            <div className="mb-3">
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  className="form-checkbox h-4 w-4 text-blue-600"
-                />
-                <span className="ml-2">Urgent Post</span>
-              </label>
-            </div>
+                <div className="mb-3">
+                  <label className="block mb-1 font-medium">Boost</label>
+                  <select
+                    className="w-full border rounded px-2 py-1"
+                    value={boostType}
+                    onChange={e => setBoostType(e.target.value)}
+                  >
+                    <option value="">Select boost type</option>
+                   {boostTypes.map((item, index) => (
+                      <option key={index} value={item.label}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-          </form>
+            </form>
         </div>
 
         {/* Footer */}
         <div className="border-t rounded-b-2xl px-6 py-3 flex justify-end gap-4 bg-cyan-800">
-          <button
-            onClick={onClose}
-            type="button"
-            className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-300 text-gray-800"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            type="submit"
-            className="px-6 py-2 rounded-lg bg-[#306ff7] hover:bg-[#1f3565] text-white"
+            <button
+                onClick={onClose}
+                type="button"
+                className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-300 text-gray-800"
+                >
+                Cancel
+            </button>
+            <button
+                onClick={handleSubmit}
+                type="submit"
+                className="px-6 py-2 rounded-lg bg-[#306ff7] hover:bg-[#1f3565] text-white"
 
-          >
-            Post
-          </button>
+                >
+                Post
+            </button>
         </div>
       </div>
     </div>

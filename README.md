@@ -23,7 +23,3 @@
    pip install -r requirements.txt
 5) ```
    uvicorn main:app --reload
-
-# now can access frontend and backend with db via docker
-1. docker-compose build
-2. docker-compose up -d

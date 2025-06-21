@@ -7,6 +7,7 @@ import MobileVerificationPopup from './MobileVerificationPopup';
 import { NotificationsIcon } from '../components/Notifications';
 import PostJobPopup from '../components/PostForm/PostForm';
 import Footer from '../components/Footer/Footer';
+import ChatBotWidget from '../components/ChatBot/ChatbotWidget';
 
 const NavBar = forwardRef<HTMLElement>((props, ref) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -74,7 +75,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
   profileOptions = [
     { name: 'View Profile', path: '/profile' },
     { name: 'Working Fields', path: '/job-fields' },
-    { name: 'Works', path: '/my-jobs' },
+    { name: 'My Jobs', path: '/my-jobs' },
     { name: 'Favourites', path: '/favorites' },
     { name: 'Analytics', path: '/analytics' },
     {
@@ -166,7 +167,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                     fontSize: '12px', 
                   }}
                   >
-                  Post Job/Task
+                  Post Tasks / Service
                   </button>
               </div>
 
@@ -335,7 +336,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                     boxShadow: '0 0 6px 0.5px rgba(74,255,195,0.7)',
                   }}
                   >
-                  Post Task / Job
+                  Post Tasks / Service
                   </button>
               </div>
 
@@ -470,6 +471,7 @@ const Layout: React.FC = () => {
           <div className="flex-1 flex flex-col">
             <Outlet />
           </div>
+          <ChatBotWidget />
           <MobileVerificationPopup />
           <Footer />
       </main>
