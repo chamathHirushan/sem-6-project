@@ -146,10 +146,10 @@ export default function JobView() {
           <div className="flex justify-between">
             <div>
               {/* Task id */ }
-              <div className="flex items-center my-1">
+              {/* <div className="flex items-center my-1">
                 <IdentificationIcon className="w-4 h-4 mr-1" style={{ color: "black" }}/>
                 <p className="text-gray-600 text-sm"><span className="font-bold">Task ID: </span>{job.id}</p>
-              </div>
+              </div> */}
               
               {/* job category*/ }
               <div className="flex items-center my-1">
