@@ -223,7 +223,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 className={`w-full px-4 py-2 rounded-r-sm ${selectedType === 'task' ? 'bg-[#0f2656] text-white' : 'bg-gray-200 text-gray-700'}`}
                 onClick={() => setSelectedType('task')}
                 >
-                Task Post
+                Service Post
             </button>
         </div>
 
@@ -233,12 +233,12 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 {/* Title */}
                 <div className="mb-3">
                     <label className="block mb-1 font-medium">
-                    {selectedType === 'job' ? 'Job Title' : 'Task Title'}
+                    {selectedType === 'job' ? 'Job Title' : 'Service Title'}
                     </label>
                     <input
                     className="w-full border rounded px-2 py-1"
                     type="text"
-                    placeholder={selectedType === 'job' ? 'Job title' : 'Task title'}
+                    placeholder={selectedType === 'job' ? 'Job title' : 'Service title'}
                     value={title}
                     onChange={e => setTitle(e.target.value)}
                     />
@@ -247,12 +247,12 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 {  /* Short Description */}
                 <div className="mb-3">
                     <label className="block mb-1 font-medium">
-                    {selectedType === 'job' ? 'Short Description' : 'Task Description'}
+                    {selectedType === 'job' ? 'Short Description' : 'Service Description'}
                     </label>
                     <input
                     className="w-full border rounded px-2 py-1"
                     type="text"
-                    placeholder={selectedType === 'job' ? 'Short job description' : 'Short task description'}
+                    placeholder={selectedType === 'job' ? 'Short job description' : 'Short service description'}
                     value={miniDescription}
                     onChange={e => setMiniDescription(e.target.value)}
                     />
@@ -263,23 +263,25 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                     <label className="block mb-1 font-medium">Description</label>
                     <textarea
                     className="w-full border rounded px-2 py-1"
-                    placeholder="Job description"
+                    placeholder="Long description here..."
                     value={description}
                     onChange={e => setDescription(e.target.value)}
                     />
                 </div>
                 
                 {/* Budget*/}
-                <div className="mb-3">
+                {selectedType === 'job' && (
+                  <div className="mb-3">
                     <label className="block mb-1 font-medium">Budget</label>
                     <input
-                    className="w-full border rounded px-2 py-1"
-                    type="number"
-                    placeholder="Budget"
-                    value={budget}
-                    onChange={e => setBudget(e.target.value)}
+                      className="w-full border rounded px-2 py-1"
+                      type="number"
+                      placeholder="Budget"
+                      value={budget}
+                      onChange={e => setBudget(e.target.value)}
                     />
-                </div>
+                  </div>
+                )}
 
                {/* Location */}
                 <div className="mb-3">
@@ -393,20 +395,22 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 )}
 
                 {/* Due date selection calander */}
-                <div className="mb-3">
-                  <label className="block mb-1 font-medium">Due Date</label>
-                  <DatePicker
-                    selected={dueDate}
-                    onChange={(date) => setDueDate(date)}
-                    dateFormat="yyyy-MM-dd"
-                    minDate={new Date()}
-                    placeholderText="Select a due date"
-                    className="w-full border rounded px-2 py-1"
-                    showMonthDropdown
-                    showYearDropdown
-                    dropdownMode="select"
-                  />
-                </div>
+                {selectedType === 'job' && (
+                  <div className="mb-3">
+                    <label className="block mb-1 font-medium">Due Date</label>
+                    <DatePicker
+                      selected={dueDate}
+                      onChange={(date) => setDueDate(date)}
+                      dateFormat="yyyy-MM-dd"
+                      minDate={new Date()}
+                      placeholderText="Select a due date"
+                      className="w-full border rounded px-2 py-1"
+                      showMonthDropdown
+                      showYearDropdown
+                      dropdownMode="select"
+                    />
+                  </div>
+                )}
 
                 {/* Job poster if file available */}
                 <div className="mb-3">
@@ -524,6 +528,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 </div>
 
                 {/* Urgent check box */}
+                {selectedType === 'job' && (
                 <div className="mb-3">
                     <label className="inline-flex items-center">
                         <input
@@ -533,6 +538,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                         <span className="ml-2">Urgent Post</span>
                     </label>
                 </div>
+            )}
 
             </form>
         </div>
