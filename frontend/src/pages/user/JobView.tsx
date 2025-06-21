@@ -146,10 +146,10 @@ export default function JobView() {
           <div className="flex justify-between">
             <div>
               {/* Task id */ }
-              <div className="flex items-center my-1">
+              {/* <div className="flex items-center my-1">
                 <IdentificationIcon className="w-4 h-4 mr-1" style={{ color: "black" }}/>
                 <p className="text-gray-600 text-sm"><span className="font-bold">Task ID: </span>{job.id}</p>
-              </div>
+              </div> */}
               
               {/* job category*/ }
               <div className="flex items-center my-1">
@@ -165,11 +165,19 @@ export default function JobView() {
             </div>
             
             <div className="flex flex-col gap-2 justify-start mr-3">
+              {/* No. of applies so far */}          
+              <div className="flex items-center justify-center p-0.5 px-1">
+                <p className="text-cyan-700 text-sm font-bold">23 applicants</p>
+              </div>
+
+
               {/* Urgent icon */}
               {job.isUrgent && (
-                <div className="flex items-center justify-center bg-red-500 rounded-md p-0.5">
-                  <ExclamationTriangleIcon className="w-4 h-4 mr-1" style={{ color: "white" }} />
-                  <p className="text-white text-xs">Urgent</p>
+                <div className="flex items-center justify-end ">
+                  <div className="flex items-center w-auto bg-red-500 rounded-md p-0.5">
+                    <ExclamationTriangleIcon className="w-4 h-4 mr-1" style={{ color: "white" }} />
+                    <p className="text-white text-xs pr-1">Urgent</p>
+                  </div>
                 </div>
               )}
 

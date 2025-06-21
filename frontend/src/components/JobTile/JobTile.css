@@ -48,7 +48,7 @@
 .job-tile.grid .job-tile-image {
     height: 100%;
     width: auto;
-    object-fit: contain;
+    /* object-fit: contain; */
     -webkit-box-pack: center;
 }
 
