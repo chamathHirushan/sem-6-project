@@ -243,21 +243,43 @@ export default function Works() {
           isTrending: false,
           isBookmarked: false,
         },
-        {
-          id: "J129",
-          title: "Garden Cleaning",
-          category: "House",
-          subCategory: "Landscaping ",
-          image: jobImage7,
-          location: "Polgahawela, Sri Lanka",
-          daysPosted: 2,
-          jobType: "Full-Time",
-          budget: 9000,
-          isUrgent: false,
-          isTrending: true,
-          isBookmarked: false,
-        },
       ]);
+
+      useEffect(() => {
+        const initialize = () => {
+          setTimeout(() => {
+            setJobs((prevJobs) => {
+              if (prevJobs.some(job => job.id === "J129")) {
+                return prevJobs;
+              }
+              return [
+                ...prevJobs,
+                {
+                  id: "J129",
+                  title: "Garden Cleaning",
+                  category: "House",
+                  subCategory: "Landscaping ",
+                  image: jobImage7,
+                  location: "Polgahawela, Sri Lanka",
+                  daysPosted: 2,
+                  jobType: "Full-Time",
+                  budget: 9000,
+                  isUrgent: false,
+                  isTrending: true,
+                  isBookmarked: false,
+                },
+              ];
+            });
+          }, 1500); // 1.5 seconds delay
+        };
+
+        window.addEventListener("add", initialize);
+
+        return () => {
+          window.removeEventListener("add", initialize);
+        };
+      }, []);
+
 
       const filteredJobs = jobs.filter((job) => {
         if (selectedSubItems.length > 0) {

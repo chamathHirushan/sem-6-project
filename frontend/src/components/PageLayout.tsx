@@ -17,13 +17,20 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
   const location = useLocation();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const [adminView, setAdminView] = useState(() => user?.role >= 3);
-  const [showPostPopup, setShowPostPopup] = useState(false);
+  const [showPostPopup, setShowPostPopups] = useState(false);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const adminDropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showHamburger, setShowHamburger] = useState(false);
   
   const navRef = useRef(null);
+
+  const setShowPostPopup = (value: boolean) => {
+    if (value) {
+      window.dispatchEvent(new Event("trigger-initialize"));
+    }
+    setShowPostPopups(value);
+  }
 
   useEffect(() => {
     const checkOverflow = () => {

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import defaultProfilePic from "../../assets/users.png";
 import { toast } from "react-toastify";
 import PaymentButton from "../../components/payhere";
+import { useAuth } from "../../contexts/AuthContext";
+
 
 interface UserProfile {
   profilePicUrl: string | null;
@@ -25,25 +27,50 @@ const fetchUserProfile = async (): Promise<UserProfile> => {
     phone: "+1234567890",
     town: "Colombo",
     lastActive: "2025-06-20 16:45",
-    joinedDate: "2023-01-15",
+    joinedDate: "2025-06-12",
   };
 };
 
-export default function Profile() {
+const fetchMydata = async (user): Promise<UserProfile> => {
+    console.log("User data:", user);
+    return {
+      profilePicUrl: user?.profile_picture
+ || "https://i.pinimg.com/236x/dd/f0/11/ddf0110aa19f445687b737679eec9cb2.jpg",
+      firstName: user?.name,
+      lastName: "-",
+      email: user?.email || "chamath@gmail.com",
+      phone: user.phone || "+94123456789",
+      town: "Kandy",
+      lastActive: "2025-06-20 17:00",
+      joinedDate: "2025-15-31",
+    };
+  };
+
+interface ProfileProps {
+  my?: boolean;
+}
+
+export default function Profile({ my = true }: ProfileProps) {
   const navigate = useNavigate();
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [user_, setUser] = useState<UserProfile | null>(null);
+  const { user, userLoggedIn } = useAuth();
   const [activeTab, setActiveTab] = useState("details");
   const [isEditing, setIsEditing] = useState(false);
-  const [premium, setPremium] = useState(0);
+  const [premium, setPremium] = useState("");
   
-    const boostTypes = [
+  const boostTypes = [
     { label: "Standard Boost", value: 1 },
     { label: "Premium Boost", value: 2 },
   ];
 
   useEffect(() => {
     const loadUser = async () => {
-      const data = await fetchUserProfile();
+      let data;
+      if (!my) {
+        data = await fetchUserProfile();
+      } else {
+        data = await fetchMydata(user);
+      }
       setUser(data);
     };
     loadUser();
@@ -56,16 +83,10 @@ export default function Profile() {
       );
     }
   };
-
-  const buyNow = async (boostType: string) => {
-    // Simulate a payment gateway call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    toast.success(`Successfully purchased ${boostType}!`);
-  }
   
   const hadndleSubmit = async () => {
     //payment gateway
-    sessionStorage.setItem("premium", JSON.stringify(premium));
+    localStorage.setItem("premium", JSON.stringify(premium));
   }
 
   const handleLogout = () => {
@@ -92,7 +113,7 @@ export default function Profile() {
     color: "#333",
   };
 
-  if (!user) return <div>Loading profile...</div>;
+  if (!user_) return <div>Loading profile...</div>;
 
   return (
     <div
@@ -130,7 +151,7 @@ export default function Profile() {
         >
           <label htmlFor="profile-upload" style={{ cursor: "pointer" }}>
             <img
-              src={user.profilePicUrl || defaultProfilePic}
+              src={user_.profilePicUrl || defaultProfilePic}
               alt="Profile"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
@@ -193,7 +214,7 @@ export default function Profile() {
                   >
                     <option value="">Select boost type</option>
                    {boostTypes.map((item, index) => (
-                      <option key={index} value={item.label}>
+                      <option key={index} value={item.value}>
                         {item.label}
                       </option>
                     ))}
@@ -239,8 +260,8 @@ export default function Profile() {
               <div style={{ flex: 1, ...fieldContainerStyle }}>
                 <label style={labelStyle}>First Name</label>
                 <input
-                  value={user.firstName}
-                  onChange={(e) => setUser({ ...user, firstName: e.target.value })}
+                  value={user_.firstName}
+                  onChange={(e) => setUser({ ...user_, firstName: e.target.value })}
                   disabled={!isEditing}
                   style={{
                     ...inputBaseStyle,
@@ -253,8 +274,8 @@ export default function Profile() {
               <div style={{ flex: 1, ...fieldContainerStyle }}>
                 <label style={labelStyle}>Last Name</label>
                 <input
-                  value={user.lastName}
-                  onChange={(e) => setUser({ ...user, lastName: e.target.value })}
+                  value={user_.lastName}
+                  onChange={(e) => setUser({ ...user_, lastName: e.target.value })}
                   disabled={!isEditing}
                   style={{
                     ...inputBaseStyle,
@@ -271,8 +292,8 @@ export default function Profile() {
               <div style={{ flex: 1, ...fieldContainerStyle }}>
                 <label style={labelStyle}>Phone Number</label>
                 <input
-                  value={user.phone}
-                  onChange={(e) => setUser({ ...user, phone: e.target.value })}
+                  value={user_.phone}
+                  onChange={(e) => setUser({ ...user_, phone: e.target.value })}
                   disabled={!isEditing}
                   style={{
                     ...inputBaseStyle,
@@ -285,7 +306,7 @@ export default function Profile() {
               <div style={{ flex: 1, ...fieldContainerStyle }}>
                 <label style={labelStyle}>Email Address</label>
                 <input
-                  value={user.email}
+                  value={user_.email}
                   disabled
                   style={{
                     ...inputBaseStyle,
@@ -303,7 +324,7 @@ export default function Profile() {
               <div style={{ flex: 1, ...fieldContainerStyle }}>
                 <label style={labelStyle}>Last Active</label>
                 <input
-                  value={user.lastActive}
+                  value={user_.lastActive}
                   disabled
                   style={{
                     ...inputBaseStyle,
@@ -317,8 +338,8 @@ export default function Profile() {
               <div style={{ flex: 1, ...fieldContainerStyle }}>
                 <label style={labelStyle}>Town</label>
                 <input
-                  value={user.town}
-                  onChange={(e) => setUser({ ...user, town: e.target.value })}
+                  value={user_.town}
+                  onChange={(e) => setUser({ ...user_, town: e.target.value })}
                   disabled={!isEditing}
                   style={{
                     ...inputBaseStyle,

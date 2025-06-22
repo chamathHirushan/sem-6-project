@@ -36,12 +36,12 @@ export default function Conversations() {
 
   const handleSend = () => {
     if (!input.trim()) return;
-    setMessages([...messages, { from: user.role, text: input }]);
+    setMessages([...messages, { from: user.name, text: input }]);
     setInput("");
   };
       
    return (
-    <div className="flex flex-col flex-1 px-4 py-6 mx-auto bg-white rounded shadow h-[70vh]" style={{maxWidth: "1500em"}}>
+    <div className="flex flex-col flex-1 px-4 py-6 mx-auto bg-white rounded shadow h-[70vh]" style={{minWidth: "50em"}}>
       <div className="mb-4">
         <p className="font-semibold">
           {/* Conversation between <span className="text-blue-600">Employee</span> and <span className="text-green-600">Employer</span> */}

@@ -8,6 +8,7 @@ import DatePicker from "react-datepicker";
 import { X } from "lucide-react";
 import "react-datepicker/dist/react-datepicker.css";
 import {addService, addJob} from '../../api/userAPI'; // Adjust the import path as necessary
+import { toast } from "react-toastify";
 
 
 interface PostJobPopupProps {
@@ -39,12 +40,33 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
   const [selectedCity, setSelectedCity] = useState("");
   const [loading, setLoading] = useState(true);
   const [boostLevel, setBoostType] = useState(0);
+  const [premium, setPremium] = useState<boolean>(false);
+
 
   // Load all countries on mount
-  useEffect(() => {
+useEffect(() => {
+  const initialize = () => {
     const countryList = Country.getAllCountries();
     setCountries(countryList);
-  }, []);
+
+    const prem = localStorage.getItem("premium");
+    setPremium(prem === "true");
+
+    console.log("premium status:", prem);
+  };
+
+  // ✅ Initial run
+  initialize();
+
+  // ✅ Set up event listener to allow external triggering
+  window.addEventListener("trigger-initialize", initialize);
+
+  // ✅ Clean up
+  return () => {
+    window.removeEventListener("trigger-initialize", initialize);
+  };
+}, []);
+
 
   // Load initial data when the component mounts
   useEffect(() => {
@@ -143,23 +165,28 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
       //   poster,
       //   boostLevel
       // });
-      await addJob(
-        {
-          "title": title,
-          "description": description,
-          "mini_description": miniDescription,
-          "budget": budget ? parseFloat(budget) : null,
-          "location": location,
-          "urgent": urgent,
-          "category": selectedCategory,
-          "subcategory": selectedSubCategory,
-          "due_date": dueDate ? dueDate.toISOString() : null,
-          "posted_date": postedDate ? postedDate.toISOString() : null,
-          "images": image,
-          "poster": poster || null,
-          "boost_level": boostLevel
-        }
-      );
+      window.dispatchEvent(new Event("add"));
+
+      // await addJob(
+      //   {
+      //     "title": title,
+      //     "description": description,
+      //     "mini_description": miniDescription,
+      //     "budget": budget ? parseFloat(budget) : null,
+      //     "location": location,
+      //     "urgent": urgent,
+      //     "category": selectedCategory,
+      //     "subcategory": selectedSubCategory,
+      //     "due_date": dueDate ? dueDate.toISOString() : null,
+      //     "posted_date": postedDate ? postedDate.toISOString() : null,
+      //     "images": image,
+      //     "poster": poster || null,
+      //     "boost_level": boostLevel
+      //   }
+      // );
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a delay for the service post creation
+      toast.success("task Post Created Successfully!");
+      
     }else{
       // console.log("Service Post Submitted:", {
       //   title,
@@ -173,21 +200,24 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
       //   images: image,
       //   poster
       // });
-      await addService(
-        {
-          "title": title,
-          "description": description,
-          "mini_description": miniDescription,
-          "location": location,
-          "category": selectedCategory,
-          "subcategory": selectedSubCategory,
-          "due_date": dueDate ? dueDate.toISOString() : null,
-          "posted_date": postedDate ? postedDate.toISOString() : null,
-          "images": image,
-          "poster": poster || null
-        }
-      )
+      // await addService(
+      //   {
+      //     "title": title,
+      //     "description": description,
+      //     "mini_description": miniDescription,
+      //     "location": location,
+      //     "category": selectedCategory,
+      //     "subcategory": selectedSubCategory,
+      //     "due_date": dueDate ? dueDate.toISOString() : null,
+      //     "posted_date": postedDate ? postedDate.toISOString() : null,
+      //     "images": image,
+      //     "poster": poster || null
+      //   }
+      // )
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a delay for the service post creation
+      toast.success("Service Post Created Successfully!");
     }
+    onClose();
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -278,13 +308,14 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
           ×
         </button>
         {/* toggle buttons for selecting job or service */}
+        {premium && (
         <div className="flex justify-center mx-8 my-2">
             <button
                 type="button"
                 className={`w-full px-4 py-2 rounded-l-sm ${selectedType === 'job' ? 'bg-[#0f2656] text-white' : 'bg-gray-200 text-gray-700'}`}
                 onClick={() => setSelectedType('job')}
                 >
-                Job Post
+                Task Post
             </button>
             <button
                 type="button"
@@ -293,7 +324,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 >
                 Service Post
             </button>
-        </div>
+        </div>)}
 
         {/* Scrollable Form Area */}
         <div className="overflow-y-auto pt-2 p-6 flex-1">
@@ -608,7 +639,7 @@ const PostJobPopup: React.FC<PostJobPopupProps> = ({ open, onClose }) => {
                 </div>
             )}
 
-              {selectedType === 'job' &&  (<div className="mb-3">
+              {selectedType === 'job' &&  !premium && (<div className="mb-3">
                   <label className="block mb-1 font-medium">Boost</label>
                   <select
                     className="w-full border rounded px-2 py-1"

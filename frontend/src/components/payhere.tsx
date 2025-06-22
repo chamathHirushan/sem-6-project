@@ -72,10 +72,10 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ name, value, itemname, on
           country: paymentDetails.country,
           hash: hash,
         };
-
+        onSubmit && onSubmit();
         // Initialize PayHere payment
         payhere.startPayment(payment);
-        onSubmit && onSubmit();
+        
       } else {
         console.error("Failed to generate hash for payment.");
       }
