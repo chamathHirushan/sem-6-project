@@ -171,7 +171,7 @@ export default function Works() {
           budget: 8000,
           isUrgent: true,
           isTrending: true,
-          isBookmarked: true,
+          isBookmarked: false,
         },
         {
           id: "J125",
@@ -185,7 +185,7 @@ export default function Works() {
           budget: " -",
           isUrgent: true,
           isTrending: true,
-          isBookmarked: true,
+          isBookmarked: false,
         },
         {
           id: "J126",
@@ -199,7 +199,7 @@ export default function Works() {
           budget: 25000,
           isUrgent: true,
           isTrending: true,
-          isBookmarked: true,
+          isBookmarked: false,
         },
         {
           id: "J127",
@@ -213,7 +213,7 @@ export default function Works() {
           budget: 5000,
           isUrgent: true,
           isTrending: true,
-          isBookmarked: true,
+          isBookmarked: false,
         },
         {
           id: "J128",
@@ -227,7 +227,7 @@ export default function Works() {
           budget: 6000,
           isUrgent: true,
           isTrending: true,
-          isBookmarked: true,
+          isBookmarked: false,
         },
         {
           id: "J130",
@@ -297,13 +297,48 @@ export default function Works() {
       
       
 
-      const toggleBookmark = (id: string) => {
-        setJobs((prevJobs) =>
-          prevJobs.map((job) =>
-            job.id === id ? { ...job, isBookmarked: !job.isBookmarked } : job
-          )
-        );
-      };
+      // const toggleBookmark = (id: string) => {
+      //   setJobs((prevJobs) =>
+      //     prevJobs.map((job) =>
+      //       job.id === id ? { ...job, isBookmarked: !job.isBookmarked } : job
+      //     )
+      //   );
+      // };
+    const toggleBookmark = (id: string) => {
+    setJobs((prevTasks) => {
+      const updatedTasks = prevTasks.map((task) =>
+        task.id === id ? { ...task, isBookmarked: !task.isBookmarked } : task
+      );
+
+      // Get current bookmarked tasks from localStorage
+      let bookmarkedTasks: Job[] = [];
+      const stored = localStorage.getItem("bookmarkedJobs");
+      if (stored) {
+        try {
+          bookmarkedTasks = JSON.parse(stored);
+        } catch {
+          bookmarkedTasks = [];
+        }
+      }
+
+      // Find the toggled task
+      const toggledTask = updatedTasks.find((task) => task.id === id);
+      if (toggledTask) {
+        if (toggledTask.isBookmarked) {
+          // Add to bookmarks if not already present
+          if (!bookmarkedTasks.some((task) => task.id === id)) {
+            bookmarkedTasks.push(toggledTask);
+          }
+        } else {
+          // Remove from bookmarks
+          bookmarkedTasks = bookmarkedTasks.filter((task) => task.id !== id);
+        }
+      }
+
+      localStorage.setItem("bookmarkedJobs", JSON.stringify(bookmarkedTasks));
+      return updatedTasks;
+    });
+  };
 
       // Pagination logic
       const [currentPage, setCurrentPage] = useState(1);

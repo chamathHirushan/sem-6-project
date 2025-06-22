@@ -71,7 +71,7 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
   // Navigation links
   let navigation: { name: string; path: string }[] = [];
   navigation = [
-    { name: 'Available Jobs', path: '/work' },
+    { name: 'Available Tasks', path: '/work' },
     { name: 'Hire Workers', path: '/hire' },
   ];
 
