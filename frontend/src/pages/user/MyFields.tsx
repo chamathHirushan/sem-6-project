@@ -13,92 +13,51 @@ interface Job {
 }
 
 export default function MyFields() {
+  const navigate = useNavigate();
   const [backendData, setBackendData] = useState<string>("Loading...");
   const {user} = useAuth();
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [editableJobs, setEditableJobs] = useState<Record<string, Job>>({});
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
-  const navigate = useNavigate();
-    
-      // useEffect(() => {
-      //   async function fetchData() {
-      //     try {
-      //       const response = await apiClient.get("/user/dashboard");
-      //       setBackendData(response.message || "No data received");
-      //     } catch (error) {
-      //       setBackendData("Error fetching data");
-      //       console.error("API Error:", error);
-      //     }
-      //   }
-    
-      //   fetchData();
-      // }, []);
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
 
-    // Example jobs. (remove this after connecting the backend)
-    const [jobs, setJobs] = useState<Job[]>([
+  const [jobs, setJobs] = useState<Job[]>([
     {
       id: "1",
-      title: "Software Developer",
-      description:
-        "Join our dynamic team to build innovative web applications and solve real-world problems.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=80&q=80",
-      budget: "$2500",
-      status: "applied by me",
+      title: "Carpenter",
+      description: "Build, install, and repair structures and fixtures made from wood and other materials.",
+      imageUrl: "https://www.shutterstock.com/image-photo/african-american-carpenter-man-use-600nw-2251271317.jpg",
+      status: "pending",
+      budget: "$1200",
     },
     {
       id: "2",
-      title: "UI/UX Designer",
-      description:
-        "Craft intuitive user experiences and elegant interfaces for our growing product suite.",
-      imageUrl:
-        "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
-      budget: "$1800",
-      status: "pending",
+      title: "Electrician",
+      description: "Install, maintain, and repair electrical wiring, equipment, and fixtures.",
+      imageUrl: "https://contractortrainingcenter.com/cdn/shop/articles/Untitled_design_1.png?v=1693506427",
+      status: "completed",
+      budget: "$950",
     },
     {
       id: "3",
-      title: "Marketing Intern",
-      description:
-        "Assist in creating digital marketing campaigns and analyzing engagement metrics.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=80&q=80",
-      budget: "$500",
+      title: "Plumber",
+      description: "Assemble, install, and repair water, gas, and drainage systems in residential and commercial locations.",
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSFLhjJYz1cK6wbhSN-QVvQKq995u4EZeO_w&s",
       status: "rejected",
+      budget: "$1100",
     },
     {
       id: "4",
-      title: "Data Analyst",
-      description:
-        "Analyze data trends and generate actionable insights to improve business performance.",
-      imageUrl:
-        "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
-      budget: "$2100",
-      status: "expired",
-    },
-    {
-      id: "5",
-      title: "DevOps Engineer",
-      description:
-        "Streamline deployment pipelines and maintain infrastructure for high availability systems.",
-      imageUrl:
-        "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
-      budget: "$2700",
+      title: "Mason",
+      description: "Build and repair structures using bricks, concrete blocks, and natural stones.",
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8KIy3rm4JbY_OgkWBfeKMeVEwtmbQQiG98w&s",
       status: "pending",
+      budget: "$1000",
     },
   ]);
 
-  const handleFilterChange = (status: string) => {
-    setSelectedStatuses((prev) =>
-      prev.includes(status)
-        ? prev.filter((s) => s !== status)
-        : [...prev, status]
-    );
-  };
-
   const toggleExpand = (id: string) => {
     setExpandedJobId(id === expandedJobId ? null : id);
-
     const foundJob = jobs.find((job) => job.id === id);
     if (foundJob) {
       setEditableJobs((prev) => ({
@@ -113,20 +72,6 @@ export default function MyFields() {
       ...prev,
       [id]: { ...prev[id], status: newStatus },
     }));
-  };
-
-  const handleCancelJob = (id: string) => {
-    setJobs((prevJobs) =>
-      prevJobs.map((job) =>
-        job.id === id ? { ...job, status: "rejected" } : job
-      )
-    );
-    setExpandedJobId(null);
-  };
-
-  const handleCompleteTask = (id: string) => {
-    setJobs((prevJobs) => prevJobs.filter((job) => job.id !== id));
-    setExpandedJobId(null);
   };
 
   const handleSave = (id: string) => {
@@ -153,22 +98,28 @@ export default function MyFields() {
     });
   };
 
+  const handleFilterChange = (status: string) => {
+    setSelectedStatuses((prev) =>
+      prev.includes(status)
+        ? prev.filter((s) => s !== status)
+        : [...prev, status]
+    );
+  };
+
   const filteredJobs = selectedStatuses.length
     ? jobs.filter((job) => selectedStatuses.includes(job.status))
     : jobs;
-
 
   return (
     <div
       style={{
         minHeight: "100vh",
         padding: "2rem",
-        background:
-          "linear-gradient(to bottom right, #205781, #4F959D, #98D2C0, #F6F8D5)",
+        background: "linear-gradient(to bottom right, #205781, #4F959D, #98D2C0, #F6F8D5)",
+        color: "#205781",
         fontFamily: "Arial, sans-serif",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
       }}
     >
       <div
@@ -176,47 +127,63 @@ export default function MyFields() {
           display: "table",
           width: "100%",
           tableLayout: "fixed",
-          borderSpacing: "2rem",
+          borderSpacing: "0.2rem",
         }}
       >
+        {/* Sidebar */}
         <div
           style={{
             display: "table-cell",
             width: "25%",
-            backgroundColor: "#4F959D",
+            backgroundColor: "white",
             borderRadius: "16px",
             padding: "1.5rem",
-            color: "white",
+            color: "#205781",
             verticalAlign: "top",
           }}
         >
-          <h3>Filter by Status</h3>
-          {["applied by me", "pending", "rejected", "expired"].map((status) => (
-            <div key={status}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={selectedStatuses.includes(status)}
-                  onChange={() => handleFilterChange(status)}
-                  style={{ marginRight: "0.5rem" }}
-                />
-                {status}
-              </label>
-            </div>
-          ))}
+          <h3
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            style={{
+              cursor: "pointer",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            Filter by Status{" "}
+            <span style={{ fontSize: "1rem" }}>
+              {isFilterOpen ? "▲" : "▼"}
+            </span>
+          </h3>
+          {isFilterOpen &&
+            ["pending", "completed", "rejected"].map((status) => (
+              <div key={status}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={selectedStatuses.includes(status)}
+                    onChange={() => handleFilterChange(status)}
+                    style={{ marginRight: "0.5rem" }}
+                  />
+                  {status}
+                </label>
+              </div>
+            ))}
         </div>
 
+        {/* Job Cards */}
         <div
           style={{
             display: "table-cell",
-            backgroundColor: "#ffffff",
+            backgroundColor: "white",
             borderRadius: "16px",
             padding: "2rem",
             color: "#205781",
             verticalAlign: "top",
           }}
         >
-          <h2 style={{ marginTop: 0 }}>My Jobs</h2>
+          <h2 style={{ marginTop: 0 }}>My Subscriptions</h2>
 
           <div
             style={{
@@ -229,6 +196,7 @@ export default function MyFields() {
             {filteredJobs.map((job) => {
               const isExpanded = expandedJobId === job.id;
               const editable = editableJobs[job.id] || job;
+
               return (
                 <div
                   key={job.id}
@@ -257,11 +225,13 @@ export default function MyFields() {
                       }}
                     />
                     <div>
-                      <h3 style={{ margin: "0 0 0.25rem 0" }}>{job.title}</h3>
+                      <h3 style={{ margin: "0 0 0.25rem 0", color: "white" }}>
+                        {job.title}
+                      </h3>
                       <p style={{ margin: 0, fontWeight: "bold" }}>
                         Budget: {job.budget}
                       </p>
-                      <p style={{ margin: "0.25rem 0", color: "#98D2C0" }}>
+                      <p style={{ margin: 0, color: "#98D2C0" }}>
                         {job.description}
                       </p>
                       <p style={{ margin: 0 }}>Status: {editable.status}</p>
@@ -276,20 +246,15 @@ export default function MyFields() {
                         borderRadius: "8px",
                         padding: "0.5rem 1rem",
                         cursor: "pointer",
+                        fontSize: "1.2rem",
                       }}
                     >
-                      {isExpanded ? "Collapse" : "Expand"}
+                      {isExpanded ? "▲" : "▼"}
                     </button>
                   </div>
 
                   {isExpanded && (
                     <div style={{ marginTop: "1rem" }}>
-                      {["pending"].includes(job.status) && (
-                        <div style={{ marginBottom: "1rem" }}>
-                          <label>Upload Proof of Work: </label>
-                          <input type="file" />
-                        </div>
-                      )}
                       <div style={{ marginBottom: "1rem" }}>
                         <label>Edit Status: </label>
                         <select
@@ -298,10 +263,9 @@ export default function MyFields() {
                             handleStatusChange(job.id, e.target.value)
                           }
                         >
-                          <option value="applied by me">Applied by me</option>
                           <option value="pending">Pending</option>
+                          <option value="completed">Completed</option>
                           <option value="rejected">Rejected</option>
-                          <option value="expired">Expired</option>
                         </select>
                       </div>
                       <div>
@@ -322,7 +286,6 @@ export default function MyFields() {
                         <button
                           onClick={() => handleCancelEdit(job.id)}
                           style={{
-                            marginRight: "1rem",
                             backgroundColor: "#ccc",
                             border: "none",
                             padding: "0.5rem 1rem",
@@ -332,39 +295,7 @@ export default function MyFields() {
                         >
                           Cancel
                         </button>
-                        {["applied by me", "pending"].includes(job.status) && (
-                          <button
-                            onClick={() => handleCancelJob(job.id)}
-                            style={{
-                              backgroundColor: "#c0392b",
-                              color: "white",
-                              border: "none",
-                              padding: "0.5rem 1rem",
-                              borderRadius: "6px",
-                              cursor: "pointer",
-                            }}
-                          >
-                            Cancel Job
-                          </button>
-                        )}
                       </div>
-                      {job.status === "pending" && (
-                        <button
-                          onClick={() => handleCompleteTask(job.id)}
-                          style={{
-                            marginTop: "0.5rem",
-                            backgroundColor: "#27ae60",
-                            color: "white",
-                            border: "none",
-                            padding: "0.5rem 1rem",
-                            borderRadius: "6px",
-                            cursor: "pointer",
-                            display: "block",
-                          }}
-                        >
-                          Complete Task
-                        </button>
-                      )}
                     </div>
                   )}
                 </div>
@@ -385,8 +316,9 @@ export default function MyFields() {
           color: "#fff",
           cursor: "pointer",
           display: "block",
-          width: "fit-content",
-          alignSelf: "center",
+          maxWidth: "auto",
+          marginLeft: "auto",
+          marginRight: "auto",
         }}
       >
         Go to dashboard
