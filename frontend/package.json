@@ -17,6 +17,7 @@
     "country-state-city": "^3.2.1",
     "date-fns": "^4.1.0",
     "firebase": "^11.6.0",
+    "framer-motion": "^12.18.1",
     "i18next": "^24.2.3",
     "lucide-react": "^0.522.0",
     "moment": "^2.30.1",
