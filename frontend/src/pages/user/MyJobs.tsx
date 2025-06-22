@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import { apiClient } from "../../api/client";
 import {useAuth} from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +21,7 @@ export default function MyJobs() {
   // const { user } = useAuth();
   const navigate = useNavigate();
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
-  const [editableJobs, setEditableJobs] = useState<Record<string, Job>>({});
+  const [editableJobs, setEditableJobs] = useState<Record<string, Job & { uploadedPhotos?: string[] }>>({});
   const [selectedCategory, setSelectedCategory] = useState<Job["category"]>("Posted by Me");
 
   const [appliedSubCategory, setAppliedSubCategory] = useState<"All" | "Accepted" | "Pending" | "Rejected">("All");
@@ -30,93 +30,94 @@ export default function MyJobs() {
 
   const [showSubCategories, setShowSubCategories] = useState<"" | "Applied by Me" | "Posted by Me" | "Assigned to Me">("");
 
-const [jobs, setJobs] = useState<Job[]>([
-  // Applied by Me
-  {
-    id: "1",
-    title: "Software Developer",
-    description: "Build innovative web apps.",
-    imageUrl: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=80&q=80",
-    budget: "$2500",
-    category: "Applied by Me",
-    subCategory: "Frontend",
-    status: "Accepted",
-  },
-  {
-    id: "2",
-    title: "Backend Engineer",
-    description: "Build robust backend systems.",
-    imageUrl: "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
-    budget: "$2200",
-    category: "Applied by Me",
-    subCategory: "Backend",
-    status: "Pending",
-  },
-  {
-    id: "3",
-    title: "QA Tester",
-    description: "Test software for bugs.",
-    imageUrl: "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
-    budget: "$1800",
-    category: "Applied by Me",
-    subCategory: "Quality Assurance",
-    status: "Rejected",
-  },
+  const [jobs, setJobs] = useState<Job[]>([
+    // Applied by Me
+    {
+      id: "1",
+      title: "Software Developer",
+      description: "Build innovative web apps.",
+      imageUrl: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=80&q=80",
+      budget: "$2500",
+      category: "Applied by Me",
+      subCategory: "Frontend",
+      status: "Accepted",
+    },
+    {
+      id: "2",
+      title: "Backend Engineer",
+      description: "Build robust backend systems.",
+      imageUrl: "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
+      budget: "$2200",
+      category: "Applied by Me",
+      subCategory: "Backend",
+      status: "Pending",
+    },
+    {
+      id: "3",
+      title: "QA Tester",
+      description: "Test software for bugs.",
+      imageUrl: "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
+      budget: "$1800",
+      category: "Applied by Me",
+      subCategory: "Quality Assurance",
+      status: "Rejected",
+    },
 
-  // Posted by Me
-  {
-    id: "4",
-    title: "UI/UX Designer",
-    description: "Craft intuitive experiences.",
-    imageUrl: "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
-    budget: "$1800",
-    category: "Posted by Me",
-    subCategory: "Design",
-    status: "Pending",
-  },
-  {
-    id: "5",
-    title: "Product Manager",
-    description: "Lead project execution.",
-    imageUrl: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=80&q=80",
-    budget: "$3000",
-    category: "Posted by Me",
-    subCategory: "Management",
-    status: "In Progress",
-  },
-  {
-    id: "6",
-    title: "Tech Consultant",
-    description: "Provide tech consultations.",
-    imageUrl: "https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://images.ctfassets.net/wp1lcwdav1p1/6VAOnHExwm5tWsPmHJoBvl/38581e711e68605fbe1925405b16552d/GettyImages-1444490806.jpg?w=1500&h=680&q=60&fit=fill&f=faces&fm=jpg&fl=progressive&auto=format%2Ccompress&dpr=1&w=1000",
-    budget: "$2600",
-    category: "Posted by Me",
-    subCategory: "Consulting",
-    status: "Cancelled",
-  },
+    // Posted by Me
+    {
+      id: "4",
+      title: "UI/UX Designer",
+      description: "Craft intuitive experiences.",
+      imageUrl: "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
+      budget: "$1800",
+      category: "Posted by Me",
+      subCategory: "Design",
+      status: "Pending",
+    },
+    {
+      id: "5",
+      title: "Product Manager",
+      description: "Lead project execution.",
+      imageUrl: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=80&q=80",
+      budget: "$3000",
+      category: "Posted by Me",
+      subCategory: "Management",
+      status: "In Progress",
+    },
+    {
+      id: "6",
+      title: "Tech Consultant",
+      description: "Provide tech consultations.",
+      imageUrl:
+        "https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://images.ctfassets.net/wp1lcwdav1p1/6VAOnHExwm5tWsPmHJoBvl/38581e711e68605fbe1925405b16552d/GettyImages-1444490806.jpg?w=1500&h=680&q=60&fit=fill&f=faces&fm=jpg&fl=progressive&auto=format%2Ccompress&dpr=1&w=1000",
+      budget: "$2600",
+      category: "Posted by Me",
+      subCategory: "Consulting",
+      status: "Cancelled",
+    },
 
-  // Assigned to Me
-  {
-    id: "7",
-    title: "Data Analyst",
-    description: "Analyze data trends.",
-    imageUrl: "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
-    budget: "$2100",
-    category: "Assigned to Me",
-    subCategory: "Analytics",
-    status: "Ongoing",
-  },
-  {
-    id: "8",
-    title: "Security Expert",
-    description: "Ensure platform security.",
-    imageUrl: "https://images.unsplash.com/photo-1556745757-8d76bdb6984b?auto=format&fit=crop&w=80&q=80",
-    budget: "$2900",
-    category: "Assigned to Me",
-    subCategory: "Cybersecurity",
-    status: "Completed",
-  },
-]);
+    // Assigned to Me
+    {
+      id: "7",
+      title: "Data Analyst",
+      description: "Analyze data trends.",
+      imageUrl: "https://bambooagile.eu/wp-content/uploads/2021/02/custom-dev-scaled-2560x1280.jpg",
+      budget: "$2100",
+      category: "Assigned to Me",
+      subCategory: "Analytics",
+      status: "Ongoing",
+    },
+    {
+      id: "8",
+      title: "Security Expert",
+      description: "Ensure platform security.",
+      imageUrl: "https://images.unsplash.com/photo-1556745757-8d76bdb6984b?auto=format&fit=crop&w=80&q=80",
+      budget: "$2900",
+      category: "Assigned to Me",
+      subCategory: "Cybersecurity",
+      status: "Completed",
+    },
+  ]);
 
   const toggleExpand = (id: string) => {
     setExpandedJobId(id === expandedJobId ? null : id);
@@ -135,6 +136,32 @@ const [jobs, setJobs] = useState<Job[]>([
       const copy = { ...prev };
       delete copy[id];
       return copy;
+    });
+  };
+
+  // Upload photos only for Assigned to Me jobs - stored only temporarily in editableJobs (not saved to jobs)
+  const handlePhotoUpload = (id: string, e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        setEditableJobs((prev) => {
+          const job = prev[id];
+          if (!job) return prev;
+          const existingPhotos = job.uploadedPhotos || [];
+          return {
+            ...prev,
+            [id]: {
+              ...job,
+              uploadedPhotos: [...existingPhotos, result],
+            },
+          };
+        });
+      };
+      reader.readAsDataURL(file);
     });
   };
 
@@ -191,7 +218,7 @@ const [jobs, setJobs] = useState<Job[]>([
                 <div
                   onClick={() => {
                     setSelectedCategory(cat as Job["category"]);
-                    setShowSubCategories((prev) => (prev === cat ? "" : cat as typeof showSubCategories));
+                    setShowSubCategories((prev) => (prev === cat ? "" : (cat as typeof showSubCategories)));
                   }}
                   style={{
                     cursor: "pointer",
@@ -257,6 +284,7 @@ const [jobs, setJobs] = useState<Job[]>([
             color: "#205781",
             verticalAlign: "top",
             height: "85vh",
+            overflowY: "auto",
           }}
         >
           <h2 style={{ marginTop: 0 }}>{selectedCategory}</h2>
@@ -302,7 +330,7 @@ const [jobs, setJobs] = useState<Job[]>([
                       <h3 style={{ margin: "0 0 0.25rem 0" }}>{job.title}</h3>
                       <p style={{ margin: 0, fontWeight: "bold" }}>Budget: {job.budget}</p>
                       <p style={{ margin: "0.25rem 0", color: "#98D2C0" }}>{job.description}</p>
-                      <p style={{ margin: 0 }}>Status: {job.status}</p>
+                      <p style={{ margin: 0 }}>Status: {editable.status}</p>
                     </div>
                     <button
                       onClick={() => toggleExpand(job.id)}
@@ -320,6 +348,7 @@ const [jobs, setJobs] = useState<Job[]>([
                       {isExpanded ? "▲" : "▼"}
                     </button>
                   </div>
+
                   {isExpanded && (
                     <div style={{ marginTop: "1rem" }}>
                       <div style={{ marginBottom: "1rem" }}>
@@ -339,6 +368,59 @@ const [jobs, setJobs] = useState<Job[]>([
                           style={{ marginLeft: "0.5rem" }}
                         />
                       </div>
+
+                      <div style={{ marginBottom: "1rem" }}>
+                        <label>Status: </label>
+                        <select
+                          value={editable.status}
+                          onChange={(e) =>
+                            setEditableJobs((prev) => ({
+                              ...prev,
+                              [job.id]: {
+                                ...prev[job.id],
+                                status: e.target.value,
+                              },
+                            }))
+                          }
+                          style={{ marginLeft: "0.5rem" }}
+                        >
+                          {(job.category === "Applied by Me"
+                            ? ["Accepted", "Pending", "Rejected"]
+                            : job.category === "Posted by Me"
+                            ? ["Pending", "In Progress", "Cancelled"]
+                            : ["Ongoing", "Completed"]
+                          ).map((statusOption) => (
+                            <option key={statusOption} value={statusOption}>
+                              {statusOption}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Upload photos only for Assigned to Me */}
+                      {job.category === "Assigned to Me" && (
+                        <div style={{ marginBottom: "1rem" }}>
+                          <label>Upload Proof Photos:</label>
+                          <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            onChange={(e) => handlePhotoUpload(job.id, e)}
+                            style={{ display: "block", marginTop: "0.5rem" }}
+                          />
+                          <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                            {(editable.uploadedPhotos || []).map((photo, index) => (
+                              <img
+                                key={index}
+                                src={photo}
+                                alt={`Proof ${index + 1}`}
+                                style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "8px" }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       <div>
                         <button
                           onClick={() => {
@@ -348,6 +430,7 @@ const [jobs, setJobs] = useState<Job[]>([
                                   ? {
                                       ...j,
                                       subCategory: editableJobs[job.id]?.subCategory || j.subCategory,
+                                      status: editableJobs[job.id]?.status || j.status,
                                     }
                                   : j
                               )
