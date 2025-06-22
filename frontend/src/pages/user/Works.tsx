@@ -5,7 +5,9 @@ import { apiClient } from "../../api/client";
 import SideMenu from "../../components/SideMenu/SideMenu";
 import JobTile from "../../components/JobTile/JobTile";
 import {Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
-import jobImage from "../../assets/get-a-job-with-no-experience.png"
+import jobImage from "../../assets/1.jpeg"
+import jobImage2 from "../../assets/2.jpeg"
+import jobImage3 from "../../assets/3.jpeg"
 import { useSearchParams, useLocation } from "react-router-dom";
 import {getAvailableJobs} from "../../api/userAPI";
 import { toast } from "react-toastify";
@@ -114,7 +116,7 @@ export default function Works() {
         location: string;
         daysPosted: number;
         jobType?: string;
-        budget: number;
+        budget: string | number;
         isUrgent: boolean;
         isTrending?: boolean;
         isBookmarked: boolean;
@@ -141,41 +143,41 @@ export default function Works() {
         {
           id: "J123",
           title: "Reparement for the ceiling",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
+          category: "Technicians",
+          subCategory: "Masonry",
           image: jobImage,
-          location: "123 Main St, New York, NY",
+          location: "Mawanella, Kegalle",
           daysPosted: 3,
           jobType: "Full-Time",
-          budget: 5000,
+          budget: 10000,
           isUrgent: true,
           isTrending: true,
           isBookmarked: false,
         },
         {
           id: "J124",
-          title: "Data Analyst",
-          category: "IT",
-          subCategory: "Data Entry",
-          image: jobImage,
-          location: "456 Elm St, Los Angeles, CA",
+          title: "Install a new water tank",
+          category: "Technicians",
+          subCategory: "Plumbing",
+          image: jobImage2,
+          location: "Panadura, Sri Lanka",
           daysPosted: 7,
           jobType: "Part-Time",
-          budget: 5000,
+          budget: 8000,
           isUrgent: true,
           isTrending: true,
           isBookmarked: true,
         },
         {
           id: "J125",
-          title: "Web Developer",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "456 Elm St, Los Angeles, CA",
+          title: "කොන්ක්‍රීට් slab එක waterproof කිරීම",
+          category: "Technicians",
+          subCategory: "Masonry",
+          image: jobImage3,
+          location: "Panadura, Sri Lanka",
           daysPosted: 7,
           jobType: "Part-Time",
-          budget: 5000,
+          budget: " -",
           isUrgent: true,
           isTrending: true,
           isBookmarked: true,
