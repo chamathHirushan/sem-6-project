@@ -231,6 +231,7 @@ useEffect(() => {
       //     "poster": poster || null
       //   }
       // )
+      window.dispatchEvent(new Event("addService"));
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a delay for the service post creation
       toast.success("Service Post Created Successfully!");
     }

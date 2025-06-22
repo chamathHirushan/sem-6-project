@@ -14,6 +14,7 @@ import jobImage1 from "../../assets/s1.jpeg"
 import jobImage4 from "../../assets/s4.jpeg"
 import jobImage5 from "../../assets/s5.jpeg"
 import jobImage6 from "../../assets/s6.jpeg"
+import jobImage7 from "../../assets/19.jpeg"
 
 export default function Hires() {
   const [backendData, setBackendData] = useState<string>("Loading...");
@@ -212,6 +213,41 @@ export default function Hires() {
       isTrending: false,
     },
   ]);
+
+        useEffect(() => {
+        const initialize = () => {
+          setTimeout(() => {
+            setTasks((prevJobs) => {
+              if (prevJobs.some(job => job.id === "J199")) {
+                return prevJobs;
+              }
+              return [
+                ...prevJobs,
+                  {
+                  id: "J199",
+                  image: jobImage7,
+                  category: "Technicians",
+                  subCategory: "Electricians",
+                  title: "Wiring & Socket Repair",
+                  location: "Kandy",
+                  daysPosted: 2,
+                  taskType: "Cleaning",
+                  budget: 150,
+                  isBookmarked: false,
+                  isUrgent: true,
+                  isTrending: true,
+                }
+              ];
+            });
+          }, 1500); // 1.5 seconds delay
+        };
+
+        window.addEventListener("addService", initialize);
+
+        return () => {
+          window.removeEventListener("addService", initialize);
+        };
+      }, []);
 
 
   const filteredTasks = tasks.filter((task) => {
