@@ -329,8 +329,9 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
 
           {/* Right side - Profile/login*/}  
              <div className="relative items-center gap-4 hidden md:flex">
-              {/* Button for posting a job/service */}
-              <div>
+                {/* Button for posting a job/service */}
+                {localStorage.getItem("verified") === "true" && (
+                <div>
                   <button
                   className="text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br 
                   focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-cyan-500/50 
@@ -343,7 +344,8 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                   >
                   Post Tasks / Service
                   </button>
-              </div>
+                </div>
+                )}
 
               {/* Notifications and Profile dropdown */}
               {userLoggedIn ? (

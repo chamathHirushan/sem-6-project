@@ -119,6 +119,38 @@ export default function MyJobs() {
     },
   ]);
 
+   useEffect(() => {
+        const initialize = () => {
+          setTimeout(() => {
+            setJobs((prevJobs) => {
+              if (prevJobs.some(job => job.id === "3")) {
+                return prevJobs;
+              }
+              return [
+                ...prevJobs,
+                {
+                  id: "3",
+                  title: "Garden Cleaning",
+                  description: "Need assistance in cleaning the yard owned by an shop owner.",
+                  imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuMXucuJjvBA8wSU1WP2xcVkro6N0YtJzY5g&s",
+                  budget: "Rs.10,000/day",
+                  category: "Applied by Me",
+                  subCategory: "Landscaping",
+                  status: "Pending",
+                },
+              ];
+            });
+          }, 1500); // 1.5 seconds delay
+        };
+
+        window.addEventListener("addMyJob", initialize);
+
+        return () => {
+          window.removeEventListener("addMyJob", initialize);
+        };
+      }, []);
+
+
   const toggleExpand = (id: string) => {
     setExpandedJobId(id === expandedJobId ? null : id);
     const foundJob = jobs.find((job) => job.id === id);

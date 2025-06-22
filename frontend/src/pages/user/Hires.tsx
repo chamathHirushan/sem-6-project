@@ -204,7 +204,7 @@ export default function Hires() {
       category: "Vehicle Repair",
       subCategory: "Car, Bike, and Vehicle Repair",
       title: "Car, Bike, and Vehicle Repair",
-      location: "Jaffna",
+      location: "Anuradapura, Sri Lanka",
       daysPosted: 3,
       taskType: "Repair",
       budget: 100,

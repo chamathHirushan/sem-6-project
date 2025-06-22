@@ -12,6 +12,7 @@ import jobImage7 from "../../assets/7.jpeg"
 import jobImage from "../../assets/get-a-job-with-no-experience.png";
 import jobImage1 from "../../assets/12.jpg";
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 interface Job {
   id: string;
@@ -120,6 +121,12 @@ export default function JobView() {
     // Navigate to the chat page with the job ID
     navigate(`/conversations`, { state: { from: location.pathname, scrollPosition: window.scrollY } });
   };
+
+  const hadnleApplyJob = async () => {
+    window.dispatchEvent(new Event("addMyJob"));
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a delay for the service post creation
+    toast.success("Application sent successfully!");
+  }
 
   return (
     <div className="p-8 lg:max-w-6xl max-w-full mx-auto">
@@ -327,12 +334,15 @@ export default function JobView() {
               </a>
             </div>
 
-
+          {localStorage.getItem("verified") === "true" && (
+            <>
             {/* Apply for Job button */ }
-            <button className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 w-full">Apply for Job</button>
+            <button className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 w-full" onClick={()=> hadnleApplyJob()}>Apply for Job</button>
             {/* Save for later button */ }
             <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full" onClick={() => handleClickChat()}>Chat</button>
             <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full">Save for Later</button>
+            </>
+          )}
           </div>            
         </div>
 

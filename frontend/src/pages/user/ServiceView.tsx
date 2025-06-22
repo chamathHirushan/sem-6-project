@@ -7,6 +7,8 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./ServiceView.css";
 import {getServiceDetails} from "../../api/userAPI";
+import jobImage6 from "../../assets/s6.jpeg"
+import poster from "../../assets/29.jpg"; // Sample job image
 
 import jobImage from "../../assets/get-a-job-with-no-experience.png";
 
@@ -64,26 +66,26 @@ export default function ServiceView() {
 }  
 
   const sampleTask = {
-    id: "D153",
-    title: "Senior Developer",
-    category: "IT & Software",
+    id: "J138",
+    title: "Car, Bike, and Vehicle Repair",
+    category: "Car, Bike, and Vehicle Repair",
     taskType: "Full-Time", 
-    location: "New York, NY",
+    location: "Anuradapura, Sri Lanka",
     isUrgent: true,
     isTrending: true,
     daysPosted: "2 days",   // no of days, months or years since posted
     dueDate: "2023-12-31",
-    postedDate: "2023-10-01",  // date when posted
-    postedUserName: "John Doe",
+    postedDate: "2025-06-11",  // date when posted
+    postedUserName: "Kavindu senevirathne",
     postedUserImage: jobImage,
     postedUserRating: 3.5,
-    miniDescription: "Looking for a senior developer with 5+ years of experience.",
+    miniDescription: "Experienced vehicle repair specialist ",
     budget: 5000,
     address: "123 Main St, New York, NY",
-    description: "We are looking for a senior developer to join our team. The ideal candidate should have at least 5 years of experience in software development, with a strong background in JavaScript and React. I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done).",
-    poster: "https://s3-ap-southeast-1.amazonaws.com/xpresslivedonotmess-live/Vacancies/DescriptionImage_181385", // poster of the job post if exist
+    description: "A dedicated and skilled vehicle repair specialist located in Anuradhapura, Sri Lanka. With hands-on experience in servicing and repairing cars, motorbikes, and other types of vehicles, he offers reliable and efficient solutions for a wide range of mechanical and diagnostic issues. Known for prompt service and technical expertise across multiple vehicle types.",
+    poster: poster, // poster of the job post if exist
     isBookmarked: false,
-    image: [jobImage, jobImage, jobImage],
+    image: [jobImage6, jobImage6, jobImage6],
   };
 
   const [task, setTask] = useState<Task>(sampleTask);
@@ -309,11 +311,14 @@ export default function ServiceView() {
               </a>
             </div>
 
-
-            {/* Apply for Job button */ }
-            <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full" onClick={() => handleClickChat()}>Chat</button>
-            {/* Save for later button */ }
-            <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full">Save for Later</button>
+          {localStorage.getItem("verified") === "true" && (
+            <>
+              {/* Apply for Job button */ }
+              <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full" onClick={() => handleClickChat()}>Chat</button>
+              {/* Save for later button */ }
+              <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full">Save for Later</button>
+            </>
+          )}
           </div>            
         </div>
 

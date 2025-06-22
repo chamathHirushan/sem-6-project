@@ -179,7 +179,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (userLoggedIn) {
       if (user?.role >= 3) {
-        navigate("/admin", { replace: true });
+        navigate("/work", { replace: true });
       } else if (user?.role <= 2) {
         navigate("/work", { replace: true });
       }
