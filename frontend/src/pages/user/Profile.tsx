@@ -322,9 +322,9 @@ export default function Profile({ my = true }: ProfileProps) {
             {/* Last Active & Town */}
             <div style={{ display: "flex", gap: "2rem", marginBottom: "1.5rem" }}>
               <div style={{ flex: 1, ...fieldContainerStyle }}>
-                <label style={labelStyle}>Last Active</label>
+                <label style={labelStyle}>Account Created On</label>
                 <input
-                  value={user_.lastActive}
+                  value={user_.joinedDate}
                   disabled
                   style={{
                     ...inputBaseStyle,

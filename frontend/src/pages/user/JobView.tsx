@@ -10,6 +10,8 @@ import "./ServiceView.css";
 import {getJobDetails} from "../../api/userAPI";
 import jobImage7 from "../../assets/7.jpeg"
 import jobImage from "../../assets/get-a-job-with-no-experience.png";
+import jobImage1 from "../../assets/12.jpg";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface Job {
   id: string;
@@ -39,6 +41,7 @@ export default function JobView() {
   const id = params.id;
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, userLoggedIn } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to top on mount
@@ -63,22 +66,23 @@ export default function JobView() {
 
   const samplejob = {
     id: id || "D153",
-    title: "Senior Developer",
-    category: "IT & Software",
-    subCategory: "Plumbing",
-    location: "New York, NY",
+    title: "Garden Cleaning",
+    category: "House",
+    subCategory: "Landscaping",
+    location: "Polgahawela, Sri Lanka",
     isUrgent: true,
-    daysPosted: "2 days",   // no of days, months or years since posted
-    dueDate: "2023-12-31",
-    postedDate: "2023-10-01",  // date when posted
-    postedUserName: "John Doe",
-    postedUserImage: jobImage,
+    daysPosted: "1 days",   // no of days, months or years since posted
+    dueDate: "2025-06-31",
+    postedDate: "2025-06-23",  // date when posted
+    postedUserName: user?.name || "John Doe",
+    postedUserImage: user?.profile_picture
+ || "https://i.pinimg.com/236x/dd/f0/11/ddf0110aa19f445687b737679eec9cb2.jpg",
     postedUserRating: 3.5,
-    miniDescription: "Looking for a senior developer with 5+ years of experience.",
-    budget: 5000,
+    miniDescription: "Urgent garden cleaning task",
+    budget: 9000,
     address: "123 Main St, New York, NY",
-    description: "We are looking for a senior developer to join our team. The ideal candidate should have at least 5 years of experience in software development, with a strong background in JavaScript and React. I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done).",
-    poster: "https://s3-ap-southeast-1.amazonaws.com/xpresslivedonotmess-live/Vacancies/DescriptionImage_181385", // poster of the job post if exist
+    description: "This is an urgent garden cleaning task categorized under House > Landscaping, based in Polgahawela, Sri Lanka. The job involves maintaining and tidying up outdoor spaces, likely requiring skills in weeding, trimming, and general yard care. It is marked as a high-priority task and must be completed by June 31, 2025. Suitable for individuals or teams experienced in residential landscaping and garden upkeep.",
+    poster: jobImage1, // poster of the job post if exist
     isBookmarked: false,
     image: [jobImage7, jobImage7, jobImage7],
   };
@@ -159,7 +163,7 @@ export default function JobView() {
               {/* job category*/ }
               <div className="flex items-center my-1">
                 <BriefcaseIcon className="w-4 h-4 mr-1" style={{ color: "black" }}/>
-                <p className="text-gray-600 text-sm"><span className="font-bold">Category: </span>{job.category} ago</p>
+                <p className="text-gray-600 text-sm"><span className="font-bold">Category: </span>{job.category}</p>
               </div>
               
               {/* Posted Date as "days/months/years" ago */ }

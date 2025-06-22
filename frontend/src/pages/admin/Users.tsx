@@ -4,6 +4,7 @@ import { apiClient } from "../../api/client";
 import { ChevronLeftIcon, ChevronRightIcon, EyeIcon, TrashIcon, PencilIcon  } from '@heroicons/react/24/solid';
 import {DeleteConfirmationModal} from "../../components/UserPopup";
 import {EditConfirmationModal} from "../../components/UserPopup";
+import { toast } from "react-toastify";
 
 interface Role {
   level: number;
@@ -82,7 +83,7 @@ const UserManagementTable = () => {
       setShowDeletePopup(false);
       setSelectedUserId(null);
       // TODO: Replace with actual delete API call
-      alert(`Deleted user ID: ${selectedUserId}`);
+      toast.success(`User deleted successfully`);
     }
   };
 
@@ -99,12 +100,17 @@ const UserManagementTable = () => {
       }
       return user;
     });
+    // Update roleName for display/logging if needed
+    const updatedUser = updatedUsers.find(user => user.id === selectedUserId);
+    let roleName = getRoleName(Number(updatedUser?.permission_level) || 1);
+    // You can use roleName for logging or UI feedback if needed
 
     setAllUsers(updatedUsers);
     setShowEditPopup(false);
     setSelectedUserId(null);
+    
     // TODO: Replace with actual update API call
-    alert(`Changed the permission of user ID: ${selectedUserId}`);
+    toast.success(`Changed the permission of user to ${roleName}`);
   }
 };
 
@@ -210,7 +216,7 @@ const UserManagementTable = () => {
 
   // Function to handle view user details
   const handleViewUser = (userId: number) => {
-    alert(`View details for user ID: ${userId}`);
+    //alert(`View details for user ID: ${userId}`);
   };
 
   return (

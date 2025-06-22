@@ -50,7 +50,12 @@ useEffect(() => {
     setCountries(countryList);
 
     const prem = localStorage.getItem("premium");
-    setPremium(prem === "true");
+    if (prem !== ""){
+      setPremium(true);
+    }
+    else{
+      setPremium(false);
+    }
 
     console.log("premium status:", prem);
   };
