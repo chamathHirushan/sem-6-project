@@ -35,6 +35,11 @@ export default function ServiceView() {
     });
   };
 
+  const handleClickChat = () => {
+    // Navigate to the chat page with the job ID
+    navigate(`/conversations`, { state: { from: location.pathname, scrollPosition: window.scrollY } });
+  };
+
   interface Task {
   id: string;
   title: string;
@@ -306,7 +311,7 @@ export default function ServiceView() {
 
 
             {/* Apply for Job button */ }
-            <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full">Chat</button>
+            <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full" onClick={() => handleClickChat()}>Chat</button>
             {/* Save for later button */ }
             <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full">Save for Later</button>
           </div>            

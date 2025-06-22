@@ -62,8 +62,8 @@ async def session(
             user_record = {
                     "email": email,
                     "role": 3,
-                    "name": "name",
-                    "phone_number": "+1234567890",
+                    "name": "John",
+                    "phone_number": "+0771234567",
                     "profile_picture": "photo"
                 }
         else:
@@ -82,7 +82,7 @@ async def session(
                     "email": email,
                     "role": 3,
                     "name": name,
-                    "phone_number": "+1234567890",
+                    "phone_number": "+0771234567",  # Default phone number, should be updated later
                     "profile_picture": photo
                 }
                 UserService().create_user(user_record)

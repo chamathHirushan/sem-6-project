@@ -132,7 +132,7 @@ const UserManagementTable = () => {
 
   // Sample user data
   const InitallUsers = [
-    { id: 1, name: "John Smith", permission_level: 4, email:"john2003@gmail.com", createdAt: new Date("2024-11-15T10:30:00") },
+    { id: 1, name: "Sewalk admin", permission_level: 4, email:"codeclouts@gmail.com", createdAt: new Date("2025-02-15T10:30:00") },
     { id: 2, name: "Sarah Johnson", permission_level: 3, email:"johnson@gmail.com", createdAt: "2025-01-22T08:45:00" },
     { id: 3, name: "Michael Chen", permission_level: 2, email:"mmichael@gmail.com", createdAt: "2025-02-14T14:15:00" },
     { id: 4, name: "Emma Wilson", permission_level: 3, email:"emma23@gmail.com", createdAt: "2025-03-05T09:20:00" },

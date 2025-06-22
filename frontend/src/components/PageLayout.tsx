@@ -73,8 +73,6 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
   navigation = [
     { name: 'Available Jobs', path: '/work' },
     { name: 'Hire Workers', path: '/hire' },
-    { name: 'Chats', path: '/conversations' },
-
   ];
 
   // Profile dropdown options
