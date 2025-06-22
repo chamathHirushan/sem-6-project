@@ -170,7 +170,7 @@ export default function Profile() {
       <div
         style={{
           flex: 1,
-          backgroundColor: "white",
+          backgroundColor: "#F6F8D5",
           borderRadius: "16px",
           padding: "4rem",
           maxWidth: "100%",

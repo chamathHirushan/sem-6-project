@@ -219,7 +219,7 @@ export default function MyJobs() {
         <div
           style={{
             display: "table-cell",
-            backgroundColor: "#ffffff",
+            backgroundColor: "#F6F8D5",
             borderRadius: "16px",
             padding: "2rem",
             color: "#205781",
@@ -230,7 +230,7 @@ export default function MyJobs() {
 
           <div
             style={{
-              backgroundColor: "white",
+              backgroundColor: "#F6F8D5",
               borderRadius: "12px",
               padding: "1rem",
               marginTop: "1rem",

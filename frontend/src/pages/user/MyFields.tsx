@@ -176,7 +176,7 @@ export default function MyFields() {
         <div
           style={{
             display: "table-cell",
-            backgroundColor: "white",
+            backgroundColor: "#F6F8D5",
             borderRadius: "16px",
             padding: "2rem",
             color: "#205781",
@@ -187,7 +187,7 @@ export default function MyFields() {
 
           <div
             style={{
-              backgroundColor: "white",
+              backgroundColor: "#F6F8D5",
               borderRadius: "12px",
               padding: "1rem",
               marginTop: "1rem",
