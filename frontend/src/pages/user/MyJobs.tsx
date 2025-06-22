@@ -15,6 +15,21 @@ type Job = {
   status: string;
 };
 
+export default function MyJobs() {
+  // const [jobs, setJobs] = useState<Job[]>([]);
+  // const [backendMessage, setBackendMessage] = useState<string>("Loading...");
+  // const { user } = useAuth();
+  const navigate = useNavigate();
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
+  const [editableJobs, setEditableJobs] = useState<Record<string, Job & { uploadedPhotos?: string[] }>>({});
+  const [selectedCategory, setSelectedCategory] = useState<Job["category"]>("Posted by Me");
+
+  const [appliedSubCategory, setAppliedSubCategory] = useState<"All" | "Accepted" | "Pending" | "Rejected">("All");
+  const [postedSubCategory, setPostedSubCategory] = useState<"All" | "Pending" | "In Progress" | "Cancelled">("All");
+  const [assignedSubCategory, setAssignedSubCategory] = useState<"All" | "Ongoing" | "Completed">("All");
+
+  const [showSubCategories, setShowSubCategories] = useState<"" | "Applied by Me" | "Posted by Me" | "Assigned to Me">("");
+
   const [jobs, setJobs] = useState<Job[]>([
     // Applied by Me
     {
