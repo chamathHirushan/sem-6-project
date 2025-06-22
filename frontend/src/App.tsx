@@ -4,7 +4,9 @@ import { AppRouter } from "./routes";
 import "react-toastify/dist/ReactToastify.css"; 
 import { AuthProvider } from './contexts/AuthContext.tsx'
 
+
 function App() {
+
   return (
     <ConfigProvider>
         <AuthProvider>

@@ -1,3 +1,4 @@
+import hashlib
 import os
 from urllib.parse import urlparse
 from fastapi import APIRouter, HTTPException, Request, Response, Header
@@ -5,6 +6,7 @@ from firebase_admin import auth, credentials
 import firebase_admin
 from services.auth_service import AuthService
 from services.user_service import UserService
+from pydantic import BaseModel
 
 cred = credentials.Certificate("./config/firebase-service-account.json")
 firebase_admin.initialize_app(cred)
@@ -188,3 +190,56 @@ async def store_phone(
     phone_number = body.get("phone_number")
     email = body.get("email")
     print("storing phone number for user:", email, "phone number:", phone_number)
+    
+    
+MERCHANT_ID = "1230959"
+MERCHANT_SECRET = "MjA5OTAzMjcyNzEzNzg1OTU1MTkxNzM5NjM0MzYyMTM1NjA0MjYyNg=="
+
+# Request models
+class StartPaymentRequest(BaseModel):
+    order_id: str
+    amount: str
+    currency: str
+
+class NotifyRequest(BaseModel):
+    merchant_id: str
+    order_id: str
+    payhere_amount: str
+    payhere_currency: str
+    status_code: str
+    md5sig: str
+
+@router.post("/start")
+async def start_payment(data: StartPaymentRequest):
+    print(f"Payment request for order: {data.order_id}")
+    
+    # First hash the merchant secret
+    hashed_secret = hashlib.md5(MERCHANT_SECRET.encode()).hexdigest().upper()
+
+    # Build the hash string
+    hash_input = f"{MERCHANT_ID}{data.order_id}{data.amount}{data.currency}{hashed_secret}"
+    hash_value = hashlib.md5(hash_input.encode()).hexdigest().upper()
+
+    print(f"Hash generated for order: {data.order_id}")
+    return {"hash": hash_value, "merchant_id": MERCHANT_ID}
+
+@router.post("/notify")
+async def payment_notify(data: NotifyRequest):
+    print(f"Payment notification received for order: {data.order_id}")
+
+    # First hash the merchant secret
+    hashed_secret = hashlib.md5(MERCHANT_SECRET.encode()).hexdigest().upper()
+
+    # Build the local MD5 signature
+    sig_input = (
+        f"{data.merchant_id}{data.order_id}{data.payhere_amount}"
+        f"{data.payhere_currency}{data.status_code}{hashed_secret}"
+    )
+    local_md5sig = hashlib.md5(sig_input.encode()).hexdigest().upper()
+
+    if local_md5sig == data.md5sig and data.status_code == "2":
+        print(f"Payment successful for order: {data.order_id}")
+        return {"status": "Payment verified"}
+    else:
+        print(f"Payment verification failed for order: {data.order_id}")
+        return {"status": "Verification failed"}, 400

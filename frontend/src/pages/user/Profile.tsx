@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import defaultProfilePic from "../../assets/users.png";
+import { toast } from "react-toastify";
+import PaymentButton from "../../components/payhere";
 
 interface UserProfile {
   profilePicUrl: string | null;
@@ -32,6 +34,12 @@ export default function Profile() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [activeTab, setActiveTab] = useState("details");
   const [isEditing, setIsEditing] = useState(false);
+  const [premium, setPremium] = useState(0);
+  
+    const boostTypes = [
+    { label: "Standard Boost", value: 1 },
+    { label: "Premium Boost", value: 2 },
+  ];
 
   useEffect(() => {
     const loadUser = async () => {
@@ -48,6 +56,17 @@ export default function Profile() {
       );
     }
   };
+
+  const buyNow = async (boostType: string) => {
+    // Simulate a payment gateway call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    toast.success(`Successfully purchased ${boostType}!`);
+  }
+  
+  const hadndleSubmit = async () => {
+    //payment gateway
+    sessionStorage.setItem("premium", JSON.stringify(premium));
+  }
 
   const handleLogout = () => {
     navigate("/login");
@@ -153,18 +172,53 @@ export default function Profile() {
           <h2>Profile Information</h2>
         </button>
         <button
-          onClick={() => navigate("/myjobs")}
+          onClick={() => navigate("/my-jobs")}
           style={{ marginTop: "0.5rem", background: "none", border: "none", color: "#205781", cursor: "pointer" }}
         >
           <h2>My Jobs</h2>
         </button>
-        <button
+        {/* <button
           onClick={() => navigate("/myfields")}
           style={{ marginTop: "0.5rem", background: "none", border: "none", color: "#205781", cursor: "pointer" }}
         >
           <h2>My Subscriptions</h2>
-        </button>
+        </button> */}
+        <br/>
+        <div className="mb-3">
+        <label className="block mb-1 font-medium">Upgrade to premium</label>
+                  <select
+                    className="w-full border rounded px-2 py-1"
+                    value={premium}
+                    onChange={e => setPremium(e.target.value)}
+                  >
+                    <option value="">Select boost type</option>
+                   {boostTypes.map((item, index) => (
+                      <option key={index} value={item.label}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+      {/* <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
+      <button
+          onClick={() => hadndleSubmit()}
+          style={{
+            padding: "0.75rem 1.5rem",
+            backgroundColor: "#205781",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer",
+          }}
+        >
+          Upgrade
+        </button> */}
+        <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
+        <PaymentButton name="upgrade" value="400.00" itemname="Monthly subscription" onSubmit={() => hadndleSubmit()}/>
+        </div>
       </div>
+
 
       {/* Right Side - Profile Info */}
       <div
