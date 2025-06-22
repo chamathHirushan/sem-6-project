@@ -9,6 +9,7 @@ import { X } from "lucide-react";
 import "react-datepicker/dist/react-datepicker.css";
 import {addService, addJob} from '../../api/userAPI'; // Adjust the import path as necessary
 import { toast } from "react-toastify";
+import PaymentButton from "../../components/payhere"; // Adjust the import path as necessary
 
 
 interface PostJobPopupProps {
@@ -50,6 +51,10 @@ useEffect(() => {
     setCountries(countryList);
 
     const prem = localStorage.getItem("premium");
+    if (prem === null || prem === undefined){
+      localStorage.setItem("premium", "");
+      setPremium(false);
+    }
     if (prem !== ""){
       setPremium(true);
     }
@@ -149,6 +154,13 @@ useEffect(() => {
   }, [open]);
 
   if (!open) return null;
+
+  const handleSubmitnew = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await new Promise(resolve => setTimeout(resolve, 3000)); 
+    window.dispatchEvent(new Event("add"));
+    onClose();
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -649,11 +661,14 @@ useEffect(() => {
                   <select
                     className="w-full border rounded px-2 py-1"
                     value={boostLevel}
-                    onChange={e => setBoostType(e.target.value)}
+                    onChange={e => {
+                      setBoostType(Number(e.target.value));
+                      console.log("Boost level selected:", e.target.value);
+                    }}
                   >
                     <option value="">Select boost type</option>
                    {boostTypes.map((item, index) => (
-                      <option key={index} value={item.label}>
+                      <option key={index} value={item.value}>
                         {item.label}
                       </option>
                     ))}
@@ -672,13 +687,31 @@ useEffect(() => {
                 >
                 Cancel
             </button>
-            <button
+            {selectedType === 'job' && !premium && boostLevel > 0 ? (
+              <PaymentButton
+                name="Post"
+                value={boostLevel === 2 ? "400.00" : boostLevel === 1 ? "300.00" : "0.00"}
+                itemname={
+                  boostLevel === 2
+                    ? "Premium post boost"
+                    : boostLevel === 1
+                    ? "Standard post boost"
+                    : ""
+                }
+                onSubmit={() =>
+                  handleSubmitnew(new Event("submit") as unknown as React.FormEvent)
+                }
+              />
+            ) : (
+              <button
                 onClick={handleSubmit}
                 type="submit"
                 className="px-6 py-2 rounded-lg bg-[#306ff7] hover:bg-[#1f3565] text-white"
-                >
+              >
                 Post
-            </button>
+              </button>
+            )}
+
         </div>
       </div>
     </div>

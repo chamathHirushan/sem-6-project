@@ -59,8 +59,8 @@ export default function Profile({ my = true }: ProfileProps) {
   const [premium, setPremium] = useState("");
   
   const boostTypes = [
-    { label: "Standard Boost", value: 1 },
-    { label: "Premium Boost", value: 2 },
+    { label: "Standard package", value: 1 },
+    { label: "Premium package", value: 2 },
   ];
 
   useEffect(() => {
@@ -212,7 +212,7 @@ export default function Profile({ my = true }: ProfileProps) {
                     value={premium}
                     onChange={e => setPremium(e.target.value)}
                   >
-                    <option value="">Select boost type</option>
+                    <option value="">Activate a package </option>
                    {boostTypes.map((item, index) => (
                       <option key={index} value={item.value}>
                         {item.label}
@@ -236,8 +236,12 @@ export default function Profile({ my = true }: ProfileProps) {
           Upgrade
         </button> */}
         <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
-        <PaymentButton name="upgrade" value="400.00" itemname="Monthly subscription" onSubmit={() => hadndleSubmit()}/>
-        </div>
+        <PaymentButton
+        name="upgrade"
+        value={`${premium === "2" ? "2000.00" : premium === "1" ? "1500.00" : "0.00"}`}
+        itemname={`Monthly ${premium === "2" ? "Premium" : premium === "1" ? "Standard" : ""} subscription`}
+        onSubmit={() => hadndleSubmit()}
+      /></div>
       </div>
 
 
