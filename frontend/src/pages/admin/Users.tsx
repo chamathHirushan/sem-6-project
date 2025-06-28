@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { apiClient } from "../../api/client";
-import { ChevronLeftIcon, ChevronRightIcon, EyeIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/solid';
-import { DeleteConfirmationModal } from "../../components/UserPopup";
-import { EditConfirmationModal } from "../../components/UserPopup";
+
+import { ChevronLeftIcon, ChevronRightIcon, EyeIcon, TrashIcon, PencilIcon  } from '@heroicons/react/24/solid';
+import {DeleteConfirmationModal} from "../../components/UserPopup";
+import {EditConfirmationModal} from "../../components/UserPopup";
+import { toast } from "react-toastify";
+        
 
 interface User {
   id: number;
@@ -134,23 +137,41 @@ const UserManagementTable = () => {
 
   const handleConfirmDelete = async () => {
     if (selectedUserId !== null) {
-      const success = await deleteUser(selectedUserId);
-      if (success) {
-        // Refresh the users list
-        await fetchUsers();
-        setShowDeletePopup(false);
-        setSelectedUserId(null);
-      }
+      const updatedUsers = allUsers.filter(user => user.id !== selectedUserId);
+      setAllUsers(updatedUsers);
+      setShowDeletePopup(false);
+      setSelectedUserId(null);
+      // TODO: Replace with actual delete API call
+      toast.success(`User deleted successfully`);
     }
   };
 
-  const handleConfirmEdit = async () => {
-    if (selectedUserId !== null) {
-      const user = allUsers.find(u => u.id === selectedUserId);
-      if (user) {
-        const newPermissionLevel = user.permission_level === 3 ? 2 :
-          user.permission_level === 2 ? 3 :
-            user.permission_level;
+  const handleConfirmEdit = () => {
+  if (selectedUserId !== null) {
+    const updatedUsers = allUsers.map(user => {
+      if (user.id === selectedUserId) {
+        return {
+          ...user,
+          permission_level: user.permission_level === 3 ? 2 :
+                            user.permission_level === 2 ? 3 :
+                            user.permission_level // leave unchanged if not 2 or 3
+        };
+      }
+      return user;
+    });
+    // Update roleName for display/logging if needed
+    const updatedUser = updatedUsers.find(user => user.id === selectedUserId);
+    let roleName = getRoleName(Number(updatedUser?.permission_level) || 1);
+    // You can use roleName for logging or UI feedback if needed
+
+    setAllUsers(updatedUsers);
+    setShowEditPopup(false);
+    setSelectedUserId(null);
+    
+    // TODO: Replace with actual update API call
+    toast.success(`Changed the permission of user to ${roleName}`);
+  }
+};
 
         const success = await updateUserPermissionLevel(selectedUserId, newPermissionLevel);
         if (success) {
@@ -172,6 +193,34 @@ const UserManagementTable = () => {
     setShowEditPopup(false);
     setSelectedUserId(null);
   };
+  
+  // const [allUsers, setAllUsers] = useState<any[]>([]);
+  useEffect(() => {
+    // fetchUsers(); // No fetchUsers function, using static data
+  }, []);
+
+  // Sample user data
+  const InitallUsers = [
+    { id: 1, name: "Sewalk admin", permission_level: 4, email:"codeclouts@gmail.com", createdAt: new Date("2025-02-15T10:30:00") },
+    { id: 2, name: "Sarah Johnson", permission_level: 3, email:"johnson@gmail.com", createdAt: "2025-01-22T08:45:00" },
+    { id: 3, name: "Michael Chen", permission_level: 2, email:"mmichael@gmail.com", createdAt: "2025-02-14T14:15:00" },
+    { id: 4, name: "Emma Wilson", permission_level: 3, email:"emma23@gmail.com", createdAt: "2025-03-05T09:20:00" },
+    { id: 5, name: "David Garcia", permission_level: 1, email:"olivia@gmail.com", createdAt: "2025-03-18T16:30:00" },
+    { id: 6, name: "Olivia Brown", permission_level: 1, email:"obrown@gmail.com", createdAt: "2025-03-30T11:45:00" },
+    { id: 7, name: "James Lee", permission_level: 2, email:"jamesle@gmail.com", createdAt: "2025-04-10T13:10:00" },
+    { id: 8, name: "Sophia Martinez", permission_level: 3, email:"sophia@gmail.com", createdAt: "2025-04-22T15:25:00" },
+    { id: 9, name: "Daniel Taylor", permission_level: 2, email:"taylor12s@gmail.com", createdAt: "2025-05-01T10:05:00" },
+    { id: 10, name: "Isabella Anderson", permission_level: 1, email:"isabella@gmail.com", createdAt: "2025-05-12T14:50:00" },
+    { id: 11, name: "David Garcia", permission_level: 1, email:"olivia@gmail.com", createdAt: "2025-03-18T16:30:00" },
+    { id: 12, name: "Olivia Brown", permission_level: 1, email:"obrown@gmail.com", createdAt: "2025-03-30T11:45:00" },
+    { id: 13, name: "James Lee", permission_level: 2, email:"jamesle@gmail.com", createdAt: "2025-04-10T13:10:00" },
+    { id: 14, name: "Sophia Martinez", permission_level: "Moderator", email:"sophia@gmail.com", createdAt: "2025-04-22T15:25:00" },
+    { id: 15, name: "Daniel Taylor", permission_level: 2, email:"taylor12s@gmail.com", createdAt: "2025-05-01T10:05:00" },
+    { id: 16, name: "Isabella Anderson", permission_level: 1, email:"isabella@gmail.com", createdAt: "2025-05-12T14:50:00" },
+  ];
+
+  const [allUsers, setAllUsers] = useState(InitallUsers);
+  const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
 
   const handleSort = (key: string) => {
     const direction =
@@ -235,10 +284,12 @@ const UserManagementTable = () => {
 
   // Function to handle view user details
   const handleViewUser = (userId: number) => {
+
     const user = allUsers.find(u => u.id === userId);
     if (user) {
       alert(`User Details:\nName: ${user.name}\nEmail: ${user.email}\nPhone: ${user.phone_number}\nTown: ${user.town}\nRole: ${getRoleName(user.permission_level)}`);
     }
+
   };
 
   if (loading) {

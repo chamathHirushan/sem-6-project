@@ -4,11 +4,10 @@ import {useAuth} from "../../contexts/AuthContext";
 
 // Dummy conversation data
 const dummyMessages = [
-  { from: "employee", text: "Hello! I am interested in the job opening." },
-  { from: "employer", text: "Hi! Can you tell me about your experience?" },
-  { from: "employee", text: "Sure, I have 3 years of experience in web development." },
-  { from: "employer", text: "That's great! Are you available for an interview this week?" },
-  { from: "employee", text: "Yes, I am available on Thursday or Friday." },
+  { from: "employer", text: "Hi!, I can repair your ceiling. is that job still abailable." },
+  { from: "employee", text: "yes, its available. I need it done by next week" },
+  { from: "employee", text: "would it be possible for you" },
+  { from: "employer", text: "Yes, I can manage it with that time" },
 ];
 
 export default function Conversations() {
@@ -36,12 +35,12 @@ export default function Conversations() {
 
   const handleSend = () => {
     if (!input.trim()) return;
-    setMessages([...messages, { from: user.role, text: input }]);
+    setMessages([...messages, { from: user.name, text: input }]);
     setInput("");
   };
       
    return (
-    <div className="flex flex-col flex-1 px-4 py-6 mx-auto bg-white rounded shadow h-[70vh]" style={{maxWidth: "1500em"}}>
+    <div className="flex flex-col flex-1 px-4 py-6 mx-auto bg-white rounded shadow h-[70vh]" style={{minWidth: "50em"}}>
       <div className="mb-4">
         <p className="font-semibold">
           {/* Conversation between <span className="text-blue-600">Employee</span> and <span className="text-green-600">Employer</span> */}
@@ -51,18 +50,18 @@ export default function Conversations() {
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`mb-3 flex ${msg.from === user.role ? "justify-end" : "justify-start"}`}
+            className={`mb-3 flex ${msg.from === "employee" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`px-4 py-2 rounded-lg max-w-xs ${
+              className={`px-4 py-2 rounded-lg min-w-xs ${
                 msg.from === "employee"
-                  ? "bg-blue-100 text-blue-900"
+                  ? "bg-gray-100 text-gray-900"
                   : "bg-green-100 text-green-900"
               }`}
             >
-              <span className="block text-xs font-medium mb-1 capitalize">
+              {/* <span className="block text-xs font-medium mb-1 capitalize">
                 {msg.from}
-              </span>
+              </span> */}
               <span>{msg.text}</span>
             </div>
           </div>

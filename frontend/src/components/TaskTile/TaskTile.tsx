@@ -28,7 +28,6 @@ const TaskTile: FC<TaskTileProps> = ({
   subCategory,
   isBookmarked,
   isUrgent,
-  budget, 
   view,
   onBookmarkToggle,
 }) => {
@@ -60,7 +59,7 @@ const TaskTile: FC<TaskTileProps> = ({
             </div>
 
             {/* Budget */}
-            <h3 className="task-tile-id">Rs. {budget}</h3>
+            {/* <h3 className="task-tile-id">Rs. {budget}</h3> */}
 
             
             <div className="flex items-center justify-between w-full">
@@ -136,7 +135,7 @@ const TaskTile: FC<TaskTileProps> = ({
             
             <div className="flex items-center justify-between w-full">
               <div className="flex flex-col gap-0.5">
-                <h3 className="task-tile-id">Rs. {budget}</h3>
+                {/* <h3 className="task-tile-id">Rs. {budget}</h3> */}
 
                 {/* Task type */}
                 <div className="flex items-center">

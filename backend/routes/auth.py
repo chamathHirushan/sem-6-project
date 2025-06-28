@@ -1,3 +1,4 @@
+import hashlib
 import os
 from urllib.parse import urlparse
 from fastapi import APIRouter, HTTPException, Request, Response, Header, Depends
@@ -7,6 +8,7 @@ from sqlalchemy.orm import Session
 from services.auth_service import AuthService
 from services.user_service import UserService
 from models.database import SessionLocal
+from pydantic import BaseModel
 
 cred = credentials.Certificate("./config/firebase-service-account.json")
 firebase_admin.initialize_app(cred)
@@ -67,21 +69,17 @@ async def session(
 
         if authorization and authorization.startswith("Bearer "):
             access_token = authorization.split(" ")[1]
-            try:
-                decoded_token = AuthService().decode_access_token(access_token)
-                email = decoded_token.get("email")
-                user_record = user_service.get_user_by_email(email)
-                
-                if not user_record:
-                    raise HTTPException(status_code=401, detail="User not found")
-                
-                # Convert SQLAlchemy model to dict
-                user_record = {
-                    "email": user_record.email,
-                    "role": user_record.permission_level,
-                    "name": user_record.name,
-                    "phone_number": user_record.phone_number,
-                    "profile_picture": user_record.pro_pic
+
+            decoded_token = AuthService().decode_access_token(access_token)
+            email = decoded_token.get("email")
+            user_record = UserService().get_user(email)
+            #dummy , deleet this below
+            user_record = {
+                    "email": email,
+                    "role": 3,
+                    "name": "John",
+                    "phone_number": "+0771234567",
+                    "profile_picture": "photo"
                 }
             except Exception as e:
                 # Token is invalid, continue to Firebase verification
@@ -109,26 +107,8 @@ async def session(
                     "email": email,
                     "permission_level": 1,  # Default permission level
                     "name": name,
-                    "phone_number": "+1234567890",  # Default phone number
-                    "pro_pic": photo,
-                    "town": "Unknown"  # Add default town
-                }
-                db_user = user_service.create_user(user_data)
-                user_record = {
-                    "email": db_user.email,
-                    "role": db_user.permission_level,
-                    "name": db_user.name,
-                    "phone_number": db_user.phone_number,
-                    "profile_picture": db_user.pro_pic
-                }
-            else:
-                # Convert existing user to dict
-                user_record = {
-                    "email": user_record.email,
-                    "role": user_record.permission_level,
-                    "name": user_record.name,
-                    "phone_number": user_record.phone_number,
-                    "profile_picture": user_record.pro_pic
+                    "phone_number": "+0771234567",  # Default phone number, should be updated later
+                    "profile_picture": photo
                 }
 
             country, region = await AuthService().get_user_region(request)
@@ -236,3 +216,61 @@ async def store_phone(
     except Exception as e:
         print(f"Store phone error: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to store phone number")
+    # store the phone number in the database for the user
+    body = await request.json()
+    phone_number = body.get("phone_number")
+    email = body.get("email")
+    print("storing phone number for user:", email, "phone number:", phone_number)
+    
+    
+MERCHANT_ID = "1230959"
+MERCHANT_SECRET = "MjA5OTAzMjcyNzEzNzg1OTU1MTkxNzM5NjM0MzYyMTM1NjA0MjYyNg=="
+
+# Request models
+class StartPaymentRequest(BaseModel):
+    order_id: str
+    amount: str
+    currency: str
+
+class NotifyRequest(BaseModel):
+    merchant_id: str
+    order_id: str
+    payhere_amount: str
+    payhere_currency: str
+    status_code: str
+    md5sig: str
+
+@router.post("/start")
+async def start_payment(data: StartPaymentRequest):
+    print(f"Payment request for order: {data.order_id}")
+    
+    # First hash the merchant secret
+    hashed_secret = hashlib.md5(MERCHANT_SECRET.encode()).hexdigest().upper()
+
+    # Build the hash string
+    hash_input = f"{MERCHANT_ID}{data.order_id}{data.amount}{data.currency}{hashed_secret}"
+    hash_value = hashlib.md5(hash_input.encode()).hexdigest().upper()
+
+    print(f"Hash generated for order: {data.order_id}")
+    return {"hash": hash_value, "merchant_id": MERCHANT_ID}
+
+@router.post("/notify")
+async def payment_notify(data: NotifyRequest):
+    print(f"Payment notification received for order: {data.order_id}")
+
+    # First hash the merchant secret
+    hashed_secret = hashlib.md5(MERCHANT_SECRET.encode()).hexdigest().upper()
+
+    # Build the local MD5 signature
+    sig_input = (
+        f"{data.merchant_id}{data.order_id}{data.payhere_amount}"
+        f"{data.payhere_currency}{data.status_code}{hashed_secret}"
+    )
+    local_md5sig = hashlib.md5(sig_input.encode()).hexdigest().upper()
+
+    if local_md5sig == data.md5sig and data.status_code == "2":
+        print(f"Payment successful for order: {data.order_id}")
+        return {"status": "Payment verified"}
+    else:
+        print(f"Payment verification failed for order: {data.order_id}")
+        return {"status": "Verification failed"}, 400

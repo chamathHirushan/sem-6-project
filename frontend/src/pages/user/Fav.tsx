@@ -40,76 +40,76 @@ export default function Fav() {
     }
     
     const [jobs, setJobs] = useState<Job[]>([
-      {
-        id: "J123",
-        title: "Software Engineer",
-        category: "IT",
-        subCategory: "Web, Mobile & Software",
-        image: jobImage,
-        location: "123 Main St, New York, NY",
-        daysPosted: 3,
-        jobType: "Full-Time",
-        budget: 5000,
-        isUrgent: true,
-        isTrending: true,
-        isBookmarked: false,
-      },
-      {
-        id: "J124",
-        title: "Data Analyst",
-        category: "IT",
-        subCategory: "Data Entry",
-        image: jobImage,
-        location: "456 Elm St, Los Angeles, CA",
-        daysPosted: 7,
-        jobType: "Part-Time",
-        budget: 5000,
-        isUrgent: true,
-        isTrending: true,
-        isBookmarked: true,
-      },
-      {
-        id: "J125",
-        title: "Web Developer",
-        category: "IT",
-        subCategory: "Web, Mobile & Software",
-        image: jobImage,
-        location: "456 Elm St, Los Angeles, CA",
-        daysPosted: 7,
-        jobType: "Part-Time",
-        budget: 5000,
-        isUrgent: true,
-        isTrending: true,
-        isBookmarked: true,
-      },
-      {
-        id: "J126",
-        title: "Graphic Designer",
-        category: "IT",
-        subCategory: "Design & Creative",
-        image: jobImage,
-        location: "456 Elm St, Los Angeles, CA",
-        daysPosted: 7,
-        jobType: "Part-Time",
-        budget: 5000,
-        isUrgent: true,
-        isTrending: true,
-        isBookmarked: true,
-      },
-      {
-        id: "J127",
-        title: "Project Manager",
-        category: "Professional",
-        subCategory: "IT Consultancy",
-        image: jobImage,
-        location: "456 Elm St, Los Angeles, CA",
-        daysPosted: 7,
-        jobType: "Part-Time",
-        budget: 5000,
-        isUrgent: true,
-        isTrending: true,
-        isBookmarked: true,
-      },
+      // {
+      //   id: "J123",
+      //   title: "Software Engineer",
+      //   category: "IT",
+      //   subCategory: "Web, Mobile & Software",
+      //   image: jobImage,
+      //   location: "123 Main St, New York, NY",
+      //   daysPosted: 3,
+      //   jobType: "Full-Time",
+      //   budget: 5000,
+      //   isUrgent: true,
+      //   isTrending: true,
+      //   isBookmarked: false,
+      // },
+      // {
+      //   id: "J124",
+      //   title: "Data Analyst",
+      //   category: "IT",
+      //   subCategory: "Data Entry",
+      //   image: jobImage,
+      //   location: "456 Elm St, Los Angeles, CA",
+      //   daysPosted: 7,
+      //   jobType: "Part-Time",
+      //   budget: 5000,
+      //   isUrgent: true,
+      //   isTrending: true,
+      //   isBookmarked: true,
+      // },
+      // {
+      //   id: "J125",
+      //   title: "Web Developer",
+      //   category: "IT",
+      //   subCategory: "Web, Mobile & Software",
+      //   image: jobImage,
+      //   location: "456 Elm St, Los Angeles, CA",
+      //   daysPosted: 7,
+      //   jobType: "Part-Time",
+      //   budget: 5000,
+      //   isUrgent: true,
+      //   isTrending: true,
+      //   isBookmarked: true,
+      // },
+      // {
+      //   id: "J126",
+      //   title: "Graphic Designer",
+      //   category: "IT",
+      //   subCategory: "Design & Creative",
+      //   image: jobImage,
+      //   location: "456 Elm St, Los Angeles, CA",
+      //   daysPosted: 7,
+      //   jobType: "Part-Time",
+      //   budget: 5000,
+      //   isUrgent: true,
+      //   isTrending: true,
+      //   isBookmarked: true,
+      // },
+      // {
+      //   id: "J127",
+      //   title: "Project Manager",
+      //   category: "Professional",
+      //   subCategory: "IT Consultancy",
+      //   image: jobImage,
+      //   location: "456 Elm St, Los Angeles, CA",
+      //   daysPosted: 7,
+      //   jobType: "Part-Time",
+      //   budget: 5000,
+      //   isUrgent: true,
+      //   isTrending: true,
+      //   isBookmarked: true,
+      // },
     ]);
 
 
@@ -128,91 +128,118 @@ export default function Fav() {
       isBookmarked: boolean;
     }
 
+    useEffect(() => {
+      // Reset filters when view mode changes
+      const stored = localStorage.getItem("bookmarkedTasks");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) {
+        setTasks(parsed);
+          }
+        } catch (e) {
+          console.error("Failed to parse bookmarkedTasks from localStorage", e);
+        }
+      }
+
+      const stored1 = localStorage.getItem("bookmarkedJobs");
+      if (stored1) {
+        try {
+          const parsed = JSON.parse(stored1);
+          if (Array.isArray(parsed)) {
+        setJobs(parsed);
+          }
+        } catch (e) {
+          console.error("Failed to parse bookmarkedJobs from localStorage", e);
+        }
+      }
+    },[]);
+
     const [tasks, setTasks] = useState<Task[]>([
-      {
-        id: "J133",
-        image: jobImage,
-        category: "Plumbing",
-        subCategory: "Plumbing",
-        title: "Plumbing Services Near Galle Town and all house services that you need to repair your drainage system",
-        location: "Galle",
-        daysPosted: 3,
-        taskType: "Plumbing",
-        budget: 100,
-        isBookmarked: true,
-        isUrgent: false,
-        isTrending: true,
-      },
-      {
-        id: "J134",
-        image: jobImage,
-        category: "Painting",
-        subCategory: "House Painting",
-        title: "Painting Houses and Offices",
-        location: "Colombo-7",
-        daysPosted: 3,
-        taskType: "Painting",
-        budget: 100,
-        isBookmarked: true,
-        isUrgent: true,
-        isTrending: true,
-      },
-      {
-        id: "J135",
-        image: jobImage,
-        category: "IT Support",
-        subCategory: "Computer Repair",
-        title: "Computer Repair, IT Support, and Networking",
-        location: "Negombo",
-        daysPosted: 3,
-        taskType: "Repair",
-        budget: 100,
-        isBookmarked: true,
-        isUrgent: true,
-        isTrending: false,
-      },
-      {
-        id: "J136",
-        image: jobImage,
-        category: "Shoe Repair",
-        subCategory: "Shoe Polishing",
-        title: "Shoe Repair & Polishing",
-        location: "Matara",
-        daysPosted: 3,
-        taskType: "Repair",
-        budget: 100,
-        isBookmarked: true,
-        isUrgent: false,
-        isTrending: false,
-      },
-      {
-        id: "J137",
-        image: jobImage,
-        category: "Woodwork",
-        subCategory: "Cupboard Repair",
-        title: "Cupboard Repair & Polishing",
-        location: "Anuradhapura",
-        daysPosted: 3,
-        taskType: "Woodwork",
-        budget: 100,
-        isBookmarked: true,
-        isUrgent: false,
-        isTrending: false,
-      },
-      {
-        id: "J138",
-        image: jobImage,
-        category: "Vehicle Repair",
-        subCategory: "Car, Bike, and Vehicle Repair",
-        title: "Car, Bike, and Vehicle Repair",
-        location: "Jaffna",
-        daysPosted: 3,
-        taskType: "Repair",
-        budget: 100,
-        isBookmarked: true,
-        isUrgent: true,
-        isTrending: false,
-      },
+      // {
+      //   id: "J133",
+      //   image: jobImage,
+      //   category: "Plumbing",
+      //   subCategory: "Plumbing",
+      //   title: "Plumbing Services Near Galle Town and all house services that you need to repair your drainage system",
+      //   location: "Galle",
+      //   daysPosted: 3,
+      //   taskType: "Plumbing",
+      //   budget: 100,
+      //   isBookmarked: true,
+      //   isUrgent: false,
+      //   isTrending: true,
+      // },
+      // {
+      //   id: "J134",
+      //   image: jobImage,
+      //   category: "Painting",
+      //   subCategory: "House Painting",
+      //   title: "Painting Houses and Offices",
+      //   location: "Colombo-7",
+      //   daysPosted: 3,
+      //   taskType: "Painting",
+      //   budget: 100,
+      //   isBookmarked: true,
+      //   isUrgent: true,
+      //   isTrending: true,
+      // },
+      // {
+      //   id: "J135",
+      //   image: jobImage,
+      //   category: "IT Support",
+      //   subCategory: "Computer Repair",
+      //   title: "Computer Repair, IT Support, and Networking",
+      //   location: "Negombo",
+      //   daysPosted: 3,
+      //   taskType: "Repair",
+      //   budget: 100,
+      //   isBookmarked: true,
+      //   isUrgent: true,
+      //   isTrending: false,
+      // },
+      // {
+      //   id: "J136",
+      //   image: jobImage,
+      //   category: "Shoe Repair",
+      //   subCategory: "Shoe Polishing",
+      //   title: "Shoe Repair & Polishing",
+      //   location: "Matara",
+      //   daysPosted: 3,
+      //   taskType: "Repair",
+      //   budget: 100,
+      //   isBookmarked: true,
+      //   isUrgent: false,
+      //   isTrending: false,
+      // },
+      // {
+      //   id: "J137",
+      //   image: jobImage,
+      //   category: "Woodwork",
+      //   subCategory: "Cupboard Repair",
+      //   title: "Cupboard Repair & Polishing",
+      //   location: "Anuradhapura",
+      //   daysPosted: 3,
+      //   taskType: "Woodwork",
+      //   budget: 100,
+      //   isBookmarked: true,
+      //   isUrgent: false,
+      //   isTrending: false,
+      // },
+      // {
+      //   id: "J138",
+      //   image: jobImage,
+      //   category: "Vehicle Repair",
+      //   subCategory: "Car, Bike, and Vehicle Repair",
+      //   title: "Car, Bike, and Vehicle Repair",
+      //   location: "Jaffna",
+      //   daysPosted: 3,
+      //   taskType: "Repair",
+      //   budget: 100,
+      //   isBookmarked: true,
+      //   isUrgent: true,
+      //   isTrending: false,
+      // },
     ]);
 
     const handleJobClick = (jobId: string) => {
@@ -362,17 +389,17 @@ export default function Fav() {
                 <div className="flex flex-row justify-center items-center w-full p-4 pb-0 pt-3">
                   <button
                     onClick={() => setActiveTab("jobs")}
-                    className={`flex-1 flex justify-center items-center text-lg font-semibold h-8 rounded-l-lg transition
+                    className={`flex-1 flex justify-center items-center text-lg font-semibold h-8 rounded-lg transition
                       ${activeTab === "jobs" ? "bg-cyan-600 text-white" : "bg-gray-200 text-gray-800"}`}
                   >
-                    Jobs
+                    Task posts
                   </button>
                   <button
                     onClick={() => setActiveTab("tasks")}
-                    className={`flex-1 flex justify-center items-center text-lg font-semibold h-8 rounded-r-lg transition
+                    className={`flex-1 flex justify-center items-center text-lg font-semibold h-8 rounded-lg transition
                       ${activeTab === "tasks" ? "bg-cyan-600 text-white" : "bg-gray-200 text-gray-800"}`}
                   >
-                    Tasks
+                    Service posts
                   </button>
                 </div>
 

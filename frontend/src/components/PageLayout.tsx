@@ -17,13 +17,20 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
   const location = useLocation();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const [adminView, setAdminView] = useState(() => user?.role >= 3);
-  const [showPostPopup, setShowPostPopup] = useState(false);
+  const [showPostPopup, setShowPostPopups] = useState(false);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const adminDropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showHamburger, setShowHamburger] = useState(false);
   
   const navRef = useRef(null);
+
+  const setShowPostPopup = (value: boolean) => {
+    if (value) {
+      window.dispatchEvent(new Event("trigger-initialize"));
+    }
+    setShowPostPopups(value);
+  }
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -64,10 +71,8 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
   // Navigation links
   let navigation: { name: string; path: string }[] = [];
   navigation = [
-    { name: 'Available Jobs', path: '/work' },
+    { name: 'Available Tasks', path: '/work' },
     { name: 'Hire Workers', path: '/hire' },
-    { name: 'Chats', path: '/conversations' },
-
   ];
 
   // Profile dropdown options
@@ -324,8 +329,9 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
 
           {/* Right side - Profile/login*/}  
              <div className="relative items-center gap-4 hidden md:flex">
-              {/* Button for posting a job/service */}
-              <div>
+                {/* Button for posting a job/service */}
+                {localStorage.getItem("verified") === "true" && (
+                <div>
                   <button
                   className="text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br 
                   focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-cyan-500/50 
@@ -338,7 +344,8 @@ const NavBar = forwardRef<HTMLElement>((props, ref) => {
                   >
                   Post Tasks / Service
                   </button>
-              </div>
+                </div>
+                )}
 
               {/* Notifications and Profile dropdown */}
               {userLoggedIn ? (

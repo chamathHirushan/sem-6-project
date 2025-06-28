@@ -65,7 +65,8 @@ const MobileVerificationPopup: React.FC = () => {
         return;
       }
       toast.success("Mobile number verified successfully!");
-      sessionStorage.removeItem("sewaUser");
+      //sessionStorage.removeItem("sewaUser");
+      localStorage.setItem("verified", "true");
       setIsOpen(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An unknown error occurred.");

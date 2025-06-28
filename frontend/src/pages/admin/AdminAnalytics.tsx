@@ -18,9 +18,9 @@ import UsersPng from "../../assets/users.png";
 import RingPieChart from "../../components/Pie";
 
 const DUMMY_POSTS_DATA = [
-    {label: "2024-11-01", count: 11},
-    {label: "2024-12-01", count: 30},
-    {label: "2025-01-01", count: 10},
+    {label: "2024-11-01", count: 0},
+    {label: "2024-12-01", count: 0},
+    {label: "2025-01-01", count: 0},
     {label: "2025-02-01", count: 22},
     {label: "2025-03-01", count: 43},
     {label: "2025-04-01", count: 29},
@@ -28,13 +28,13 @@ const DUMMY_POSTS_DATA = [
 ];
 
 const DUMMY_EARNINGS_DATA = [
-    {label: "2024-Nov", count: 1100},
-    {label: "2024-Dec", count: 3000},
-    {label: "2025-Jan", count: 10000},
+    {label: "2024-Nov", count: 100},
+    {label: "2024-Dec", count: 300},
+    {label: "2025-Jan", count: 2000},
     {label: "2025-Feb", count: 2200},
-    {label: "2025-Mar", count: 4300},
-    {label: "2025-Apr", count: 2900},
-    {label: "2025-May", count: 9000},
+    {label: "2025-Mar", count: 300},
+    {label: "2025-Apr", count: 1000},
+    {label: "2025-May", count: 1200},
 ];
 
 const posted_tasks = [
@@ -108,7 +108,7 @@ export default function AdminAnalytics() {
                 <DataInfoCard
                   img={lkrImg}
                   title="Earnings over the selected time period (LKR)"
-                  value="19 100"
+                  value="5 100"
                   Info="Total earnings of the platform over the selected time period"
                   isFiltered={false}
                   displayTooltip={true}
@@ -116,7 +116,7 @@ export default function AdminAnalytics() {
                 <DataInfoCard
                   img={PostImg}
                   title="Total number boosted posts"
-                  value={34}
+                  value={11}
                   Info="Total number of posts boosted by users"
                   isFiltered={false}
                   displayTooltip={true}
@@ -222,7 +222,7 @@ export default function AdminAnalytics() {
               <DataInfoCard
                 img={UsersPng}
                 title={`Active users within ${selectedOption.label.toLowerCase()}`}
-                value={168}
+                value={16}
                 Info="Active users f the platform within the selected time period"
                 isFiltered={false}
                 displayTooltip={true}

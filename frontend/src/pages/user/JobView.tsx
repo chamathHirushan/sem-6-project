@@ -8,8 +8,11 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./ServiceView.css";
 import {getJobDetails} from "../../api/userAPI";
-
+import jobImage7 from "../../assets/7.jpeg"
 import jobImage from "../../assets/get-a-job-with-no-experience.png";
+import jobImage1 from "../../assets/12.jpg";
+import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 interface Job {
   id: string;
@@ -39,6 +42,7 @@ export default function JobView() {
   const id = params.id;
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, userLoggedIn } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to top on mount
@@ -63,24 +67,25 @@ export default function JobView() {
 
   const samplejob = {
     id: id || "D153",
-    title: "Senior Developer",
-    category: "IT & Software",
-    subCategory: "Plumbing",
-    location: "New York, NY",
+    title: "Garden Cleaning",
+    category: "House",
+    subCategory: "Landscaping",
+    location: "Polgahawela, Sri Lanka",
     isUrgent: true,
-    daysPosted: "2 days",   // no of days, months or years since posted
-    dueDate: "2023-12-31",
-    postedDate: "2023-10-01",  // date when posted
-    postedUserName: "John Doe",
-    postedUserImage: jobImage,
+    daysPosted: "1 days",   // no of days, months or years since posted
+    dueDate: "2025-06-31",
+    postedDate: "2025-06-23",  // date when posted
+    postedUserName: user?.name || "John Doe",
+    postedUserImage: user?.profile_picture
+ || "https://i.pinimg.com/236x/dd/f0/11/ddf0110aa19f445687b737679eec9cb2.jpg",
     postedUserRating: 3.5,
-    miniDescription: "Looking for a senior developer with 5+ years of experience.",
-    budget: 5000,
+    miniDescription: "Urgent garden cleaning task",
+    budget: 9000,
     address: "123 Main St, New York, NY",
-    description: "We are looking for a senior developer to join our team. The ideal candidate should have at least 5 years of experience in software development, with a strong background in JavaScript and React. I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done).",
-    poster: "https://s3-ap-southeast-1.amazonaws.com/xpresslivedonotmess-live/Vacancies/DescriptionImage_181385", // poster of the job post if exist
+    description: "This is an urgent garden cleaning task categorized under House > Landscaping, based in Polgahawela, Sri Lanka. The job involves maintaining and tidying up outdoor spaces, likely requiring skills in weeding, trimming, and general yard care. It is marked as a high-priority task and must be completed by June 31, 2025. Suitable for individuals or teams experienced in residential landscaping and garden upkeep.",
+    poster: jobImage1, // poster of the job post if exist
     isBookmarked: false,
-    image: [jobImage, jobImage, jobImage],
+    image: [jobImage7, jobImage7, jobImage7],
   };
 
   const [job, setJob] = useState<Job>(samplejob);
@@ -111,6 +116,17 @@ export default function JobView() {
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
   const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${encodeURIComponent(shareUrl)}`;
   const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${shareText}`;
+
+  const handleClickChat = () => {
+    // Navigate to the chat page with the job ID
+    navigate(`/conversations`, { state: { from: location.pathname, scrollPosition: window.scrollY } });
+  };
+
+  const hadnleApplyJob = async () => {
+    window.dispatchEvent(new Event("addMyJob"));
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a delay for the service post creation
+    toast.success("Application sent successfully!");
+  }
 
   return (
     <div className="p-8 lg:max-w-6xl max-w-full mx-auto">
@@ -154,7 +170,7 @@ export default function JobView() {
               {/* job category*/ }
               <div className="flex items-center my-1">
                 <BriefcaseIcon className="w-4 h-4 mr-1" style={{ color: "black" }}/>
-                <p className="text-gray-600 text-sm"><span className="font-bold">Category: </span>{job.category} ago</p>
+                <p className="text-gray-600 text-sm"><span className="font-bold">Category: </span>{job.category}</p>
               </div>
               
               {/* Posted Date as "days/months/years" ago */ }
@@ -166,9 +182,9 @@ export default function JobView() {
             
             <div className="flex flex-col gap-2 justify-start mr-3">
               {/* No. of applies so far */}          
-              <div className="flex items-center justify-center p-0.5 px-1">
+              {/* <div className="flex items-center justify-center p-0.5 px-1">
                 <p className="text-cyan-700 text-sm font-bold">23 applicants</p>
-              </div>
+              </div> */}
 
 
               {/* Urgent icon */}
@@ -212,7 +228,7 @@ export default function JobView() {
 
 
           {/* Comments section */}
-          <div className="border-t border-gray-300 my-4"></div>
+          {/* <div className="border-t border-gray-300 my-4"></div>
           <h2 className="text-xl font-semibold mb-2">Comments</h2>
           <div className="flex flex-col gap-2">
             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
@@ -221,7 +237,7 @@ export default function JobView() {
             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
               <p className="text-gray-600">This is another comment.</p>
             </div>
-          </div>  
+          </div>   */}
         </div>
 
         {/* right side summary area */}
@@ -231,7 +247,7 @@ export default function JobView() {
             <img src={job.postedUserImage} alt="Job Poster" className="w-16 h-16 rounded-full mr-4" />
             <div>
               <h3 className="text-lg font-semibold">{job.postedUserName}</h3>
-                <div className="flex items-center">
+                {/* <div className="flex items-center">
                   <StarRatings
                     rating={job.postedUserRating}
                     starRatedColor="#FACC15"
@@ -242,7 +258,7 @@ export default function JobView() {
                   />
                   
                   <span className="ml-1.5 text-gray-600">{job.postedUserRating}</span>
-                </div>
+                </div> */}
             </div>
           </div>
           
@@ -318,12 +334,15 @@ export default function JobView() {
               </a>
             </div>
 
-
+          {localStorage.getItem("verified") === "true" && (
+            <>
             {/* Apply for Job button */ }
-            <button className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 w-full">Apply for Job</button>
+            <button className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 w-full" onClick={()=> hadnleApplyJob()}>Apply for Job</button>
             {/* Save for later button */ }
-            <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full">Chat</button>
+            <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full" onClick={() => handleClickChat()}>Chat</button>
             <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full">Save for Later</button>
+            </>
+          )}
           </div>            
         </div>
 

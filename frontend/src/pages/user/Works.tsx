@@ -4,8 +4,17 @@ import { apiClient } from "../../api/client";
 // import { useNavigate } from "react-router-dom";
 import SideMenu from "../../components/SideMenu/SideMenu";
 import JobTile from "../../components/JobTile/JobTile";
+
 import { Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
-import jobImage from "../../assets/get-a-job-with-no-experience.png"
+import {Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
+import jobImage from "../../assets/1.jpeg"
+import jobImage2 from "../../assets/2.jpeg"
+import jobImage3 from "../../assets/3.jpeg"
+import jobImage4 from "../../assets/4.jpeg"
+import jobImage5 from "../../assets/5.jpeg"
+import jobImage6 from "../../assets/6.jpeg"
+import jobImage7 from "../../assets/7.jpeg"
+import jobImage8 from "../../assets/8.jpeg"
 import { useSearchParams, useLocation } from "react-router-dom";
 import {getAvailableJobs} from "../../api/userAPI";
 import { toast } from "react-toastify";
@@ -114,7 +123,7 @@ export default function Works() {
         location: string;
         daysPosted: number;
         jobType?: string;
-        budget: number;
+        budget: string | number;
         isUrgent: boolean;
         isTrending?: boolean;
         isBookmarked: boolean;
@@ -141,340 +150,138 @@ export default function Works() {
         {
           id: "J123",
           title: "Reparement for the ceiling",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
+          category: "Technicians",
+          subCategory: "Masonry",
           image: jobImage,
-          location: "123 Main St, New York, NY",
+          location: "Mawanella, Kegalle",
           daysPosted: 3,
           jobType: "Full-Time",
-          budget: 5000,
+          budget: 10000,
           isUrgent: true,
           isTrending: true,
           isBookmarked: false,
         },
         {
           id: "J124",
-          title: "Data Analyst",
-          category: "IT",
-          subCategory: "Data Entry",
-          image: jobImage,
-          location: "456 Elm St, Los Angeles, CA",
+          title: "Install a new water tank",
+          category: "Technicians",
+          subCategory: "Plumbing",
+          image: jobImage2,
+          location: "Panadura, Sri Lanka",
           daysPosted: 7,
           jobType: "Part-Time",
-          budget: 5000,
+          budget: 8000,
           isUrgent: true,
           isTrending: true,
-          isBookmarked: true,
+          isBookmarked: false,
         },
         {
           id: "J125",
-          title: "Web Developer",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "456 Elm St, Los Angeles, CA",
+          title: "කොන්ක්‍රීට් slab එක waterproof කිරීම",
+          category: "Technicians",
+          subCategory: "Masonry",
+          image: jobImage3,
+          location: "Panadura, Sri Lanka",
           daysPosted: 7,
           jobType: "Part-Time",
-          budget: 5000,
+          budget: " -",
           isUrgent: true,
           isTrending: true,
-          isBookmarked: true,
+          isBookmarked: false,
         },
         {
           id: "J126",
-          title: "Graphic Designer",
-          category: "IT",
-          subCategory: "Design & Creative",
-          image: jobImage,
-          location: "456 Elm St, Los Angeles, CA",
+          title: "House Painting",
+          category: "House",
+          subCategory: "House Painting",
+          image: jobImage4,
+          location: "Kaluthara, Sri Lanka",
           daysPosted: 7,
           jobType: "Part-Time",
-          budget: 5000,
+          budget: 25000,
           isUrgent: true,
           isTrending: true,
-          isBookmarked: true,
+          isBookmarked: false,
         },
         {
           id: "J127",
-          title: "Project Manager",
-          category: "Professional",
-          subCategory: "IT Consultancy",
-          image: jobImage,
-          location: "456 Elm St, Los Angeles, CA",
+          title: "Fix Power trip issues",
+          category: "Technicians",
+          subCategory: "Electricians",
+          image: jobImage5,
+          location: "Molple, Katubedda",
           daysPosted: 7,
           jobType: "Part-Time",
           budget: 5000,
           isUrgent: true,
           isTrending: true,
-          isBookmarked: true,
+          isBookmarked: false,
         },
         {
           id: "J128",
-          title: "UX/UI Designer",
-          category: "IT",
-          subCategory: "Design & Creative",
-          image: jobImage,
-          location: "456 Elm St, Los Angeles, CA",
-          daysPosted: 7,
-          jobType: "Part-Time",
-          budget: 5000,
-          isUrgent: true,
-          isTrending: true,
-          isBookmarked: true,
-        },
-        {
-          id: "J129",
-          title: "QA Engineer",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "789 Oak St, Chicago, IL",
+          title: "Leakage in bathroom pipes",
+          category: "Technicians",
+          subCategory: "Plumbing",
+          image: jobImage6,
+          location: "Kottawa, Sri Lanka",
           daysPosted: 2,
-          jobType: "Full-Time",
-          budget: 4500,
-          isUrgent: false,
+          jobType: "Part-Time",
+          budget: 6000,
+          isUrgent: true,
           isTrending: true,
           isBookmarked: false,
         },
         {
           id: "J130",
-          title: "DevOps Engineer",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "321 Pine St, Seattle, WA",
+          title: "බුදු මැදුරක් තැනීම",
+          category: "House",
+          subCategory: "Construction",
+          image: jobImage8,
+          location: "Gampaha, Sri Lanka",
           daysPosted: 5,
           jobType: "Full-Time",
-          budget: 6000,
+          budget: 30000,
           isUrgent: true,
           isTrending: false,
           isBookmarked: false,
-        },
-        {
-          id: "J131",
-          title: "Mobile Developer",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "654 Maple St, Austin, TX",
-          daysPosted: 4,
-          jobType: "Part-Time",
-          budget: 4800,
-          isUrgent: false,
-          isTrending: true,
-          isBookmarked: true,
-        },
-        {
-          id: "J132",
-          title: "System Administrator",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "987 Cedar St, Boston, MA",
-          daysPosted: 6,
-          jobType: "Full-Time",
-          budget: 5200,
-          isUrgent: true,
-          isTrending: false,
-          isBookmarked: false,
-        },
-        {
-          id: "J133",
-          title: "Business Analyst",
-          category: "Professional",
-          subCategory: "IT Consultancy",
-          image: jobImage,
-          location: "159 Spruce St, Denver, CO",
-          daysPosted: 1,
-          jobType: "Part-Time",
-          budget: 4700,
-          isUrgent: false,
-          isTrending: true,
-          isBookmarked: true,
-        },
-        {
-          id: "J134",
-          title: "Network Engineer",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "753 Willow St, Miami, FL",
-          daysPosted: 8,
-          jobType: "Full-Time",
-          budget: 5300,
-          isUrgent: true,
-          isTrending: false,
-          isBookmarked: false,
-        },
-        {
-          id: "J135",
-          title: "Content Writer",
-          category: "Professional",
-          subCategory: "Arts & Crafts",
-          image: jobImage,
-          location: "852 Birch St, Portland, OR",
-          daysPosted: 2,
-          jobType: "Part-Time",
-          budget: 3500,
-          isUrgent: false,
-          isTrending: true,
-          isBookmarked: false,
-        },
-        {
-          id: "J136",
-          title: "SEO Specialist",
-          category: "Professional",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "951 Aspen St, Dallas, TX",
-          daysPosted: 3,
-          jobType: "Full-Time",
-          budget: 4100,
-          isUrgent: true,
-          isTrending: false,
-          isBookmarked: true,
-        },
-        {
-          id: "J137",
-          title: "Product Owner",
-          category: "Professional",
-          subCategory: "IT Consultancy",
-          image: jobImage,
-          location: "357 Redwood St, San Jose, CA",
-          daysPosted: 5,
-          jobType: "Full-Time",
-          budget: 7000,
-          isUrgent: false,
-          isTrending: true,
-          isBookmarked: false,
-        },
-        {
-          id: "J138",
-          title: "Support Engineer",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "258 Poplar St, Atlanta, GA",
-          daysPosted: 4,
-          jobType: "Part-Time",
-          budget: 3900,
-          isUrgent: true,
-          isTrending: false,
-          isBookmarked: true,
-        },
-        {
-          id: "J139",
-          title: "Cloud Architect",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "654 Magnolia St, Houston, TX",
-          daysPosted: 6,
-          jobType: "Full-Time",
-          budget: 8000,
-          isUrgent: false,
-          isTrending: true,
-          isBookmarked: false,
-        },
-        {
-          id: "J140",
-          title: "Database Administrator",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "147 Palm St, Orlando, FL",
-          daysPosted: 7,
-          jobType: "Part-Time",
-          budget: 5500,
-          isUrgent: true,
-          isTrending: false,
-          isBookmarked: true,
-        },
-        {
-          id: "J141",
-          title: "IT Consultant",
-          category: "Professional",
-          subCategory: "IT Consultancy",
-          image: jobImage,
-          location: "369 Cypress St, San Diego, CA",
-          daysPosted: 2,
-          jobType: "Full-Time",
-          budget: 6200,
-          isUrgent: false,
-          isTrending: true,
-          isBookmarked: false,
-        },
-        {
-          id: "J142",
-          title: "Machine Learning Engineer",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "753 Olive St, San Francisco, CA",
-          daysPosted: 1,
-          jobType: "Full-Time",
-          budget: 9000,
-          isUrgent: true,
-          isTrending: true,
-          isBookmarked: true,
-        },
-        {
-          id: "J143",
-          title: "Frontend Developer",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "951 Walnut St, Charlotte, NC",
-          daysPosted: 3,
-          jobType: "Part-Time",
-          budget: 4700,
-          isUrgent: false,
-          isTrending: false,
-          isBookmarked: false,
-        },
-        {
-          id: "J144",
-          title: "Backend Developer",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "159 Chestnut St, Columbus, OH",
-          daysPosted: 5,
-          jobType: "Full-Time",
-          budget: 5100,
-          isUrgent: true,
-          isTrending: true,
-          isBookmarked: true,
-        },
-        {
-          id: "J145",
-          title: "Full Stack Developer",
-          category: "IT",
-          subCategory: "Web, Mobile & Software",
-          image: jobImage,
-          location: "357 Hickory St, Indianapolis, IN",
-          daysPosted: 4,
-          jobType: "Full-Time",
-          budget: 7500,
-          isUrgent: false,
-          isTrending: false,
-          isBookmarked: false,
-        },
-        {
-          id: "J146",
-          title: "Technical Writer",
-          category: "Professional",
-          subCategory: "Arts & Crafts",
-          image: jobImage,
-          location: "258 Maple St, Nashville, TN",
-          daysPosted: 6,
-          jobType: "Part-Time",
-          budget: 3600,
-          isUrgent: true,
-          isTrending: true,
-          isBookmarked: true,
         },
       ]);
+
+      useEffect(() => {
+        const initialize = () => {
+          setTimeout(() => {
+            setJobs((prevJobs) => {
+              if (prevJobs.some(job => job.id === "J129")) {
+                return prevJobs;
+              }
+              return [
+                ...prevJobs,
+                {
+                  id: "J129",
+                  title: "Garden Cleaning",
+                  category: "House",
+                  subCategory: "Landscaping ",
+                  image: jobImage7,
+                  location: "Polgahawela, Sri Lanka",
+                  daysPosted: 2,
+                  jobType: "Full-Time",
+                  budget: 9000,
+                  isUrgent: false,
+                  isTrending: true,
+                  isBookmarked: false,
+                },
+              ];
+            });
+          }, 1500); // 1.5 seconds delay
+        };
+
+        window.addEventListener("add", initialize);
+
+        return () => {
+          window.removeEventListener("add", initialize);
+        };
+      }, []);
+
 
       const filteredJobs = jobs.filter((job) => {
         if (selectedSubItems.length > 0) {
@@ -492,13 +299,48 @@ export default function Works() {
       
       
 
-      const toggleBookmark = (id: string) => {
-        setJobs((prevJobs) =>
-          prevJobs.map((job) =>
-            job.id === id ? { ...job, isBookmarked: !job.isBookmarked } : job
-          )
-        );
-      };
+      // const toggleBookmark = (id: string) => {
+      //   setJobs((prevJobs) =>
+      //     prevJobs.map((job) =>
+      //       job.id === id ? { ...job, isBookmarked: !job.isBookmarked } : job
+      //     )
+      //   );
+      // };
+    const toggleBookmark = (id: string) => {
+    setJobs((prevTasks) => {
+      const updatedTasks = prevTasks.map((task) =>
+        task.id === id ? { ...task, isBookmarked: !task.isBookmarked } : task
+      );
+
+      // Get current bookmarked tasks from localStorage
+      let bookmarkedTasks: Job[] = [];
+      const stored = localStorage.getItem("bookmarkedJobs");
+      if (stored) {
+        try {
+          bookmarkedTasks = JSON.parse(stored);
+        } catch {
+          bookmarkedTasks = [];
+        }
+      }
+
+      // Find the toggled task
+      const toggledTask = updatedTasks.find((task) => task.id === id);
+      if (toggledTask) {
+        if (toggledTask.isBookmarked) {
+          // Add to bookmarks if not already present
+          if (!bookmarkedTasks.some((task) => task.id === id)) {
+            bookmarkedTasks.push(toggledTask);
+          }
+        } else {
+          // Remove from bookmarks
+          bookmarkedTasks = bookmarkedTasks.filter((task) => task.id !== id);
+        }
+      }
+
+      localStorage.setItem("bookmarkedJobs", JSON.stringify(bookmarkedTasks));
+      return updatedTasks;
+    });
+  };
 
       // Pagination logic
       const [currentPage, setCurrentPage] = useState(1);

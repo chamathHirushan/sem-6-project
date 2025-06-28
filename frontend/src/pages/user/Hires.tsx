@@ -8,6 +8,13 @@ import {Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
 import jobImage from "../../assets/get-a-job-with-no-experience.png"
 import { useSearchParams, useLocation } from "react-router-dom";
 import {getAllAvailableServices} from "../../api/userAPI";
+import jobImage3 from "../../assets/s3.jpeg"
+import jobImage2 from "../../assets/s2.jpeg"
+import jobImage1 from "../../assets/s1.jpeg"
+import jobImage4 from "../../assets/s4.jpeg"
+import jobImage5 from "../../assets/s5.jpeg"
+import jobImage6 from "../../assets/s6.jpeg"
+import jobImage7 from "../../assets/19.jpeg"
 
 export default function Hires() {
   const [backendData, setBackendData] = useState<string>("Loading...");
@@ -114,7 +121,7 @@ export default function Hires() {
     location: string;
     daysPosted: number;
     taskType?: string;
-    budget: number;
+    budget?: number;
     isUrgent: boolean;
     isTrending?: boolean;
     isBookmarked: boolean;
@@ -123,7 +130,7 @@ export default function Hires() {
   const [tasks, setTasks] = useState<Task[]>([
     {
       id: "J133",
-      image: jobImage,
+      image: jobImage1,
       category: "Plumbing",
       subCategory: "Plumbing",
       title: "Plumbing Services Near Galle Town and all house services that you need to repair your drainage system",
@@ -131,13 +138,13 @@ export default function Hires() {
       daysPosted: 3,
       taskType: "Plumbing",
       budget: 100,
-      isBookmarked: true,
+      isBookmarked: false,
       isUrgent: false,
       isTrending: true,
     },
     {
       id: "J134",
-      image: jobImage,
+      image: jobImage2,
       category: "Painting",
       subCategory: "House Painting",
       title: "Painting Houses and Offices",
@@ -145,13 +152,13 @@ export default function Hires() {
       daysPosted: 3,
       taskType: "Painting",
       budget: 100,
-      isBookmarked: true,
+      isBookmarked: false,
       isUrgent: true,
       isTrending: true,
     },
     {
       id: "J135",
-      image: jobImage,
+      image: jobImage3,
       category: "IT Support",
       subCategory: "Computer Repair",
       title: "Computer Repair, IT Support, and Networking",
@@ -159,27 +166,27 @@ export default function Hires() {
       daysPosted: 3,
       taskType: "Repair",
       budget: 100,
-      isBookmarked: true,
+      isBookmarked: false,
       isUrgent: true,
       isTrending: false,
     },
     {
       id: "J136",
-      image: jobImage,
-      category: "Shoe Repair",
-      subCategory: "Shoe Polishing",
-      title: "Shoe Repair & Polishing",
+      image: jobImage4,
+      category: "Repairings",
+      subCategory: "Bag Repair",
+      title: "බෑග්, Shoes අලුත්වැඩියා කිරීම",
       location: "Matara",
       daysPosted: 3,
       taskType: "Repair",
       budget: 100,
-      isBookmarked: true,
+      isBookmarked: false,
       isUrgent: false,
       isTrending: false,
     },
     {
       id: "J137",
-      image: jobImage,
+      image: jobImage5,
       category: "Woodwork",
       subCategory: "Cupboard Repair",
       title: "Cupboard Repair & Polishing",
@@ -187,25 +194,60 @@ export default function Hires() {
       daysPosted: 3,
       taskType: "Woodwork",
       budget: 100,
-      isBookmarked: true,
+      isBookmarked: false,
       isUrgent: false,
       isTrending: false,
     },
     {
       id: "J138",
-      image: jobImage,
+      image: jobImage6,
       category: "Vehicle Repair",
       subCategory: "Car, Bike, and Vehicle Repair",
       title: "Car, Bike, and Vehicle Repair",
-      location: "Jaffna",
+      location: "Anuradapura, Sri Lanka",
       daysPosted: 3,
       taskType: "Repair",
       budget: 100,
-      isBookmarked: true,
+      isBookmarked: false,
       isUrgent: true,
       isTrending: false,
     },
   ]);
+
+        useEffect(() => {
+        const initialize = () => {
+          setTimeout(() => {
+            setTasks((prevJobs) => {
+              if (prevJobs.some(job => job.id === "J199")) {
+                return prevJobs;
+              }
+              return [
+                ...prevJobs,
+                  {
+                  id: "J199",
+                  image: jobImage7,
+                  category: "Technicians",
+                  subCategory: "Electricians",
+                  title: "Wiring & Socket Repair",
+                  location: "Kandy",
+                  daysPosted: 2,
+                  taskType: "Cleaning",
+                  budget: 150,
+                  isBookmarked: false,
+                  isUrgent: true,
+                  isTrending: true,
+                }
+              ];
+            });
+          }, 1500); // 1.5 seconds delay
+        };
+
+        window.addEventListener("addService", initialize);
+
+        return () => {
+          window.removeEventListener("addService", initialize);
+        };
+      }, []);
 
 
   const filteredTasks = tasks.filter((task) => {
@@ -224,11 +266,39 @@ export default function Hires() {
 
 
   const toggleBookmark = (id: string) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.map((task) =>
         task.id === id ? { ...task, isBookmarked: !task.isBookmarked } : task
-      )
-    );
+      );
+
+      // Get current bookmarked tasks from localStorage
+      let bookmarkedTasks: Task[] = [];
+      const stored = localStorage.getItem("bookmarkedTasks");
+      if (stored) {
+        try {
+          bookmarkedTasks = JSON.parse(stored);
+        } catch {
+          bookmarkedTasks = [];
+        }
+      }
+
+      // Find the toggled task
+      const toggledTask = updatedTasks.find((task) => task.id === id);
+      if (toggledTask) {
+        if (toggledTask.isBookmarked) {
+          // Add to bookmarks if not already present
+          if (!bookmarkedTasks.some((task) => task.id === id)) {
+            bookmarkedTasks.push(toggledTask);
+          }
+        } else {
+          // Remove from bookmarks
+          bookmarkedTasks = bookmarkedTasks.filter((task) => task.id !== id);
+        }
+      }
+
+      localStorage.setItem("bookmarkedTasks", JSON.stringify(bookmarkedTasks));
+      return updatedTasks;
+    });
   };
 
   // Pagination logic
@@ -314,7 +384,6 @@ return (
             {...task}
             view={viewMode}
             onBookmarkToggle={toggleBookmark}
-            budget={String(task.budget)}
           />
         ))}
       </div>
