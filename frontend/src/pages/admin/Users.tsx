@@ -1,9 +1,29 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
 import { apiClient } from "../../api/client";
-import { ChevronLeftIcon, ChevronRightIcon, EyeIcon, TrashIcon, PencilIcon  } from '@heroicons/react/24/solid';
-import {DeleteConfirmationModal} from "../../components/UserPopup";
-import {EditConfirmationModal} from "../../components/UserPopup";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  EyeIcon,
+  TrashIcon,
+  PencilIcon,
+} from "@heroicons/react/24/solid";
+import {
+  DeleteConfirmationModal,
+  EditConfirmationModal,
+} from "../../components/UserPopup";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  phone_number: string;
+  town: string;
+  permission_level: number;
+  pro_pic: string | null;
+  created_at: string;
+}
 
 interface Role {
   level: number;
@@ -14,7 +34,7 @@ const permissionLevelMap: Record<number, Role> = {
   1: { level: 1, name: "User(Unverified)" },
   2: { level: 2, name: "User" },
   3: { level: 3, name: "Moderator" },
-  4: { level: 4, name: "Admin" }
+  4: { level: 4, name: "Admin" },
 };
 
 const getRoleName = (level: number): string => {
@@ -22,39 +42,42 @@ const getRoleName = (level: number): string => {
 };
 
 export default function Users() {
-    const [backendData, setBackendData] = useState<string>("Loading...");
-      const {user} = useAuth();
-    
-      useEffect(() => {
-        async function fetchData() {
-          try {
-            const response = await apiClient.get("/admin/dashboard");
-            setBackendData(response.message || "No data received");
-          } catch (error) {
-            setBackendData("Error fetching data");
-            console.error("API Error:", error);
-          }
-        }
-    
-        fetchData();
-      }, []);
-
-    return (
-      <>
-        {/* <p>Logged as level {user.role} user</p>
-        Users page content goes here.
-        <p>{backendData}</p> */}
-        <UserManagementTable/>
-      </>
-    );
-  }
-
-const UserManagementTable = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [toText, setToText] = useState<string>("");
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await apiClient.get("/user/users");
+      console.log("Fetched users:", response);
+      const data = Array.isArray(response) ? response : [];
+      setUsers(data);
+      setLoading(false);
+    } catch (error) {
+      setError("Error fetching users");
+      setLoading(false);
+      console.error("API Error:", error);
+    }
+  };
+
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      await apiClient.delete(`/user/users/${userId}`);
+      fetchUsers(); // Refresh the list after deletion
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
 
   const handleRequestDeleteUser = (userId: number) => {
     setSelectedUserId(userId);
@@ -62,52 +85,46 @@ const UserManagementTable = () => {
   };
 
   const handleRequestEditUser = (userId: number) => {
-    console.log("Requesting edit for user ID:", userId);
-    const user = allUsers.find(user => user.id === userId);
+    const user = users.find((user) => user.id === userId);
     if (user?.permission_level === 3) {
       setToText("User");
     } else if (user?.permission_level === 2) {
       setToText("Moderator");
     }
-    console.log("User permission level:", user?.permission_level);
-    console.log("To text:", toText);
     setSelectedUserId(userId);
     setShowEditPopup(true);
   };
 
   const handleConfirmDelete = () => {
     if (selectedUserId !== null) {
-      const updatedUsers = allUsers.filter(user => user.id !== selectedUserId);
-      setAllUsers(updatedUsers);
+      handleDeleteUser(selectedUserId);
       setShowDeletePopup(false);
       setSelectedUserId(null);
-      // TODO: Replace with actual delete API call
-      alert(`Deleted user ID: ${selectedUserId}`);
     }
   };
 
   const handleConfirmEdit = () => {
-  if (selectedUserId !== null) {
-    const updatedUsers = allUsers.map(user => {
-      if (user.id === selectedUserId) {
-        return {
-          ...user,
-          permission_level: user.permission_level === 3 ? 2 :
-                            user.permission_level === 2 ? 3 :
-                            user.permission_level // leave unchanged if not 2 or 3
-        };
-      }
-      return user;
-    });
+    if (selectedUserId !== null) {
+      const updatedUsers = users.map((user) => {
+        if (user.id === selectedUserId) {
+          return {
+            ...user,
+            permission_level:
+              user.permission_level === 3
+                ? 2
+                : user.permission_level === 2
+                  ? 3
+                  : user.permission_level,
+          };
+        }
+        return user;
+      });
 
-    setAllUsers(updatedUsers);
-    setShowEditPopup(false);
-    setSelectedUserId(null);
-    // TODO: Replace with actual update API call
-    alert(`Changed the permission of user ID: ${selectedUserId}`);
-  }
-};
-
+      setUsers(updatedUsers);
+      setShowEditPopup(false);
+      setSelectedUserId(null);
+    }
+  };
 
   const handleCloseDeleteModal = () => {
     setShowDeletePopup(false);
@@ -118,100 +135,9 @@ const UserManagementTable = () => {
     setShowEditPopup(false);
     setSelectedUserId(null);
   };
-  
-  // const [allUsers, setAllUsers] = useState<any[]>([]);
-  useEffect(() => {
-    // fetchUsers(); // No fetchUsers function, using static data
-  }, []);
 
-  // Sample user data
-  const InitallUsers = [
-    { id: 1, name: "John Smith", permission_level: 4, email:"john2003@gmail.com", createdAt: new Date("2024-11-15T10:30:00") },
-    { id: 2, name: "Sarah Johnson", permission_level: 3, email:"johnson@gmail.com", createdAt: "2025-01-22T08:45:00" },
-    { id: 3, name: "Michael Chen", permission_level: 2, email:"mmichael@gmail.com", createdAt: "2025-02-14T14:15:00" },
-    { id: 4, name: "Emma Wilson", permission_level: 3, email:"emma23@gmail.com", createdAt: "2025-03-05T09:20:00" },
-    { id: 5, name: "David Garcia", permission_level: 1, email:"olivia@gmail.com", createdAt: "2025-03-18T16:30:00" },
-    { id: 6, name: "Olivia Brown", permission_level: 1, email:"obrown@gmail.com", createdAt: "2025-03-30T11:45:00" },
-    { id: 7, name: "James Lee", permission_level: 2, email:"jamesle@gmail.com", createdAt: "2025-04-10T13:10:00" },
-    { id: 8, name: "Sophia Martinez", permission_level: 3, email:"sophia@gmail.com", createdAt: "2025-04-22T15:25:00" },
-    { id: 9, name: "Daniel Taylor", permission_level: 2, email:"taylor12s@gmail.com", createdAt: "2025-05-01T10:05:00" },
-    { id: 10, name: "Isabella Anderson", permission_level: 1, email:"isabella@gmail.com", createdAt: "2025-05-12T14:50:00" },
-    { id: 11, name: "David Garcia", permission_level: 1, email:"olivia@gmail.com", createdAt: "2025-03-18T16:30:00" },
-    { id: 12, name: "Olivia Brown", permission_level: 1, email:"obrown@gmail.com", createdAt: "2025-03-30T11:45:00" },
-    { id: 13, name: "James Lee", permission_level: 2, email:"jamesle@gmail.com", createdAt: "2025-04-10T13:10:00" },
-    { id: 14, name: "Sophia Martinez", permission_level: "Moderator", email:"sophia@gmail.com", createdAt: "2025-04-22T15:25:00" },
-    { id: 15, name: "Daniel Taylor", permission_level: 2, email:"taylor12s@gmail.com", createdAt: "2025-05-01T10:05:00" },
-    { id: 16, name: "Isabella Anderson", permission_level: 1, email:"isabella@gmail.com", createdAt: "2025-05-12T14:50:00" },
-  ];
-
-  const [allUsers, setAllUsers] = useState(InitallUsers);
-  const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
-
-  const handleSort = (key: string) => {
-    const direction =
-      sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
-
-    const sorted = [...allUsers].sort((a, b) => {
-      let aVal = a[key];
-      let bVal = b[key];
-
-      if (key === 'createdAt') {
-        aVal = new Date(aVal);
-        bVal = new Date(bVal);
-      }
-
-      if (typeof aVal === 'string') {
-        return direction === 'asc'
-          ? aVal.localeCompare(bVal)
-          : bVal.localeCompare(aVal);
-      }
-
-      if (typeof aVal === 'number' || aVal instanceof Date) {
-        return direction === 'asc'
-          ? aVal > bVal ? 1 : -1
-          : aVal < bVal ? 1 : -1;
-      }
-
-      return 0;
-    });
-
-    setSortConfig({ key, direction });
-    setAllUsers(sorted);
-  };
-  
-
-  const filteredUsers = allUsers.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    getRoleName(Number(user.permission_level)).toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery]);
-
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(8);
-  
-  // Get current users
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-  
-  // Change page
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-  
-  // Format date
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
-  // Function to handle view user details
-  const handleViewUser = (userId: number) => {
-    alert(`View details for user ID: ${userId}`);
-  };
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="flex flex-col bg-background p-6 max-w-full mx-auto">
@@ -267,103 +193,42 @@ const UserManagementTable = () => {
                           : "bg-accent text-primary"
                     }`}
                   >
-                    {getRoleName(Number(user.permission_level))}
-                  </span>
-                </td>
-                <td className="py-3 px-4 text-primary">{formatDate(user.createdAt)}</td>
-                <td className="py-3 px-4 text-center">
-                  <button
-                    onClick={() => handleViewUser(user.id)}
-                    className="p-1 rounded-md border transition-opacity"
-                    title="View Details"
-                  >
-                    <EyeIcon className="w-5 h-5 text-primary hover:opacity-80 transition-opacity" />
+                    Edit
                   </button>
-                </td>
-                <td className="py-3 px-4 text-center">
-                  {(Number(user.permission_level) !== 4 && Number(user.permission_level) > 1) ? (
-                    <button
-                      onClick={() => handleRequestEditUser(user.id)}
-                      title="Change Role"
-                    >
-                      <PencilIcon className="w-5 h-5 text-secondary hover:opacity-80 transition-opacity" />
-                    </button>
-                  ) : (
-                    <span className="p-1"></span>
-                  )}
-                </td>
-                <td className="py-3 px-4 text-center">
-                  {Number(user.permission_level) !== 4 ? (
-                    <button
-                      onClick={() => handleRequestDeleteUser(user.id)}
-                      title="Delete User"
-                    >
-                      <TrashIcon className="w-5 h-5 text-red-400 hover:opacity-80 transition-opacity" />
-                    </button>
-                  ) : (
-                    <span className="p-1"></span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  <button
+                    onClick={() => handleRequestDeleteUser(userItem.id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div>No users found.</div>
+        )}
       </div>
-      
-      {/* Pagination */}
-      <div className="flex items-center justify-between mt-6">
-        <div className="text-sm text-primary">
-          Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} users
-        </div>
 
-        {Math.ceil(filteredUsers.length / usersPerPage) > 1 && (    
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => paginate(currentPage > 1 ? currentPage - 1 : 1)}
-            disabled={currentPage === 1}
-            className={`p-2 rounded-md flex items-center justify-center bg-secondary hover:opacity-80 transition-opacity ${
-              currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-            title="Previous Page"
-          >
-            <ChevronLeftIcon className="w-5 h-5" color="background" />
-          </button>
-          
-          {[...Array(Math.ceil(filteredUsers.length / usersPerPage))].map((_, i) => (
-            <button
-              key={i}
-              onClick={() => paginate(i + 1)}
-              className={`w-8 h-8 flex items-center justify-center rounded-md ${
-                currentPage === i + 1 ? 'bg-primary text-white' : 'bg-background text-primary border border-secondary'
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
-          
-          <button
-            onClick={() => paginate(currentPage < Math.ceil(filteredUsers.length / usersPerPage) ? currentPage + 1 : currentPage)}
-            disabled={currentPage === Math.ceil(filteredUsers.length / usersPerPage)}
-            className={`p-2 rounded-md flex items-center justify-center bg-secondary hover:opacity-80 transition-opacity ${
-              currentPage === Math.ceil(filteredUsers.length / usersPerPage) ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-            title="Next Page"
-          >
-            <ChevronRightIcon className="w-5 h-5" color="background" />
-          </button>
-        </div>)}
-      </div>
+      <button
+        onClick={() => navigate("/users/create")}
+        className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+      >
+        Add New User
+      </button>
+
       <DeleteConfirmationModal
-          isOpen={showDeletePopup}
-          onClose={handleCloseDeleteModal}
-          onConfirm={handleConfirmDelete}
+        isOpen={showDeletePopup}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
       />
+
       <EditConfirmationModal
-          to = {toText}
-          isOpen={showEditPopup}
-          onClose={handleCloseEditModal}
-          onConfirm={handleConfirmEdit}
-        />
+        to={toText}
+        isOpen={showEditPopup}
+        onClose={handleCloseEditModal}
+        onConfirm={handleConfirmEdit}
+      />
     </div>
   );
-};
+}

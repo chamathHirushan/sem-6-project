@@ -7,6 +7,7 @@ import Works from "../pages/user/Works";
 import AdminAnalytics from "../pages/admin/AdminAnalytics";
 import UnauthorizedPage from "../pages/Unauthorized";
 import Users from "../pages/admin/Users";
+import UserForm from "../pages/admin/UserForm";
 import Hires from "../pages/user/Hires";
 import MyJobs from "../pages/user/MyJobs";
 import JobView from "../pages/user/JobView";
@@ -45,14 +46,17 @@ export function AppRouter() {
         ],
       },
 
-      {
-        element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 3} isLoggedIn={userLoggedIn} />,
-        children: [
-          { path: "/admin", element: <AdminAnalytics /> },
-          { path: "/users", element: <Users /> },
-        ],
-      },
-      ]}
+        {
+          element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 3} isLoggedIn={userLoggedIn} />,
+          children: [
+            { path: "/admin", element: <AdminAnalytics /> },
+            { path: "/users", element: <Users /> },
+            { path: "/users/create", element: <UserForm /> },
+            { path: "/users/edit/:id", element: <UserForm /> },
+          ],
+        },
+      ]
+    }
   ]);
 
   return <RouterProvider router={router} />;
