@@ -4,6 +4,8 @@ import { apiClient } from "../../api/client";
 // import { useNavigate } from "react-router-dom";
 import SideMenu from "../../components/SideMenu/SideMenu";
 import JobTile from "../../components/JobTile/JobTile";
+
+import { Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
 import {Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
 import jobImage from "../../assets/1.jpeg"
 import jobImage2 from "../../assets/2.jpeg"
@@ -370,53 +372,53 @@ export default function Works() {
 
         {/* Header bar. It includes total jobs found result & grid/table view buttons*/}
         <div className="flex justify-between items-center mb-5  bg-gray-200 rounded-lg">
-            <h2 style={{ fontSize: "16px", padding: "8px 16px" }}>
-              <strong>{filteredJobs.length}</strong> jobs found.
-            </h2>
+          <h2 style={{ fontSize: "16px", padding: "8px 16px" }}>
+            <strong>{filteredJobs.length}</strong> jobs found.
+          </h2>
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleViewChange("grid")}
-                style={{
-                  color: viewMode === "grid" ? 'black' : "gray",
-                  border: "none",
-                  padding: "5px 10px",
-                  cursor: "pointer",
-                }}
-              >
-                <Squares2X2Icon className="w-5 h-5"/>
-              </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleViewChange("grid")}
+              style={{
+                color: viewMode === "grid" ? 'black' : "gray",
+                border: "none",
+                padding: "5px 10px",
+                cursor: "pointer",
+              }}
+            >
+              <Squares2X2Icon className="w-5 h-5" />
+            </button>
 
-              <button
-                onClick={() => handleViewChange("list")}
-                style={{
-                  color: viewMode === "list" ? "black" : "gray",
-                  border: "none",
-                  padding: "5px 10px",
-                  cursor: "pointer",
-                }}
-              >
-                <ListBulletIcon className="w-6 h-6"/>
-              </button>
-            </div>
+            <button
+              onClick={() => handleViewChange("list")}
+              style={{
+                color: viewMode === "list" ? "black" : "gray",
+                border: "none",
+                padding: "5px 10px",
+                cursor: "pointer",
+              }}
+            >
+              <ListBulletIcon className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         {/* Main job listing area that takes all remaining height */}
         <div style={{ flex: 1, overflowY: "auto" }}>
-           <div
-              style={{
-                display: viewMode === "grid" ? "grid" : "flex",
-                gridTemplateColumns: viewMode === "grid" ? "repeat(auto-fill, minmax(200px, 1fr))" : undefined,
-                gridAutoRows: viewMode === "grid" ? "minmax(200px, auto)" : undefined,
-                gap: "12px",
-                justifyItems: "center",
-                flexWrap: viewMode === "list" ? "wrap" : undefined,
-                flexDirection: "column",
-                justifyContent: viewMode === "list" ? "center" : undefined,
-                width: viewMode === "list" ? "100%" : "100%",
-                margin: viewMode === "list" ? "0 auto" : undefined,
-              }}
-            >
+          <div
+            style={{
+              display: viewMode === "grid" ? "grid" : "flex",
+              gridTemplateColumns: viewMode === "grid" ? "repeat(auto-fill, minmax(200px, 1fr))" : undefined,
+              gridAutoRows: viewMode === "grid" ? "minmax(200px, auto)" : undefined,
+              gap: "12px",
+              justifyItems: "center",
+              flexWrap: viewMode === "list" ? "wrap" : undefined,
+              flexDirection: "column",
+              justifyContent: viewMode === "list" ? "center" : undefined,
+              width: viewMode === "list" ? "100%" : "100%",
+              margin: viewMode === "list" ? "0 auto" : undefined,
+            }}
+          >
             {paginatedJobs.map((job, index) => (
               <JobTile
                 key={`${job.id}_${index}`}
@@ -433,7 +435,7 @@ export default function Works() {
           <div className="text-sm text-gray-600 font-medium">
             {`Showing ${(currentPage - 1) * itemsPerPage + 1} to ${Math.min(currentPage * itemsPerPage, jobs.length)} of ${jobs.length} Entries`}
           </div>
-          
+
           <div className="flex space-x-1">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
@@ -459,11 +461,11 @@ export default function Works() {
               Next
             </button>
           </div>
-          
-        </div>
 
         </div>
+
       </div>
-    );
-  }
+    </div>
+  );
+}
 

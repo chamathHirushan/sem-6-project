@@ -15,6 +15,17 @@ export const verifyOTP = async (phone_number: string, otp: string) => {
     return response;
   };  
 
+
+export const addTask = async (title: string, description: string, budget: number, location: string) => {
+    const response = await apiClient.post("/api/task/add", {
+      title: title,
+      description: description,
+      budget: budget,
+      location: location
+    });
+    return response;
+  }
+
 export const getUserProfile = async () => {
   const response = await apiClient.get("/api/user/profile");
   return response.data;
