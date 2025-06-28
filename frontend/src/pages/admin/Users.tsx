@@ -140,28 +140,58 @@ export default function Users() {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Users Management</h1>
-      <div className="grid gap-4">
-        {Array.isArray(users) && users.length > 0 ? (
-          users.map((userItem) => (
-            <div key={userItem.id} className="border p-4 rounded-lg shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold">{userItem.name}</h2>
-                  <p className="text-gray-600">{userItem.email}</p>
-                  <p className="text-gray-600">
-                    Phone: {userItem.phone_number}
-                  </p>
-                  <p className="text-gray-600">Town: {userItem.town}</p>
-                  <p className="text-gray-600">
-                    Permission Level: {getRoleName(userItem.permission_level)}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => navigate(`/users/edit/${userItem.id}`)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+    <div className="flex flex-col bg-background p-6 max-w-full mx-auto">
+      <div className="flex items-center justify-between mb-6 relative">
+        <h1 className="text-2xl font-bold text-primary">Users Management</h1>
+        <div className="ml-auto">
+          <input
+        type="text"
+        placeholder="Search by name, email or role"
+        className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary text-black min-w-[300px]"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+      
+      <div className="overflow-x-auto rounded-lg shadow-md">
+        <table className="min-w-full bg-white border-collapse">
+          <thead>
+            <tr className="bg-primary text-white">
+              <th className="py-3 px-4 text-left font-semibold" onClick={() => handleSort('name')}>Name {sortConfig.key === 'name' && (<span className="text-xs align-middle">
+                {sortConfig.direction === 'asc' ? '▲' : '▼'}
+              </span>)}</th>
+              <th className="py-3 px-4 text-left font-semibold" onClick={() => handleSort('email')}>Email {sortConfig.key === 'email' && (<span className="text-xs align-middle">
+                {sortConfig.direction === 'asc' ? '▲' : '▼'}
+              </span>)}</th>
+              <th className="py-3 px-4 text-left font-semibold" onClick={() => handleSort('permission_level')}> Role {sortConfig.key === 'permission_level' && (<span className="text-xs align-middle">
+                {sortConfig.direction === 'asc' ? '▲' : '▼'}
+              </span>)}</th>
+              <th className="py-3 px-4 text-left font-semibold" onClick={() => handleSort('createdAt')}>Created Time {sortConfig.key === 'createdAt' && (<span className="text-xs align-middle">
+                {sortConfig.direction === 'asc' ? '▲' : '▼'}
+              </span>)}</th>
+              <th className="py-3 px-4 text-center w-16"></th>
+              <th className="py-3 px-4 text-center w-16"></th>
+              <th className="py-3 px-4 text-center w-16"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {currentUsers.map((user, index) => (
+              <tr 
+                key={user.id} 
+                className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
+              >
+                <td className="py-3 px-4 text-primary">{user.name}</td>
+                <td className="py-3 px-4 text-primary">{user.email}</td>
+                <td className="py-3 px-4">
+                  <span 
+                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      Number(user.permission_level) === 4 
+                        ? "bg-primary text-white" 
+                        : Number(user.permission_level) === 3 
+                          ? "bg-secondary text-white" 
+                          : "bg-accent text-primary"
+                    }`}
                   >
                     Edit
                   </button>

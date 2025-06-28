@@ -29,21 +29,22 @@ export function AppRouter() {
     {
       element: <Layout />,
       children: [
-        {
-          element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 0} isLoggedIn={userLoggedIn} />,
-          children: [
-            { path: "/work", element: <Works /> },
-            { path: "/work/:id", element: <JobView /> },
-            { path: "/hire", element: <Hires /> },
-            { path: "/hire/:id", element: <ServiceView /> },
-            { path: "/my-jobs", element: <MyJobs /> },
-            { path: "/conversations", element: <Conversations /> },
-            { path: "/analytics", element: <Analytics /> },
-            { path: "/job-fields", element: <MyFields /> },
-            { path: "/favorites", element: <Fav /> },
-            { path: "/profile", element: <Profile /> },
-          ],
-        },
+      {
+        element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 0} isLoggedIn={userLoggedIn} />,
+        children: [
+          { path: "/work", element: <Works /> },
+          { path: "/work/:id", element: <JobView /> },
+          { path: "/hire", element: <Hires /> },
+          { path: "/hire/:id", element: <ServiceView /> },
+          { path: "/my-jobs", element: <MyJobs /> },
+          { path: "/conversations", element: <Conversations /> },
+          { path: "/analytics", element: <Analytics /> },
+          { path: "/job-fields", element: <MyFields /> },
+          { path: "/favorites", element: <Fav /> },
+          { path: "/profile", element: <Profile /> },
+          
+        ],
+      },
 
         {
           element: <ProtectedRoute isAllowed={userLoggedIn && user?.role >= 3} isLoggedIn={userLoggedIn} />,

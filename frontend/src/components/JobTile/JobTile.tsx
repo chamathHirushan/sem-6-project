@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {ClockIcon, MapPinIcon, TagIcon, StarIcon, ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import {ClockIcon, MapPinIcon, TagIcon, StarIcon } from "@heroicons/react/24/outline";
 import { StarIcon as SolidStarIcon, FireIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import "./JobTile.css";
 
@@ -10,12 +10,12 @@ interface JobTileProps {
   title: string;
   location: string;
   daysPosted: number;
-  jobType: string;
+  subCategory: string;
   budget: string;   // budget can be a string(for negotiable services) or number
   isBookmarked: boolean;
-  isUrgent: boolean,
-  isTrending: boolean,
+  isUrgent: boolean;
   view: "grid" | "list"; // Determines the tile layout
+  isTrending?: boolean;
   onBookmarkToggle: (id: string) => void;
 }
 
@@ -25,11 +25,10 @@ const JobTile: FC<JobTileProps> = ({
   title,
   location,
   daysPosted,
-  jobType,
+  subCategory,
   budget,
   isBookmarked,
   isUrgent,
-  isTrending,
   view,
   onBookmarkToggle,
 }) => {
@@ -69,7 +68,7 @@ const JobTile: FC<JobTileProps> = ({
                 {/* Job type */}
                 <div className="flex items-center">
                   <TagIcon className="w-4 h-4 mr-1" style={{ color: "red" }} />
-                  <p className="job-tile-type">{jobType}</p>
+                  <p className="job-tile-type">{subCategory}</p>
                 </div>
 
                 {/* Location */}
@@ -95,25 +94,14 @@ const JobTile: FC<JobTileProps> = ({
                   )}
 
                   {/* Trending icon */}
-                  {isTrending && (
+                  {/* {isTrending && (
                       <div className="flex items-center justify-center p-0.5 px-1">
                       <FireIcon className="w-4 h-4 -mr-0.5" style={{ color: "orange" }} />
                     </div>
-                  )}
+                  )} */}
                 </div>
 
-                <div className="flex items-center justify-between w-full pl-3">
-                  {/* Chat icon */}
-                  <button
-                    className="job-tile-chat"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      navigate(`/chat/${id}`);
-                    }}
-                  >
-                    <ChatBubbleOvalLeftEllipsisIcon className="w-5 h-5" />
-                  </button>
+                <div className="flex items-center justify-end w-full pl-3">
 
                   {/* Bookmark icon */}
                   <button
@@ -154,7 +142,7 @@ const JobTile: FC<JobTileProps> = ({
                 {/* Job type */}
                 <div className="flex items-center">
                   <TagIcon className="w-4 h-4 mr-1" style={{ color: "red" }} />
-                  <p className="job-tile-type">{jobType}</p>
+                  <p className="job-tile-type">{subCategory}</p>
                 </div>
 
                 {/* location */}
@@ -174,12 +162,12 @@ const JobTile: FC<JobTileProps> = ({
                 )}
 
                 {/* Trending icon */}
-                {isTrending && (
+                {/* {isTrending && (
                     <div className="flex items-center justify-center rounded-md border border-orange-500 p-0.5 px-1">
                     <FireIcon className="w-4 h-4 mr-0.5" style={{ color: "orange" }} />
                     <p className="text-black text-xs">Trending</p>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
 
@@ -200,19 +188,6 @@ const JobTile: FC<JobTileProps> = ({
                   <StarIcon className="w-5 h-5" />
                 )}
                 </button>
-
-                {/* chat icon */}
-                <button
-                className="job-tile-chat"
-                onClick={(e) => { 
-                  e.stopPropagation();
-                  e.preventDefault();
-                  navigate(`/chat/${id}`);
-                }}
-                > 
-                <ChatBubbleOvalLeftEllipsisIcon className="w-5 h-5" />
-                </button>
-
               </div>
               
               

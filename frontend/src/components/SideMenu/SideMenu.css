@@ -26,17 +26,38 @@
 
 .sidebar-subitems {
     list-style-type: none;
-    padding-left: 20px;
+    padding-left: 0;
     margin-top: 8px;
     font-size: small;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
 }
 
 .sidebar-subitem {
-    padding: 5px 0;
+    padding: 4px 8px;
     cursor: pointer;
-    border-bottom: 1px solid #eee;
+    border: none;
+    background-color: #ffffff;
+    border-radius: 8px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    font-weight: 400;
+    font-size: x-small;
+    /* transition: background 0.2s; */
+    margin-bottom: 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    transition: background-color 0.2s ease;
 }
 
 .sidebar-subitem:hover {
-    background-color: #f0f0f0;
+    background-color: #9eddff;
+}
+
+.sidebar-subitem.selected {
+    background-color: #e2e8f0;
+    font-weight: 600;
+    color: #2563eb;
+    border: 1px solid #2563eb;
 }

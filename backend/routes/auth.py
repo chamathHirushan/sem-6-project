@@ -100,7 +100,7 @@ async def session(
             
             refresh_cookie_options = {
                 "httponly": True,
-                "secure": True,
+                "secure": False,
                 "samesite": "Strict",
                 "path": "/auth/refresh",
                 "max_age": 86400 * REFRESH_TOKEN_EXPIRE_DAYS

@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
 import {ClockIcon, MapPinIcon, TagIcon, CalendarDaysIcon, BriefcaseIcon, IdentificationIcon } from "@heroicons/react/24/outline";
 import { StarIcon as SolidStarIcon, FireIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
@@ -7,10 +7,36 @@ import StarRatings from 'react-star-ratings';
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./ServiceView.css";
+import {getJobDetails} from "../../api/userAPI";
 
 import jobImage from "../../assets/get-a-job-with-no-experience.png";
 
+interface Job {
+  id: string;
+  title: string;
+  category: string;
+  subCategory: string;
+  location: string;
+  isUrgent: boolean;
+  daysPosted: string; // e.g., "2 days", "1 month", "3 years"
+  dueDate: string; // ISO date string: "YYYY-MM-DD"
+  postedDate: string; // ISO date string: "YYYY-MM-DD"
+  postedUserName: string;
+  postedUserImage: string;
+  postedUserRating: number; // e.g., 3.5
+  miniDescription: string;
+  budget: number;
+  address: string;
+  description: string;
+  poster: string;
+  isBookmarked: boolean;
+  image: string[]; // array of image URLs
+}
+
 export default function JobView() {
+  // Make sure your route is defined as /hire/:id in your router!
+  const params = useParams();
+  const id = params.id;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,8 +45,9 @@ export default function JobView() {
 
     console.log("Opened JobView. Came from:", location.state?.from);
     console.log("Stored scroll position:", location.state?.scrollPosition);
+    console.log("Job ID from URL:", id);
 
-  }, []);
+  }, [id, location.state]);
   
   const handleBack = () => {
     const from = location.state?.from || { pathname: "/work" };
@@ -34,14 +61,13 @@ export default function JobView() {
   };
   
 
-  const job = {
-    id: "D153",
+  const samplejob = {
+    id: id || "D153",
     title: "Senior Developer",
     category: "IT & Software",
-    jobType: "Full-Time",
+    subCategory: "Plumbing",
     location: "New York, NY",
     isUrgent: true,
-    isTrending: true,
     daysPosted: "2 days",   // no of days, months or years since posted
     dueDate: "2023-12-31",
     postedDate: "2023-10-01",  // date when posted
@@ -52,11 +78,30 @@ export default function JobView() {
     budget: 5000,
     address: "123 Main St, New York, NY",
     description: "We are looking for a senior developer to join our team. The ideal candidate should have at least 5 years of experience in software development, with a strong background in JavaScript and React. I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done). I'm obviously missing something stupidly simple here. I have images with a white background so I want to be able to edit the arrows on the Bootstraps Carousel so they are visible. So many changing the color of the arrows (NOT the background like I've done).",
-    jobPoster: "https://s3-ap-southeast-1.amazonaws.com/xpresslivedonotmess-live/Vacancies/DescriptionImage_181385", // poster of the job post if exist
+    poster: "https://s3-ap-southeast-1.amazonaws.com/xpresslivedonotmess-live/Vacancies/DescriptionImage_181385", // poster of the job post if exist
     isBookmarked: false,
     image: [jobImage, jobImage, jobImage],
   };
 
+  const [job, setJob] = useState<Job>(samplejob);
+
+  useEffect(() => {
+    async function fetchJobs() {
+      try {
+        if (!id) { return; } // If no ID, do not fetch
+        const fetchedJob = await getJobDetails(id);//TODO
+        if (!fetchedJob) {
+          //toast.error("Please try again.");
+          return;
+        }
+        setJob(fetchedJob);
+      } catch (error) {
+        //toast.error(error instanceof Error ? error.message : "An unknown error occurred.");
+        console.error("Error fetching job details:", error);
+      }
+    }
+    fetchJobs();
+  }, [id]);
 
   // Social media share URLs
   const shareUrl = `https://sewa.lk/hire/${job.id}`;
@@ -129,12 +174,12 @@ export default function JobView() {
               )}
 
               {/* Trending icon */}
-              {job.isTrending && (
+              {/* {job.isTrending && (
                   <div className="flex items-center justify-center rounded-md border border-orange-500 p-0.5 px-1">
                   <FireIcon className="w-4 h-4 mr-0.5" style={{ color: "orange" }} />
                   <p className="text-black text-xs">Trending</p>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
           
@@ -147,11 +192,11 @@ export default function JobView() {
           <p className="mb-4">{job.description}</p>
 
           {/* Task Poster. If the job poster is not empty show it as an image. otherwise not showing anything atleast the header */}
-          {job.jobPoster && (       
+          {job.poster && (       
             <div>
               <div className="border-t border-gray-300 my-4"></div>
-              <h2 className="text-xl font-semibold mb-2">Task Poster</h2>
-              <img src={job.jobPoster} alt="Job Poster" className="w-full h-full mr-4" />
+              <h2 className="text-xl font-semibold mb-2">Job Poster</h2>
+              <img src={job.poster} alt="Job Poster" className="w-full h-full mr-4" />
             </div>
           )}
 
@@ -172,7 +217,7 @@ export default function JobView() {
         </div>
 
         {/* right side summary area */}
-        <div className="w-full h-full lg:w-1/3 bg-white p-4 rounded-lg shadow-md">
+        <div className="w-full h-full lg:w-1/3 bg-gray-100 p-4 rounded-lg shadow-md">
           {/* user info of the job poster */}
           <div className="flex items-center mb-4">
             <img src={job.postedUserImage} alt="Job Poster" className="w-16 h-16 rounded-full mr-4" />
@@ -221,7 +266,7 @@ export default function JobView() {
               {/* Task Type */ }
               <div className="flex items-center">
                 <TagIcon className="w-4 h-4 mr-1" style={{ color: "red" }}/>
-                <p className="text-gray-600 text-sm">{job.jobType}</p>
+                <p className="text-gray-600 text-sm">{job.subCategory}</p>
               </div>                         
             </div>
 
@@ -269,6 +314,7 @@ export default function JobView() {
             {/* Apply for Job button */ }
             <button className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 w-full">Apply for Job</button>
             {/* Save for later button */ }
+            <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full">Chat</button>
             <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full">Save for Later</button>
           </div>            
         </div>
