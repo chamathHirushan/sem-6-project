@@ -1,4 +1,4 @@
-# Sem-6-project
+# SEWA.LK - CSE Sem-6 professional portfolio project
 
 ## To run Frontend
 
