@@ -19,6 +19,8 @@ class WorkerPost(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     category_id = Column(Integer, ForeignKey("working_category.id"))
     location = Column(String)  # town
+    title = Column(String)
+    subcategory = Column(String)
     description = Column(Text)
     post_date = Column(DateTime(timezone=True), server_default=func.now())
     photos = Column(String)  # Comma-separated list of image URLs or JSON array

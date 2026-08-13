@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
 import { apiClient } from "../../api/client";
-
-import { ChevronLeftIcon, ChevronRightIcon, EyeIcon, TrashIcon, PencilIcon  } from '@heroicons/react/24/solid';
-import {DeleteConfirmationModal} from "../../components/UserPopup";
-import {EditConfirmationModal} from "../../components/UserPopup";
+import { ChevronLeftIcon, ChevronRightIcon, EyeIcon, TrashIcon, PencilIcon } from "@heroicons/react/24/solid";
+import { DeleteConfirmationModal } from "../../components/UserPopup";
+import { EditConfirmationModal } from "../../components/UserPopup";
 import { toast } from "react-toastify";
-        
 
 interface User {
   id: number;
@@ -36,32 +33,11 @@ const getRoleName = (level: number): string => {
 };
 
 export default function Users() {
-  const [backendData, setBackendData] = useState<string>("Loading...");
-  const { user } = useAuth();
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await apiClient.get("/admin/dashboard");
-        setBackendData(response.message || "No data received");
-      } catch (error) {
-        setBackendData("Error fetching data");
-        console.error("API Error:", error);
-      }
-    }
-
-    fetchData();
-  }, []);
-
-  return (
-    <>
-      <UserManagementTable />
-    </>
-  );
+  return <UserManagementTable />;
 }
 
 const UserManagementTable = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
@@ -69,46 +45,22 @@ const UserManagementTable = () => {
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(8);
 
-  // Fetch users from backend
   const fetchUsers = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.get("/user/users/");
-      setAllUsers(response.data || response); // Handle different response structures
-    } catch (error) {
-      console.error("Error fetching users:", error);
+      const response: any = await apiClient.get("/user/users/");
+      const users = Array.isArray(response) ? response : response.data || [];
+      setAllUsers(users);
+    } catch (err) {
+      console.error("Error fetching users:", err);
       setError("Failed to fetch users");
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Delete user via API
-  const deleteUser = async (userId: number) => {
-    try {
-      await apiClient.delete(`/user/users/${userId}`);
-      return true;
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      setError("Failed to delete user");
-      return false;
-    }
-  };
-
-  // Update user permission level via API
-  const updateUserPermissionLevel = async (userId: number, newPermissionLevel: number) => {
-    try {
-      await apiClient.patch(`/user/users/${userId}/level`, {
-        permission_level: newPermissionLevel
-      });
-      return true;
-    } catch (error) {
-      console.error("Error updating user permission:", error);
-      setError("Failed to update user permission");
-      return false;
     }
   };
 
@@ -122,65 +74,48 @@ const UserManagementTable = () => {
   };
 
   const handleRequestEditUser = (userId: number) => {
-    console.log("Requesting edit for user ID:", userId);
-    const user = allUsers.find(user => user.id === userId);
-    if (user?.permission_level === 3) {
+    const selected = allUsers.find((u) => u.id === userId);
+    if (selected?.permission_level === 3) {
       setToText("User");
-    } else if (user?.permission_level === 2) {
+    } else if (selected?.permission_level === 2) {
       setToText("Moderator");
     }
-    console.log("User permission level:", user?.permission_level);
-    console.log("To text:", toText);
     setSelectedUserId(userId);
     setShowEditPopup(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (selectedUserId !== null) {
-      const updatedUsers = allUsers.filter(user => user.id !== selectedUserId);
-      setAllUsers(updatedUsers);
+    if (selectedUserId === null) return;
+    try {
+      await apiClient.delete(`/user/users/${selectedUserId}`);
+      await fetchUsers();
+      toast.success("User deleted successfully");
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      toast.error("Failed to delete user");
+    } finally {
       setShowDeletePopup(false);
       setSelectedUserId(null);
-      // TODO: Replace with actual delete API call
-      toast.success(`User deleted successfully`);
     }
   };
 
-  const handleConfirmEdit = () => {
-  if (selectedUserId !== null) {
-    const updatedUsers = allUsers.map(user => {
-      if (user.id === selectedUserId) {
-        return {
-          ...user,
-          permission_level: user.permission_level === 3 ? 2 :
-                            user.permission_level === 2 ? 3 :
-                            user.permission_level // leave unchanged if not 2 or 3
-        };
-      }
-      return user;
-    });
-    // Update roleName for display/logging if needed
-    const updatedUser = updatedUsers.find(user => user.id === selectedUserId);
-    let roleName = getRoleName(Number(updatedUser?.permission_level) || 1);
-    // You can use roleName for logging or UI feedback if needed
-
-    setAllUsers(updatedUsers);
-    setShowEditPopup(false);
-    setSelectedUserId(null);
-    
-    // TODO: Replace with actual update API call
-    toast.success(`Changed the permission of user to ${roleName}`);
-  }
-};
-
-        const success = await updateUserPermissionLevel(selectedUserId, newPermissionLevel);
-        if (success) {
-          // Refresh the users list
-          await fetchUsers();
-          setShowEditPopup(false);
-          setSelectedUserId(null);
-        }
-      }
+  const handleConfirmEdit = async () => {
+    if (selectedUserId === null) return;
+    const selected = allUsers.find((u) => u.id === selectedUserId);
+    if (!selected) return;
+    const newLevel = selected.permission_level === 3 ? 2 : selected.permission_level === 2 ? 3 : selected.permission_level;
+    try {
+      await apiClient.patch(`/user/users/${selectedUserId}/level`, {
+        permission_level: newLevel,
+      });
+      await fetchUsers();
+      toast.success(`Changed the permission of user to ${getRoleName(newLevel)}`);
+    } catch (err) {
+      console.error("Error updating user permission:", err);
+      toast.error("Failed to update user permission");
+    } finally {
+      setShowEditPopup(false);
+      setSelectedUserId(null);
     }
   };
 
@@ -193,56 +128,28 @@ const UserManagementTable = () => {
     setShowEditPopup(false);
     setSelectedUserId(null);
   };
-  
-  // const [allUsers, setAllUsers] = useState<any[]>([]);
-  useEffect(() => {
-    // fetchUsers(); // No fetchUsers function, using static data
-  }, []);
-
-  // Sample user data
-  const InitallUsers = [
-    { id: 1, name: "Sewalk admin", permission_level: 4, email:"codeclouts@gmail.com", createdAt: new Date("2025-02-15T10:30:00") },
-    { id: 2, name: "Sarah Johnson", permission_level: 3, email:"johnson@gmail.com", createdAt: "2025-01-22T08:45:00" },
-    { id: 3, name: "Michael Chen", permission_level: 2, email:"mmichael@gmail.com", createdAt: "2025-02-14T14:15:00" },
-    { id: 4, name: "Emma Wilson", permission_level: 3, email:"emma23@gmail.com", createdAt: "2025-03-05T09:20:00" },
-    { id: 5, name: "David Garcia", permission_level: 1, email:"olivia@gmail.com", createdAt: "2025-03-18T16:30:00" },
-    { id: 6, name: "Olivia Brown", permission_level: 1, email:"obrown@gmail.com", createdAt: "2025-03-30T11:45:00" },
-    { id: 7, name: "James Lee", permission_level: 2, email:"jamesle@gmail.com", createdAt: "2025-04-10T13:10:00" },
-    { id: 8, name: "Sophia Martinez", permission_level: 3, email:"sophia@gmail.com", createdAt: "2025-04-22T15:25:00" },
-    { id: 9, name: "Daniel Taylor", permission_level: 2, email:"taylor12s@gmail.com", createdAt: "2025-05-01T10:05:00" },
-    { id: 10, name: "Isabella Anderson", permission_level: 1, email:"isabella@gmail.com", createdAt: "2025-05-12T14:50:00" },
-    { id: 11, name: "David Garcia", permission_level: 1, email:"olivia@gmail.com", createdAt: "2025-03-18T16:30:00" },
-    { id: 12, name: "Olivia Brown", permission_level: 1, email:"obrown@gmail.com", createdAt: "2025-03-30T11:45:00" },
-    { id: 13, name: "James Lee", permission_level: 2, email:"jamesle@gmail.com", createdAt: "2025-04-10T13:10:00" },
-    { id: 14, name: "Sophia Martinez", permission_level: "Moderator", email:"sophia@gmail.com", createdAt: "2025-04-22T15:25:00" },
-    { id: 15, name: "Daniel Taylor", permission_level: 2, email:"taylor12s@gmail.com", createdAt: "2025-05-01T10:05:00" },
-    { id: 16, name: "Isabella Anderson", permission_level: 1, email:"isabella@gmail.com", createdAt: "2025-05-12T14:50:00" },
-  ];
-
-  const [allUsers, setAllUsers] = useState(InitallUsers);
-  const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
 
   const handleSort = (key: string) => {
     const direction =
-      sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
+      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
 
     const sorted = [...allUsers].sort((a, b) => {
-      let aVal = a[key as keyof User];
-      let bVal = b[key as keyof User];
+      let aVal: any = a[key as keyof User];
+      let bVal: any = b[key as keyof User];
 
-      if (key === 'created_at') {
+      if (key === "created_at") {
         aVal = new Date(aVal as string);
         bVal = new Date(bVal as string);
       }
 
-      if (typeof aVal === 'string') {
-        return direction === 'asc'
+      if (typeof aVal === "string") {
+        return direction === "asc"
           ? aVal.localeCompare(bVal as string)
           : (bVal as string).localeCompare(aVal);
       }
 
-      if (typeof aVal === 'number' || aVal instanceof Date) {
-        return direction === 'asc'
+      if (typeof aVal === "number" || aVal instanceof Date) {
+        return direction === "asc"
           ? (aVal as any) > (bVal as any) ? 1 : -1
           : (aVal as any) < (bVal as any) ? 1 : -1;
       }
@@ -254,9 +161,9 @@ const UserManagementTable = () => {
     setAllUsers(sorted);
   };
 
-  const filteredUsers = allUsers.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredUsers = allUsers.filter((user) =>
+    (user.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (user.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
     getRoleName(user.permission_level).toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -264,32 +171,22 @@ const UserManagementTable = () => {
     setCurrentPage(1);
   }, [searchQuery]);
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(8);
-
-  // Get current users
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-  // Change page
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  // Format date
   const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+    if (!dateString) return "-";
+    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Function to handle view user details
   const handleViewUser = (userId: number) => {
-
-    const user = allUsers.find(u => u.id === userId);
-    if (user) {
-      alert(`User Details:\nName: ${user.name}\nEmail: ${user.email}\nPhone: ${user.phone_number}\nTown: ${user.town}\nRole: ${getRoleName(user.permission_level)}`);
+    const selected = allUsers.find((u) => u.id === userId);
+    if (selected) {
+      alert(`User Details:\nName: ${selected.name}\nEmail: ${selected.email}\nPhone: ${selected.phone_number}\nTown: ${selected.town}\nRole: ${getRoleName(selected.permission_level)}`);
     }
-
   };
 
   if (loading) {
@@ -340,31 +237,31 @@ const UserManagementTable = () => {
         <table className="min-w-full bg-white border-collapse">
           <thead>
             <tr className="bg-primary text-white">
-              <th className="py-3 px-4 text-left font-semibold cursor-pointer" onClick={() => handleSort('name')}>
-                Name {sortConfig.key === 'name' && (
+              <th className="py-3 px-4 text-left font-semibold cursor-pointer" onClick={() => handleSort("name")}>
+                Name {sortConfig.key === "name" && (
                   <span className="text-xs align-middle">
-                    {sortConfig.direction === 'asc' ? '▲' : '▼'}
+                    {sortConfig.direction === "asc" ? "▲" : "▼"}
                   </span>
                 )}
               </th>
-              <th className="py-3 px-4 text-left font-semibold cursor-pointer" onClick={() => handleSort('email')}>
-                Email {sortConfig.key === 'email' && (
+              <th className="py-3 px-4 text-left font-semibold cursor-pointer" onClick={() => handleSort("email")}>
+                Email {sortConfig.key === "email" && (
                   <span className="text-xs align-middle">
-                    {sortConfig.direction === 'asc' ? '▲' : '▼'}
+                    {sortConfig.direction === "asc" ? "▲" : "▼"}
                   </span>
                 )}
               </th>
-              <th className="py-3 px-4 text-left font-semibold cursor-pointer" onClick={() => handleSort('permission_level')}>
-                Role {sortConfig.key === 'permission_level' && (
+              <th className="py-3 px-4 text-left font-semibold cursor-pointer" onClick={() => handleSort("permission_level")}>
+                Role {sortConfig.key === "permission_level" && (
                   <span className="text-xs align-middle">
-                    {sortConfig.direction === 'asc' ? '▲' : '▼'}
+                    {sortConfig.direction === "asc" ? "▲" : "▼"}
                   </span>
                 )}
               </th>
-              <th className="py-3 px-4 text-left font-semibold cursor-pointer" onClick={() => handleSort('created_at')}>
-                Created Time {sortConfig.key === 'created_at' && (
+              <th className="py-3 px-4 text-left font-semibold cursor-pointer" onClick={() => handleSort("created_at")}>
+                Created Time {sortConfig.key === "created_at" && (
                   <span className="text-xs align-middle">
-                    {sortConfig.direction === 'asc' ? '▲' : '▼'}
+                    {sortConfig.direction === "asc" ? "▲" : "▼"}
                   </span>
                 )}
               </th>
@@ -433,10 +330,9 @@ const UserManagementTable = () => {
         </table>
       </div>
 
-      {/* Pagination */}
       <div className="flex items-center justify-between mt-6">
         <div className="text-sm text-primary">
-          Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} users
+          Showing {filteredUsers.length === 0 ? 0 : indexOfFirstUser + 1} to {Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} users
         </div>
 
         {Math.ceil(filteredUsers.length / usersPerPage) > 1 && (
@@ -444,7 +340,7 @@ const UserManagementTable = () => {
             <button
               onClick={() => paginate(currentPage > 1 ? currentPage - 1 : 1)}
               disabled={currentPage === 1}
-              className={`p-2 rounded-md flex items-center justify-center bg-secondary hover:opacity-80 transition-opacity ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
+              className={`p-2 rounded-md flex items-center justify-center bg-secondary hover:opacity-80 transition-opacity ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               title="Previous Page"
             >
@@ -455,7 +351,7 @@ const UserManagementTable = () => {
               <button
                 key={i}
                 onClick={() => paginate(i + 1)}
-                className={`w-8 h-8 flex items-center justify-center rounded-md ${currentPage === i + 1 ? 'bg-primary text-white' : 'bg-background text-primary border border-secondary'
+                className={`w-8 h-8 flex items-center justify-center rounded-md ${currentPage === i + 1 ? "bg-primary text-white" : "bg-background text-primary border border-secondary"
                   }`}
               >
                 {i + 1}
@@ -465,7 +361,7 @@ const UserManagementTable = () => {
             <button
               onClick={() => paginate(currentPage < Math.ceil(filteredUsers.length / usersPerPage) ? currentPage + 1 : currentPage)}
               disabled={currentPage === Math.ceil(filteredUsers.length / usersPerPage)}
-              className={`p-2 rounded-md flex items-center justify-center bg-secondary hover:opacity-80 transition-opacity ${currentPage === Math.ceil(filteredUsers.length / usersPerPage) ? 'opacity-50 cursor-not-allowed' : ''
+              className={`p-2 rounded-md flex items-center justify-center bg-secondary hover:opacity-80 transition-opacity ${currentPage === Math.ceil(filteredUsers.length / usersPerPage) ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               title="Next Page"
             >

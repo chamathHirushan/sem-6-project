@@ -34,7 +34,7 @@ class WorkerProfileResponse(WorkerProfileBase):
     id: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class WorkerPostBase(BaseModel):
     user_id: int
@@ -53,7 +53,7 @@ class WorkerPostResponse(WorkerPostBase):
     views: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ReviewBase(BaseModel):
     post_id: int
@@ -73,7 +73,7 @@ class ReviewResponse(ReviewBase):
     commenter_photo: str
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class WorkerPostDetailResponse(BaseModel):
     id: int
@@ -93,7 +93,7 @@ class WorkerPostDetailResponse(BaseModel):
     is_editable: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Worker Profile endpoints
 @router.post("/profiles/", response_model=WorkerProfileResponse)
@@ -178,7 +178,7 @@ def get_worker_posts(
 ):
     query = db.query(WorkerPost)
     if worker_id:
-        query = query.filter(WorkerPost.worker_id == worker_id)
+        query = query.filter(WorkerPost.user_id == worker_id)
     posts = query.offset(skip).limit(limit).all()
     return posts
 
@@ -212,7 +212,7 @@ def get_available_worker_posts(db: Session = Depends(get_db)):
 
         post_dict = {
             **post.__dict__,
-            'worker_name': f"{post.user.first_name} {post.user.last_name}",
+            'worker_name': post.user.name if post.user else "",
             'worker_photo': post.user.pro_pic,
             'category_name': post.category.category_name,
             'avg_rating': avg_rating,
@@ -235,7 +235,7 @@ def get_post_reviews(post_id: int, db: Session = Depends(get_db)):
     for review in reviews:
         review_dict = {
             **review.__dict__,
-            'commenter_name': f"{review.commenter.first_name} {review.commenter.last_name}",
+            'commenter_name': review.commenter.name if review.commenter else "",
             'commenter_photo': review.commenter.pro_pic
         }
         response.append(review_dict)
@@ -266,7 +266,7 @@ def get_user_worker_posts(
 
         post_dict = {
             **post.__dict__,
-            'worker_name': f"{post.user.first_name} {post.user.last_name}",
+            'worker_name': post.user.name if post.user else "",
             'worker_photo': post.user.pro_pic,
             'category_name': post.category.category_name,
             'avg_rating': avg_rating,
@@ -298,7 +298,7 @@ def get_worker_post_details(
 
     response = {
         **post.__dict__,
-        'worker_name': f"{post.user.first_name} {post.user.last_name}",
+        'worker_name': post.user.name if post.user else "",
         'worker_photo': post.user.pro_pic,
         'category_name': post.category.category_name,
         'avg_rating': avg_rating,

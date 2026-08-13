@@ -12,7 +12,7 @@ const MobileVerificationPopup: React.FC = () => {
   const [otpSent, setOtpSent] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const {user} = useAuth();
-  const [isOpen, setIsOpen] = useState(user.phone_number ? true : true);
+  const [isOpen, setIsOpen] = useState(!(user?.phone_number || localStorage.getItem("verified") === "true"));
   const [phoneError, setPhoneError] = useState(false);
 
   const normalizePhoneNumber = (number: string) => {
@@ -59,8 +59,9 @@ const MobileVerificationPopup: React.FC = () => {
     
     setIsLoading(true);
     try {
-      const success = await verifyOTP(formatted, otp);
-      if (!success) {
+      const success: any = await verifyOTP(formatted, otp);
+      const verified = success === true || success?.verified === true || success?.success === true;
+      if (!verified) {
         toast.error("Invalid OTP. Please try again.");
         return;
       }

@@ -6,7 +6,8 @@ import { StarIcon as SolidStarIcon, FireIcon, ExclamationTriangleIcon } from "@h
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./ServiceView.css";
-import {getServiceDetails} from "../../api/userAPI";
+import {getServiceDetails, addBookmark} from "../../api/userAPI";
+import { toast } from "react-toastify";
 import jobImage6 from "../../assets/s6.jpeg"
 import poster from "../../assets/29.jpg"; // Sample job image
 
@@ -38,8 +39,24 @@ export default function ServiceView() {
   };
 
   const handleClickChat = () => {
-    // Navigate to the chat page with the job ID
-    navigate(`/conversations`, { state: { from: location.pathname, scrollPosition: window.scrollY } });
+    navigate(`/conversations`, {
+      state: {
+        from: location.pathname,
+        scrollPosition: window.scrollY,
+        otherUserId: task.postedUserId,
+      },
+    });
+  };
+
+  const handleSaveForLater = async () => {
+    if (!id) return;
+    try {
+      await addBookmark(id, true, "service");
+      setTask((prev) => ({ ...prev, isBookmarked: true }));
+      toast.success("Saved for later.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save service.");
+    }
   };
 
   interface Task {
@@ -55,7 +72,10 @@ export default function ServiceView() {
   postedDate: string; // format: "YYYY-MM-DD"
   postedUserName: string;
   postedUserImage: string;
+  postedUserId?: number;
   postedUserRating?: number;
+  comments?: { id: number; name: string; text: string }[];
+  reviewCount?: number;
   miniDescription: string;
   budget: number;
   address: string;
@@ -159,7 +179,7 @@ export default function ServiceView() {
               {/* task category*/ }
               <div className="flex items-center my-1">
                 <BriefcaseIcon className="w-4 h-4 mr-1" style={{ color: "black" }}/>
-                <p className="text-gray-600 text-sm"><span className="font-bold">Category: </span>{task.category} ago</p>
+                <p className="text-gray-600 text-sm"><span className="font-bold">Category: </span>{task.category}</p>
               </div>
               
               {/* Posted Date as "days/months/years" ago */ }
@@ -172,7 +192,7 @@ export default function ServiceView() {
             <div className="flex flex-col gap-2 justify-start mr-3">
               {/* No. of applies so far */}          
               <div className="flex items-center justify-center p-0.5 px-1">
-                <p className="text-cyan-700 text-sm font-bold">7 applicants</p>
+                <p className="text-cyan-700 text-sm font-bold">{task.reviewCount || 0} reviews</p>
               </div>
 
 
@@ -220,12 +240,16 @@ export default function ServiceView() {
           <div className="border-t border-gray-300 my-4"></div>
           <h2 className="text-xl font-semibold mb-2">Comments</h2>
           <div className="flex flex-col gap-2">
-            <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-              <p className="text-gray-600">This is a comment.</p>
-            </div>
-            <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-              <p className="text-gray-600">This is another comment.</p>
-            </div>
+            {(task.comments && task.comments.length > 0) ? task.comments.map((comment) => (
+              <div key={comment.id} className="bg-gray-100 p-4 rounded-lg shadow-md">
+                <p className="text-sm font-semibold text-gray-800">{comment.name}</p>
+                <p className="text-gray-600">{comment.text}</p>
+              </div>
+            )) : (
+              <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+                <p className="text-gray-600">No reviews yet.</p>
+              </div>
+            )}
           </div>  
         </div>
 
@@ -316,7 +340,7 @@ export default function ServiceView() {
               {/* Apply for Job button */ }
               <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full" onClick={() => handleClickChat()}>Chat</button>
               {/* Save for later button */ }
-              <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full">Save for Later</button>
+              <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full" onClick={handleSaveForLater}>Save for Later</button>
             </>
           )}
           </div>            

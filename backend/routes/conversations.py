@@ -39,7 +39,7 @@ class MessageResponse(MessageBase):
     sender_photo: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ConversationResponse(BaseModel):
     id: int
@@ -51,7 +51,7 @@ class ConversationResponse(BaseModel):
     unread_count: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.get("/user/{user_id}", response_model=List[ConversationResponse])
 def get_user_conversations(
@@ -102,7 +102,7 @@ def get_user_conversations(
         response.append({
             'id': conv.id,
             'other_user_id': other_user_id,
-            'other_user_name': f"{other_user.first_name} {other_user.last_name}",
+            'other_user_name': other_user.name if other_user else "",
             'other_user_photo': other_user.pro_pic,
             'last_message': last_message.text if last_message else None,
             'last_message_time': last_message.created_at if last_message else None,
@@ -159,7 +159,7 @@ def get_conversation_messages(
         sender = db.query(User).filter(User.id == msg.sender_id).first()
         response.append({
             **msg.__dict__,
-            'sender_name': f"{sender.first_name} {sender.last_name}",
+            'sender_name': sender.name if sender else "",
             'sender_photo': sender.pro_pic
         })
     

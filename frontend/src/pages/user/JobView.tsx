@@ -7,7 +7,7 @@ import StarRatings from 'react-star-ratings';
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./ServiceView.css";
-import {getJobDetails} from "../../api/userAPI";
+import {getJobDetails, applyForJob, addBookmark} from "../../api/userAPI";
 import jobImage7 from "../../assets/7.jpeg"
 import jobImage from "../../assets/get-a-job-with-no-experience.png";
 import jobImage1 from "../../assets/12.jpg";
@@ -26,6 +26,7 @@ interface Job {
   postedDate: string; // ISO date string: "YYYY-MM-DD"
   postedUserName: string;
   postedUserImage: string;
+  postedUserId?: number;
   postedUserRating: number; // e.g., 3.5
   miniDescription: string;
   budget: number;
@@ -42,7 +43,7 @@ export default function JobView() {
   const id = params.id;
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, userLoggedIn } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to top on mount
@@ -109,7 +110,7 @@ export default function JobView() {
   }, [id]);
 
   // Social media share URLs
-  const shareUrl = `https://sewa.lk/hire/${job.id}`;
+  const shareUrl = `https://sewa.lk/work/${job.id}`;
   const shareText = encodeURIComponent(`${job.title} - Check out this job post!`);
 
   const whatsappUrl = `https://wa.me/?text=${shareText}%20${encodeURIComponent(shareUrl)}`;
@@ -118,14 +119,34 @@ export default function JobView() {
   const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${shareText}`;
 
   const handleClickChat = () => {
-    // Navigate to the chat page with the job ID
-    navigate(`/conversations`, { state: { from: location.pathname, scrollPosition: window.scrollY } });
+    navigate(`/conversations`, {
+      state: {
+        from: location.pathname,
+        scrollPosition: window.scrollY,
+        otherUserId: job.postedUserId,
+      },
+    });
   };
 
   const hadnleApplyJob = async () => {
-    window.dispatchEvent(new Event("addMyJob"));
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a delay for the service post creation
-    toast.success("Application sent successfully!");
+    if (!id) return;
+    try {
+      await applyForJob(id);
+      toast.success("Application sent successfully!");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not apply for this job.");
+    }
+  }
+
+  const handleSaveForLater = async () => {
+    if (!id) return;
+    try {
+      await addBookmark(id, true, "job");
+      setJob((prev) => ({ ...prev, isBookmarked: true }));
+      toast.success("Saved for later.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save job.");
+    }
   }
 
   return (
@@ -340,7 +361,7 @@ export default function JobView() {
             <button className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 w-full" onClick={()=> hadnleApplyJob()}>Apply for Job</button>
             {/* Save for later button */ }
             <button className="bg-primary text-white px-4 py-2 rounded-md mt-2 w-full" onClick={() => handleClickChat()}>Chat</button>
-            <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full">Save for Later</button>
+            <button className="bg-red-500 text-white px-4 py-2 rounded-md mt-2 w-full" onClick={handleSaveForLater}>Save for Later</button>
             </>
           )}
           </div>            

@@ -72,8 +72,7 @@ class GatewayService:
             redis.delete(otp_key)
             redis.delete(f"otp_req_count:{user_id}")
             redis.delete(otp_validate_count)
-            # store the phone number in the database
-            print(f"Phone number {phone_number} verified successfully. storing in the database.")
+            print(f"Phone number {phone_number} verified successfully.")
             return True
         
         redis.incr(otp_validate_count)

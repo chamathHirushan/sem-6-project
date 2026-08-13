@@ -1,38 +1,22 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "../../api/client";
-// import {useAuth} from "../../contexts/AuthContext";
-// import { useNavigate } from "react-router-dom";
 import SideMenu from "../../components/SideMenu/SideMenu";
 import TaskTile from "../../components/TaskTile/TaskTile";
-import {Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
-import jobImage from "../../assets/get-a-job-with-no-experience.png"
+import { Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
 import { useSearchParams, useLocation } from "react-router-dom";
-import {getAllAvailableServices} from "../../api/userAPI";
-import jobImage3 from "../../assets/s3.jpeg"
-import jobImage2 from "../../assets/s2.jpeg"
-import jobImage1 from "../../assets/s1.jpeg"
-import jobImage4 from "../../assets/s4.jpeg"
-import jobImage5 from "../../assets/s5.jpeg"
-import jobImage6 from "../../assets/s6.jpeg"
-import jobImage7 from "../../assets/19.jpeg"
+import { getAllAvailableServices, addBookmark } from "../../api/userAPI";
+import { toast } from "react-toastify";
 
 export default function Hires() {
-  const [backendData, setBackendData] = useState<string>("Loading...");
-  // const {user} = useAuth();
-  // const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  // const [selectedSubItem, setSelectedSubItem] = useState<string | null>(null);
   const [selectedSubItems, setSelectedSubItems] = useState<string[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const defaultView = (searchParams.get("view") as "grid" | "list") || "grid";
   const [viewMode, setViewMode] = useState<"grid" | "list">(defaultView);
   const location = useLocation();
 
-
-  // When user changes view, update URL param too
   const handleViewChange = (mode: "grid" | "list") => {
     setViewMode(mode);
-    setSearchParams({ view: mode });  // Updates the URL
+    setSearchParams({ view: mode });
   };
   
   const handleSubItemSelect = (subItem: string) => {
@@ -49,38 +33,13 @@ export default function Hires() {
     setSelectedSubItems([]);
   };
 
-
   useEffect(() => {
-    // Restore scroll position if available
-    console.log("Restoring scroll position: ", location.state?.scrollPosition);
     if (location.state?.scrollPosition !== undefined) {
-      console.log("Restoring scroll to:", location.state.scrollPosition);
       setTimeout(() => {
         window.scrollTo(0, location.state.scrollPosition);
       }, 0);
-    } else {
-      console.log("No scroll position to restore.");
     }
   }, []);
-
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const fetchedServices = await getAllAvailableServices();
-        setTasks(fetchedServices);
-      } catch (error) {
-        //setTasks(fetchedServices);
-        console.error("API Error:", error);
-      }
-    }
-    fetchData();
-  }, []);
-
-
-  
-
-
 
   const menuItems = [
     { label: "Technicians", subItems: [
@@ -107,7 +66,7 @@ export default function Hires() {
       "Architects", "Boarding Places", "House Painting", "House Rental", "House/Office Cleaning", "Interior Design", "Landscaping"
     ]},
     { label: "Beauty & Event", subItems: [
-      "Advertising & promotions", "Audio Hires", "Band, DJ & dancing", "Band, DJ & dancing", "Beauty Salon", "Catering & Food",
+      "Advertising & promotions", "Audio Hires", "Band, DJ & dancing", "Beauty Salon", "Catering & Food",
       "Dress Makers","Event Planners", "Flowers & Decos", "Health & Beauty Spa", "Photography", "Videography"] },
     { label: "Other", subItems: ["Other"] },
   ];
@@ -127,188 +86,59 @@ export default function Hires() {
     isBookmarked: boolean;
   }
 
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "J133",
-      image: jobImage1,
-      category: "Plumbing",
-      subCategory: "Plumbing",
-      title: "Plumbing Services Near Galle Town and all house services that you need to repair your drainage system",
-      location: "Galle",
-      daysPosted: 3,
-      taskType: "Plumbing",
-      budget: 100,
-      isBookmarked: false,
-      isUrgent: false,
-      isTrending: true,
-    },
-    {
-      id: "J134",
-      image: jobImage2,
-      category: "Painting",
-      subCategory: "House Painting",
-      title: "Painting Houses and Offices",
-      location: "Colombo-7",
-      daysPosted: 3,
-      taskType: "Painting",
-      budget: 100,
-      isBookmarked: false,
-      isUrgent: true,
-      isTrending: true,
-    },
-    {
-      id: "J135",
-      image: jobImage3,
-      category: "IT Support",
-      subCategory: "Computer Repair",
-      title: "Computer Repair, IT Support, and Networking",
-      location: "Negombo",
-      daysPosted: 3,
-      taskType: "Repair",
-      budget: 100,
-      isBookmarked: false,
-      isUrgent: true,
-      isTrending: false,
-    },
-    {
-      id: "J136",
-      image: jobImage4,
-      category: "Repairings",
-      subCategory: "Bag Repair",
-      title: "බෑග්, Shoes අලුත්වැඩියා කිරීම",
-      location: "Matara",
-      daysPosted: 3,
-      taskType: "Repair",
-      budget: 100,
-      isBookmarked: false,
-      isUrgent: false,
-      isTrending: false,
-    },
-    {
-      id: "J137",
-      image: jobImage5,
-      category: "Woodwork",
-      subCategory: "Cupboard Repair",
-      title: "Cupboard Repair & Polishing",
-      location: "Anuradhapura",
-      daysPosted: 3,
-      taskType: "Woodwork",
-      budget: 100,
-      isBookmarked: false,
-      isUrgent: false,
-      isTrending: false,
-    },
-    {
-      id: "J138",
-      image: jobImage6,
-      category: "Vehicle Repair",
-      subCategory: "Car, Bike, and Vehicle Repair",
-      title: "Car, Bike, and Vehicle Repair",
-      location: "Anuradapura, Sri Lanka",
-      daysPosted: 3,
-      taskType: "Repair",
-      budget: 100,
-      isBookmarked: false,
-      isUrgent: true,
-      isTrending: false,
-    },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-        useEffect(() => {
-        const initialize = () => {
-          setTimeout(() => {
-            setTasks((prevJobs) => {
-              if (prevJobs.some(job => job.id === "J199")) {
-                return prevJobs;
-              }
-              return [
-                ...prevJobs,
-                  {
-                  id: "J199",
-                  image: jobImage7,
-                  category: "Technicians",
-                  subCategory: "Electricians",
-                  title: "Wiring & Socket Repair",
-                  location: "Kandy",
-                  daysPosted: 2,
-                  taskType: "Cleaning",
-                  budget: 150,
-                  isBookmarked: false,
-                  isUrgent: true,
-                  isTrending: true,
-                }
-              ];
-            });
-          }, 1500); // 1.5 seconds delay
-        };
-
-        window.addEventListener("addService", initialize);
-
-        return () => {
-          window.removeEventListener("addService", initialize);
-        };
-      }, []);
-
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const fetchedServices = await getAllAvailableServices();
+        setTasks(Array.isArray(fetchedServices) ? fetchedServices : []);
+      } catch (error) {
+        console.error("API Error:", error);
+        toast.error("Could not load services.");
+        setTasks([]);
+      }
+    }
+    fetchData();
+  }, []);
 
   const filteredTasks = tasks.filter((task) => {
     if (selectedSubItems.length > 0) {
       return selectedSubItems
         .map((s) => s.toLowerCase())
-        .includes(task.subCategory.toLowerCase());
+        .includes((task.subCategory || "").toLowerCase());
     } else if (searchTerm.trim() !== "") {
       return (
-        task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.location.toLowerCase().includes(searchTerm.toLowerCase())
+        (task.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (task.location || "").toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     return true;
   });
 
-
-  const toggleBookmark = (id: string) => {
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.map((task) =>
-        task.id === id ? { ...task, isBookmarked: !task.isBookmarked } : task
+  const toggleBookmark = async (id: string) => {
+    const current = tasks.find((task) => task.id === id);
+    const nextState = !current?.isBookmarked;
+    setTasks((prev) =>
+      prev.map((task) => task.id === id ? { ...task, isBookmarked: nextState } : task)
+    );
+    try {
+      await addBookmark(id, nextState, "service");
+    } catch (error) {
+      console.error("Failed to update bookmark:", error);
+      toast.error("Could not update bookmark.");
+      setTasks((prev) =>
+        prev.map((task) => task.id === id ? { ...task, isBookmarked: !nextState } : task)
       );
-
-      // Get current bookmarked tasks from localStorage
-      let bookmarkedTasks: Task[] = [];
-      const stored = localStorage.getItem("bookmarkedTasks");
-      if (stored) {
-        try {
-          bookmarkedTasks = JSON.parse(stored);
-        } catch {
-          bookmarkedTasks = [];
-        }
-      }
-
-      // Find the toggled task
-      const toggledTask = updatedTasks.find((task) => task.id === id);
-      if (toggledTask) {
-        if (toggledTask.isBookmarked) {
-          // Add to bookmarks if not already present
-          if (!bookmarkedTasks.some((task) => task.id === id)) {
-            bookmarkedTasks.push(toggledTask);
-          }
-        } else {
-          // Remove from bookmarks
-          bookmarkedTasks = bookmarkedTasks.filter((task) => task.id !== id);
-        }
-      }
-
-      localStorage.setItem("bookmarkedTasks", JSON.stringify(bookmarkedTasks));
-      return updatedTasks;
-    });
+    }
   };
 
-  // Pagination logic
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
-  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(filteredTasks.length / itemsPerPage));
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const paginatedTasks = filteredTasks.slice(indexOfFirstItem, indexOfLastItem);
-
 
 return (
   <div style={{ display: "flex" }}>
@@ -321,15 +151,13 @@ return (
           searchTerm={searchTerm}
           setSearchTerm={(term) => {
             setSearchTerm(term);
-            setCurrentPage(1); // Reset to first page on new search
+            setCurrentPage(1);
           }}
           selectedSubItem={null}
-          showAdvertisement={true} // Hide advertisement for this page
+          showAdvertisement={true}
         />
     
     <div style={{ padding: "20px", width: "100%", display: "flex", flexDirection: "column" }}>
-  
-    {/* Header bar. It includes total tasks found result & grid/table view buttons*/}
     <div className="flex justify-between items-center mb-5 bg-gray-200 rounded-lg">
         <h2 style={{ fontSize: "16px", padding: "8px 16px" }}>
         <strong>{filteredTasks.length}</strong> tasks found.
@@ -362,7 +190,6 @@ return (
         </div>
     </div>
 
-     {/* Main job listing area that takes all remaining height */}
      <div style={{ flex: 1, overflowY: "auto" }}>
        <div
           style={{
@@ -374,7 +201,7 @@ return (
             flexWrap: viewMode === "list" ? "wrap" : undefined,
             flexDirection: "column",
             justifyContent: viewMode === "list" ? "center" : undefined,
-            width: viewMode === "list" ? "100%" : "100%",
+            width: "100%",
             margin: viewMode === "list" ? "0 auto" : undefined,
           }}
         >
@@ -389,10 +216,9 @@ return (
       </div>
     </div>
     
-    {/* Tailwind Pagination Controls */}
     <div className="flex justify-between items-center mt-8">
       <div className="text-sm text-gray-600 font-medium">
-        {`Showing ${(currentPage - 1) * itemsPerPage + 1} to ${Math.min(currentPage * itemsPerPage, tasks.length)} of ${tasks.length} Entries`}
+        {`Showing ${filteredTasks.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to ${Math.min(currentPage * itemsPerPage, filteredTasks.length)} of ${filteredTasks.length} Entries`}
       </div>
       
       <div className="flex space-x-1">
@@ -421,9 +247,7 @@ return (
         </button>
       </div>
         </div>
-
     </div>
   </div>
 );
 }
-

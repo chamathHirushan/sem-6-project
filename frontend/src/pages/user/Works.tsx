@@ -1,43 +1,23 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "../../api/client";
-// import {useAuth} from "../../contexts/AuthContext";
-// import { useNavigate } from "react-router-dom";
 import SideMenu from "../../components/SideMenu/SideMenu";
 import JobTile from "../../components/JobTile/JobTile";
-
 import { Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
-import {Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
-import jobImage from "../../assets/1.jpeg"
-import jobImage2 from "../../assets/2.jpeg"
-import jobImage3 from "../../assets/3.jpeg"
-import jobImage4 from "../../assets/4.jpeg"
-import jobImage5 from "../../assets/5.jpeg"
-import jobImage6 from "../../assets/6.jpeg"
-import jobImage7 from "../../assets/7.jpeg"
-import jobImage8 from "../../assets/8.jpeg"
 import { useSearchParams, useLocation } from "react-router-dom";
-import {getAvailableJobs} from "../../api/userAPI";
+import { getAvailableJobs, addBookmark } from "../../api/userAPI";
 import { toast } from "react-toastify";
 
-
 export default function Works() {
-      const [backendData, setBackendData] = useState<string>("Loading...");
-      // const {user} = useAuth();
-      // const navigate = useNavigate();
       const [searchTerm, setSearchTerm] = useState("");
-      // const [selectedSubItem, setSelectedSubItem] = useState<string | null>(null);
       const [selectedSubItems, setSelectedSubItems] = useState<string[]>([]);
       const [searchParams, setSearchParams] = useSearchParams();
       const defaultView = (searchParams.get("view") as "grid" | "list") || "grid";
       const [viewMode, setViewMode] = useState<"grid" | "list">(defaultView);
       const location = useLocation();
 
-      // When user changes view, update URL param too
       const handleViewChange = (mode: "grid" | "list") => {
         setViewMode(mode);
-        setSearchParams({ view: mode });  // Updates the URL
+        setSearchParams({ view: mode });
       };
-      
 
       const handleSubItemSelect = (subItem: string) => {
         if (!selectedSubItems.includes(subItem)) {
@@ -53,35 +33,13 @@ export default function Works() {
         setSelectedSubItems([]);
       };
 
-
       useEffect(() => {
-        // Restore scroll position if available
-        console.log("Restoring scroll position: ", location.state?.scrollPosition);
         if (location.state?.scrollPosition !== undefined) {
-          console.log("Restoring scroll to:", location.state.scrollPosition);
           setTimeout(() => {
             window.scrollTo(0, location.state.scrollPosition);
           }, 0);
-        } else {
-          console.log("No scroll position to restore.");
         }
       }, []);
-
-
-      // useEffect(() => {
-      //   async function fetchData() {
-      //     try {
-      //       const response = await apiClient.get("/user/dashboard");
-      //       setBackendData(response.message || "No data received");
-      //     } catch (error) {
-      //       setBackendData("Error fetching data");
-      //       console.error("API Error:", error);
-      //     }
-      //   }
-    
-      //   fetchData();
-      // }, []);
-
 
       const menuItems = [
         { label: "Technicians", subItems: [
@@ -113,7 +71,6 @@ export default function Works() {
         { label: "Other", subItems: ["Other"] },
       ];
 
-      
       interface Job {
         id: string;
         title: string;
@@ -129,227 +86,60 @@ export default function Works() {
         isBookmarked: boolean;
       }
 
-      useEffect(() => {
-        async function fetchJobs() {
-          try {
-            const fetchedjobs = await getAvailableJobs();//TODO
-            if (!fetchedjobs || fetchedjobs.length === 0) {
-              //toast.error("Please try again.");
-              return;
-            }
-            setJobs(fetchedjobs);
-          } catch (error) {
-            //toast.error(error instanceof Error ? error.message : "An unknown error occurred.");
-            console.error("Error fetching jobs:", error);
-          }
+      const [jobs, setJobs] = useState<Job[]>([]);
+
+      const loadJobs = async () => {
+        try {
+          const fetchedjobs = await getAvailableJobs();
+          setJobs(Array.isArray(fetchedjobs) ? fetchedjobs : []);
+        } catch (error) {
+          console.error("Error fetching jobs:", error);
+          toast.error("Could not load jobs.");
+          setJobs([]);
         }
-        fetchJobs();
-      }, []);
-      
-      const [jobs, setJobs] = useState<Job[]>([
-        {
-          id: "J123",
-          title: "Reparement for the ceiling",
-          category: "Technicians",
-          subCategory: "Masonry",
-          image: jobImage,
-          location: "Mawanella, Kegalle",
-          daysPosted: 3,
-          jobType: "Full-Time",
-          budget: 10000,
-          isUrgent: true,
-          isTrending: true,
-          isBookmarked: false,
-        },
-        {
-          id: "J124",
-          title: "Install a new water tank",
-          category: "Technicians",
-          subCategory: "Plumbing",
-          image: jobImage2,
-          location: "Panadura, Sri Lanka",
-          daysPosted: 7,
-          jobType: "Part-Time",
-          budget: 8000,
-          isUrgent: true,
-          isTrending: true,
-          isBookmarked: false,
-        },
-        {
-          id: "J125",
-          title: "කොන්ක්‍රීට් slab එක waterproof කිරීම",
-          category: "Technicians",
-          subCategory: "Masonry",
-          image: jobImage3,
-          location: "Panadura, Sri Lanka",
-          daysPosted: 7,
-          jobType: "Part-Time",
-          budget: " -",
-          isUrgent: true,
-          isTrending: true,
-          isBookmarked: false,
-        },
-        {
-          id: "J126",
-          title: "House Painting",
-          category: "House",
-          subCategory: "House Painting",
-          image: jobImage4,
-          location: "Kaluthara, Sri Lanka",
-          daysPosted: 7,
-          jobType: "Part-Time",
-          budget: 25000,
-          isUrgent: true,
-          isTrending: true,
-          isBookmarked: false,
-        },
-        {
-          id: "J127",
-          title: "Fix Power trip issues",
-          category: "Technicians",
-          subCategory: "Electricians",
-          image: jobImage5,
-          location: "Molple, Katubedda",
-          daysPosted: 7,
-          jobType: "Part-Time",
-          budget: 5000,
-          isUrgent: true,
-          isTrending: true,
-          isBookmarked: false,
-        },
-        {
-          id: "J128",
-          title: "Leakage in bathroom pipes",
-          category: "Technicians",
-          subCategory: "Plumbing",
-          image: jobImage6,
-          location: "Kottawa, Sri Lanka",
-          daysPosted: 2,
-          jobType: "Part-Time",
-          budget: 6000,
-          isUrgent: true,
-          isTrending: true,
-          isBookmarked: false,
-        },
-        {
-          id: "J130",
-          title: "බුදු මැදුරක් තැනීම",
-          category: "House",
-          subCategory: "Construction",
-          image: jobImage8,
-          location: "Gampaha, Sri Lanka",
-          daysPosted: 5,
-          jobType: "Full-Time",
-          budget: 30000,
-          isUrgent: true,
-          isTrending: false,
-          isBookmarked: false,
-        },
-      ]);
+      };
 
       useEffect(() => {
-        const initialize = () => {
-          setTimeout(() => {
-            setJobs((prevJobs) => {
-              if (prevJobs.some(job => job.id === "J129")) {
-                return prevJobs;
-              }
-              return [
-                ...prevJobs,
-                {
-                  id: "J129",
-                  title: "Garden Cleaning",
-                  category: "House",
-                  subCategory: "Landscaping ",
-                  image: jobImage7,
-                  location: "Polgahawela, Sri Lanka",
-                  daysPosted: 2,
-                  jobType: "Full-Time",
-                  budget: 9000,
-                  isUrgent: false,
-                  isTrending: true,
-                  isBookmarked: false,
-                },
-              ];
-            });
-          }, 1500); // 1.5 seconds delay
-        };
-
-        window.addEventListener("add", initialize);
-
-        return () => {
-          window.removeEventListener("add", initialize);
-        };
+        loadJobs();
       }, []);
-
 
       const filteredJobs = jobs.filter((job) => {
         if (selectedSubItems.length > 0) {
           return selectedSubItems
             .map((s) => s.toLowerCase())
-            .includes(job.subCategory.toLowerCase());
+            .includes((job.subCategory || "").toLowerCase());
         } else if (searchTerm.trim() !== "") {
           return (
-            job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            job.location.toLowerCase().includes(searchTerm.toLowerCase())
+            (job.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (job.location || "").toLowerCase().includes(searchTerm.toLowerCase())
           );
         }
         return true;
       });
-      
-      
 
-      // const toggleBookmark = (id: string) => {
-      //   setJobs((prevJobs) =>
-      //     prevJobs.map((job) =>
-      //       job.id === id ? { ...job, isBookmarked: !job.isBookmarked } : job
-      //     )
-      //   );
-      // };
-    const toggleBookmark = (id: string) => {
-    setJobs((prevTasks) => {
-      const updatedTasks = prevTasks.map((task) =>
-        task.id === id ? { ...task, isBookmarked: !task.isBookmarked } : task
+    const toggleBookmark = async (id: string) => {
+      const current = jobs.find((job) => job.id === id);
+      const nextState = !current?.isBookmarked;
+      setJobs((prev) =>
+        prev.map((job) => job.id === id ? { ...job, isBookmarked: nextState } : job)
       );
-
-      // Get current bookmarked tasks from localStorage
-      let bookmarkedTasks: Job[] = [];
-      const stored = localStorage.getItem("bookmarkedJobs");
-      if (stored) {
-        try {
-          bookmarkedTasks = JSON.parse(stored);
-        } catch {
-          bookmarkedTasks = [];
-        }
+      try {
+        await addBookmark(id, nextState, "job");
+      } catch (error) {
+        console.error("Failed to update bookmark:", error);
+        toast.error("Could not update bookmark.");
+        setJobs((prev) =>
+          prev.map((job) => job.id === id ? { ...job, isBookmarked: !nextState } : job)
+        );
       }
+    };
 
-      // Find the toggled task
-      const toggledTask = updatedTasks.find((task) => task.id === id);
-      if (toggledTask) {
-        if (toggledTask.isBookmarked) {
-          // Add to bookmarks if not already present
-          if (!bookmarkedTasks.some((task) => task.id === id)) {
-            bookmarkedTasks.push(toggledTask);
-          }
-        } else {
-          // Remove from bookmarks
-          bookmarkedTasks = bookmarkedTasks.filter((task) => task.id !== id);
-        }
-      }
-
-      localStorage.setItem("bookmarkedJobs", JSON.stringify(bookmarkedTasks));
-      return updatedTasks;
-    });
-  };
-
-      // Pagination logic
       const [currentPage, setCurrentPage] = useState(1);
       const itemsPerPage = 20;
-      const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+      const totalPages = Math.max(1, Math.ceil(filteredJobs.length / itemsPerPage));
       const indexOfLastItem = currentPage * itemsPerPage;
       const indexOfFirstItem = indexOfLastItem - itemsPerPage;
       const paginatedJobs = filteredJobs.slice(indexOfFirstItem, indexOfLastItem);
-
 
     return (
       <div style={{ display: "flex"}}>
@@ -362,15 +152,13 @@ export default function Works() {
           searchTerm={searchTerm}
           setSearchTerm={(term) => {
             setSearchTerm(term);
-            setCurrentPage(1); // Reset to first page on new search
+            setCurrentPage(1);
           }}
           selectedSubItem={null}
-          showAdvertisement={true} // Hide advertisement for this page
+          showAdvertisement={true}
         />
 
         <div style={{ padding: "20px", width: "100%", display: "flex", flexDirection: "column" }}>
-
-        {/* Header bar. It includes total jobs found result & grid/table view buttons*/}
         <div className="flex justify-between items-center mb-5  bg-gray-200 rounded-lg">
           <h2 style={{ fontSize: "16px", padding: "8px 16px" }}>
             <strong>{filteredJobs.length}</strong> jobs found.
@@ -403,7 +191,6 @@ export default function Works() {
           </div>
         </div>
 
-        {/* Main job listing area that takes all remaining height */}
         <div style={{ flex: 1, overflowY: "auto" }}>
           <div
             style={{
@@ -415,7 +202,7 @@ export default function Works() {
               flexWrap: viewMode === "list" ? "wrap" : undefined,
               flexDirection: "column",
               justifyContent: viewMode === "list" ? "center" : undefined,
-              width: viewMode === "list" ? "100%" : "100%",
+              width: "100%",
               margin: viewMode === "list" ? "0 auto" : undefined,
             }}
           >
@@ -430,10 +217,9 @@ export default function Works() {
             ))}
           </div>
         </div>
-        {/* Tailwind Pagination Controls */}
         <div className="flex justify-between items-center mt-8">
           <div className="text-sm text-gray-600 font-medium">
-            {`Showing ${(currentPage - 1) * itemsPerPage + 1} to ${Math.min(currentPage * itemsPerPage, jobs.length)} of ${jobs.length} Entries`}
+            {`Showing ${filteredJobs.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to ${Math.min(currentPage * itemsPerPage, filteredJobs.length)} of ${filteredJobs.length} Entries`}
           </div>
 
           <div className="flex space-x-1">
@@ -461,11 +247,8 @@ export default function Works() {
               Next
             </button>
           </div>
-
         </div>
-
       </div>
     </div>
   );
 }
-

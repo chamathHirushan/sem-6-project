@@ -36,7 +36,7 @@ class NotificationResponse(NotificationBase):
     link: str     # Computed link to the relevant page
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.get("/user/{user_id}", response_model=List[NotificationResponse])
 def get_user_notifications(

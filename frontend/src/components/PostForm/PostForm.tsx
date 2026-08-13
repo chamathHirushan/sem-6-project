@@ -155,87 +155,53 @@ useEffect(() => {
 
   if (!open) return null;
 
+  const buildJobPayload = () => ({
+    title,
+    description,
+    mini_description: miniDescription,
+    budget: budget ? parseFloat(budget) : null,
+    location: location || selectedCity,
+    urgent,
+    category: selectedCategory,
+    subcategory: selectedSubCategory,
+    due_date: dueDate ? dueDate.toISOString() : null,
+    posted_date: postedDate ? postedDate.toISOString() : null,
+    images: image,
+    poster: poster?.previewUrl || null,
+    boost_level: boostLevel,
+  });
+
+  const buildServicePayload = () => ({
+    title,
+    description,
+    mini_description: miniDescription,
+    location: location || selectedCity,
+    category: selectedCategory,
+    subcategory: selectedSubCategory,
+    images: image,
+    poster: poster?.previewUrl || null,
+    boost_level: boostLevel,
+  });
+
   const handleSubmitnew = async (e: React.FormEvent) => {
     e.preventDefault();
-    await new Promise(resolve => setTimeout(resolve, 3000)); 
-    window.dispatchEvent(new Event("add"));
-    onClose();
+    await handleSubmit(e);
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    // Optionally reset form or call onClose()
-    if (selectedType === 'job'){
-      // console.log("Job Post Submitted:", {
-      //   title,
-      //   description,
-      //   miniDescription,
-      //   budget,
-      //   location,
-      //   urgent,
-      //   selectedCategory,
-      //   selectedSubCategory,
-      //   dueDate,
-      //   postedDate,
-      //   images: image,
-      //   poster,
-      //   boostLevel
-      // });
-      window.dispatchEvent(new Event("add"));
-
-      // await addJob(
-      //   {
-      //     "title": title,
-      //     "description": description,
-      //     "mini_description": miniDescription,
-      //     "budget": budget ? parseFloat(budget) : null,
-      //     "location": location,
-      //     "urgent": urgent,
-      //     "category": selectedCategory,
-      //     "subcategory": selectedSubCategory,
-      //     "due_date": dueDate ? dueDate.toISOString() : null,
-      //     "posted_date": postedDate ? postedDate.toISOString() : null,
-      //     "images": image,
-      //     "poster": poster || null,
-      //     "boost_level": boostLevel
-      //   }
-      // );
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a delay for the service post creation
-      toast.success("task Post Created Successfully!");
-      
-    }else{
-      // console.log("Service Post Submitted:", {
-      //   title,
-      //   description,
-      //   miniDescription,
-      //   location,
-      //   selectedCategory,
-      //   selectedSubCategory,
-      //   dueDate,
-      //   postedDate,
-      //   images: image,
-      //   poster
-      // });
-      // await addService(
-      //   {
-      //     "title": title,
-      //     "description": description,
-      //     "mini_description": miniDescription,
-      //     "location": location,
-      //     "category": selectedCategory,
-      //     "subcategory": selectedSubCategory,
-      //     "due_date": dueDate ? dueDate.toISOString() : null,
-      //     "posted_date": postedDate ? postedDate.toISOString() : null,
-      //     "images": image,
-      //     "poster": poster || null
-      //   }
-      // )
-      window.dispatchEvent(new Event("addService"));
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a delay for the service post creation
-      toast.success("Service Post Created Successfully!");
+    try {
+      if (selectedType === 'job'){
+        await addJob(buildJobPayload());
+        toast.success("Task post created successfully!");
+      } else {
+        await addService(buildServicePayload());
+        toast.success("Service post created successfully!");
+      }
+      onClose();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not create post.");
     }
-    onClose();
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

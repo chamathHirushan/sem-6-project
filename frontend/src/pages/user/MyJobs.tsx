@@ -1,8 +1,7 @@
 import { useEffect, useState, ChangeEvent } from "react";
-import { apiClient } from "../../api/client";
-import {useAuth} from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import jobIcon from "../../assets/sewa_favicon.png"
+import { getUserJobs, updateJobStatus } from "../../api/userAPI";
+import { toast } from "react-toastify";
 
 type Job = {
   id: string;
@@ -30,126 +29,21 @@ export default function MyJobs() {
 
   const [showSubCategories, setShowSubCategories] = useState<"" | "Applied by Me" | "Posted by Me" | "Assigned to Me">("");
 
-  const [jobs, setJobs] = useState<Job[]>([
-    // Applied by Me
-    {
-      id: "1",
-      title: "Security Duty",
-      description: "My shop requires a security for 3 days.",
-      imageUrl: "https://www.clearway.co.uk/wp-content/uploads/2023/06/What-does-a-security-guard-do.webp",
-      budget: "Rs.4,000/day",
-      category: "Applied by Me",
-      subCategory: "Security",
-      status: "Accepted",
-    },
-    {
-      id: "2",
-      title: "House Keeping",
-      description: "This job required to keep the house clean for 3 days.",
-      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3Gd7wAtzBzPsnFZhvcivvJsOM52_ZZvQsGQ&s",
-      budget: "Rs.2,000/day",
-      category: "Applied by Me",
-      subCategory: "Cleaing",
-      status: "Pending",
-    },
-    {
-      id: "3",
-      title: "Garden Cleaning",
-      description: "Need assistance in cleaning the yard owned by an shop owner.",
-      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuMXucuJjvBA8wSU1WP2xcVkro6N0YtJzY5g&s",
-      budget: "Rs.10,000/day",
-      category: "Applied by Me",
-      subCategory: "Landscaping",
-      status: "Pending",
-    },
-
-    // Posted by Me
-    {
-      id: "4",
-      title: "Mason",
-      description: "Need urgent help in reparing the walls of the back entrance of the gate. Some of the walls are cracked and need to repair them as well.",
-      imageUrl: "https://media.istockphoto.com/id/610442626/photo/master-mason.jpg?s=612x612&w=0&k=20&c=8JlF8evy9RJRSup-WM6_G1XJh0Hd3tWAPUoLYERyoqk=",
-      budget: "Rs.800/hour",
-      category: "Posted by Me",
-      subCategory: "Landscaping",
-      status: "Pending",
-    },
-    {
-      id: "5",
-      title: "Carpenter",
-      description: "Need the expertise to create a couple of furniture items in the household and repair and paint the wooden staircase.",
-      imageUrl: "https://media.licdn.com/dms/image/v2/D5612AQHJ4JMQKvFwpA/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1709617139736?e=2147483647&v=beta&t=zYP7vqo4oudV-Fc7hsuzb1r7E7MX9ndL1dVpn80ssd4",
-      budget: "Rs.5,000/day",
-      category: "Posted by Me",
-      subCategory: "Designing",
-      status: "In Progress",
-    },
-    {
-      id: "6",
-      title: "Architectural Engineer",
-      description: "Searching for an expert to design and plan out the bedroom that currently in the construction period.",
-      imageUrl:
-        "https://asset.velvetjobs.com/job-description-samples/covers/w992/architectural-engineer.jpeg",
-      budget: "Rs.10,000/day",
-      category: "Posted by Me",
-      subCategory: "Designing",
-      status: "Cancelled",
-    },
-
-    // Assigned to Me
-    {
-      id: "7",
-      title: "Garden Cleaning",
-      description: "This is an urgent cleaning task categorized under House > Landscaping, based in Polgahawela, Sri Lanka.",
-      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuMXucuJjvBA8wSU1WP2xcVkro6N0YtJzY5g&s",
-      budget: "Rs.9,000/day",
-      category: "Assigned to Me",
-      subCategory: "Landscaping",
-      status: "Ongoing",
-    },
-    {
-      id: "8",
-      title: "House Keeping",
-      description: "This job required to keep the house clean for 2 days since the owners have been gone on a family trip.",
-      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3Gd7wAtzBzPsnFZhvcivvJsOM52_ZZvQsGQ&s",
-      budget: "Rs.3,000/day",
-      category: "Assigned to Me",
-      subCategory: "Landscaping",
-      status: "Completed",
-    },
-  ]);
+  const [jobs, setJobs] = useState<Job[]>([]);
 
    useEffect(() => {
-        const initialize = () => {
-          setTimeout(() => {
-            setJobs((prevJobs) => {
-              if (prevJobs.some(job => job.id === "3")) {
-                return prevJobs;
-              }
-              return [
-                ...prevJobs,
-                {
-                  id: "3",
-                  title: "Garden Cleaning",
-                  description: "Need assistance in cleaning the yard owned by an shop owner.",
-                  imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuMXucuJjvBA8wSU1WP2xcVkro6N0YtJzY5g&s",
-                  budget: "Rs.10,000/day",
-                  category: "Applied by Me",
-                  subCategory: "Landscaping",
-                  status: "Pending",
-                },
-              ];
-            });
-          }, 1500); // 1.5 seconds delay
-        };
-
-        window.addEventListener("addMyJob", initialize);
-
-        return () => {
-          window.removeEventListener("addMyJob", initialize);
-        };
+        async function loadJobs() {
+          try {
+            const data = await getUserJobs();
+            setJobs(Array.isArray(data) ? data : []);
+          } catch (error) {
+            console.error("Failed to load jobs", error);
+            toast.error("Could not load your jobs.");
+            setJobs([]);
+          }
+        }
+        loadJobs();
       }, []);
-
 
   const toggleExpand = (id: string) => {
     setExpandedJobId(id === expandedJobId ? null : id);
@@ -455,19 +349,23 @@ export default function MyJobs() {
 
                       <div>
                         <button
-                          onClick={() => {
-                            setJobs((prevJobs) =>
-                              prevJobs.map((j) =>
-                                j.id === job.id
-                                  ? {
-                                      ...j,
-                                      subCategory: editableJobs[job.id]?.subCategory || j.subCategory,
-                                      status: editableJobs[job.id]?.status || j.status,
-                                    }
-                                  : j
-                              )
-                            );
-                            handleCancelEdit(job.id);
+                          onClick={async () => {
+                            const nextStatus = editableJobs[job.id]?.status || job.status;
+                            const nextSub = editableJobs[job.id]?.subCategory || job.subCategory;
+                            try {
+                              await updateJobStatus(job.id, nextStatus, job.category);
+                              setJobs((prevJobs) =>
+                                prevJobs.map((j) =>
+                                  j.id === job.id
+                                    ? { ...j, subCategory: nextSub, status: nextStatus }
+                                    : j
+                                )
+                              );
+                              handleCancelEdit(job.id);
+                              toast.success("Job updated.");
+                            } catch (error) {
+                              toast.error(error instanceof Error ? error.message : "Could not update job.");
+                            }
                           }}
                           style={{
                             marginRight: "1rem",
@@ -504,7 +402,7 @@ export default function MyJobs() {
       </div>
 
       <button
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/work")}
         style={{
           marginTop: "0.4rem",
           padding: "1rem 1.2rem",

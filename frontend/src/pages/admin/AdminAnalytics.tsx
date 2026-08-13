@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { apiClient } from "../../api/client";
+import { getAdminAnalytics } from "../../api/userAPI";
 import DataInfoCard from "../../components/DataInfoCard";
 import lkrImg from "../../assets/rupee.svg";
 import Select from "react-select";
@@ -45,21 +44,32 @@ const posted_tasks = [
 ];
 
 export default function AdminAnalytics() {
-    const [backendData, setBackendData] = useState<string>("Loading...");
-    const {user} = useAuth();
-  
-    useEffect(() => {
-      async function fetchData() {
-        try {
-          const response = await apiClient.get("/admin/dashboard");
-          setBackendData(response.message || "No data received");
-        } catch (error) {
-          setBackendData("Error fetching data");
-          console.error("API Error:", error);
-        }
+    const [kpis, setKpis] = useState({
+      earnings: 0,
+      boosted_posts: 0,
+      completion_rate: 0,
+      active_users: 0,
+      active_user_percentage: "0%",
+    });
+    const [postedTasks, setPostedTasks] = useState(posted_tasks);
+    const [selectedOption, setSelectedOption] = useState<{ label: string; value: string }>({ label: "Last 12 months", value: "for_12_months" });
+    const [postsData, setPostsData] = React.useState(DUMMY_POSTS_DATA);
+    const [earningsData, setEarningsData] = React.useState(DUMMY_EARNINGS_DATA);
+
+    const loadAnalytics = async (period: string) => {
+      try {
+        const response: any = await getAdminAnalytics(period);
+        if (response?.posts) setPostsData(response.posts);
+        if (response?.earnings) setEarningsData(response.earnings);
+        if (response?.posted_tasks) setPostedTasks(response.posted_tasks);
+        if (response?.kpis) setKpis(response.kpis);
+      } catch (error) {
+        console.error("API Error:", error);
       }
-  
-      fetchData();
+    };
+
+    useEffect(() => {
+      loadAnalytics("for_12_months");
     }, []);
 
     const options = [
@@ -67,10 +77,6 @@ export default function AdminAnalytics() {
       { label: "Last 6 months", value: "for_6_months" },
       { label: "Last 12 months", value: "for_12_months" },
     ];
-
-    const [selectedOption, setSelectedOption] = useState<{ label: string; value: string }>({ label: "Last 12 months", value: "for_12_months" });
-    const [postsData, setPostsData] = React.useState(DUMMY_POSTS_DATA);
-    const [earningsData, setEarningsData] = React.useState(DUMMY_EARNINGS_DATA);
 
   return (
       <div className="mx-8">
@@ -82,8 +88,9 @@ export default function AdminAnalytics() {
             options={options}
             value={selectedOption}
             onChange={(value) => {
-              setSelectedOption(value || { label: "Last 12 months", value: "for_12_months" })
-              // setData(fullData[value?.value as keyof typeof DUMMY_ANALYTICS_DATA]);
+              const next = value || { label: "Last 12 months", value: "for_12_months" };
+              setSelectedOption(next);
+              loadAnalytics(next.value);
             }}
             menuPlacement="bottom"
             styles={{
@@ -108,7 +115,7 @@ export default function AdminAnalytics() {
                 <DataInfoCard
                   img={lkrImg}
                   title="Earnings over the selected time period (LKR)"
-                  value="5 100"
+                  value={kpis.earnings}
                   Info="Total earnings of the platform over the selected time period"
                   isFiltered={false}
                   displayTooltip={true}
@@ -116,7 +123,7 @@ export default function AdminAnalytics() {
                 <DataInfoCard
                   img={PostImg}
                   title="Total number boosted posts"
-                  value={11}
+                  value={kpis.boosted_posts}
                   Info="Total number of posts boosted by users"
                   isFiltered={false}
                   displayTooltip={true}
@@ -124,7 +131,7 @@ export default function AdminAnalytics() {
                 <DataInfoCard
                   img={rateImg}
                   title="Completion rate of boosted posts"
-                  value={0.89}
+                  value={kpis.completion_rate}
                   Info="Total number of users you have engaged with via your working posts"
                   isFiltered={false}
                   displayTooltip={true}
@@ -209,7 +216,7 @@ export default function AdminAnalytics() {
                     customLegendStyle="style2"
                     showPercentageLabel
                     hideValueInLegend
-                    data={assignColors(posted_tasks)}
+                    data={assignColors(postedTasks)}
                     paddingAngle={10}
                     innerRadius={40}
                     outerRadius={80}
@@ -222,7 +229,7 @@ export default function AdminAnalytics() {
               <DataInfoCard
                 img={UsersPng}
                 title={`Active users within ${selectedOption.label.toLowerCase()}`}
-                value={16}
+                value={kpis.active_users}
                 Info="Active users f the platform within the selected time period"
                 isFiltered={false}
                 displayTooltip={true}
@@ -230,7 +237,7 @@ export default function AdminAnalytics() {
               <DataInfoCard
                 img={usageImg}
                 title={`Active user percentage over ${selectedOption.label.toLowerCase()}`}
-                value="82%"
+                value={kpis.active_user_percentage}
                 Info="Active user percentage over the selected time period"
                 isFiltered={false}
                 displayTooltip={true}

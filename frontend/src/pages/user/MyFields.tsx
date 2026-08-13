@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "../../api/client";
-import {useAuth} from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { getUserFields, updateUserField } from "../../api/userAPI";
+import { toast } from "react-toastify";
 
 interface Job {
   id: string;
@@ -14,47 +14,26 @@ interface Job {
 
 export default function MyFields() {
   const navigate = useNavigate();
-  const [backendData, setBackendData] = useState<string>("Loading...");
-  const {user} = useAuth();
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [editableJobs, setEditableJobs] = useState<Record<string, Job>>({});
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
 
-  const [jobs, setJobs] = useState<Job[]>([
-    {
-      id: "1",
-      title: "Carpenter",
-      description: "Build, install, and repair structures and fixtures made from wood and other materials.",
-      imageUrl: "https://www.shutterstock.com/image-photo/african-american-carpenter-man-use-600nw-2251271317.jpg",
-      status: "pending",
-      budget: "$1200",
-    },
-    {
-      id: "2",
-      title: "Electrician",
-      description: "Install, maintain, and repair electrical wiring, equipment, and fixtures.",
-      imageUrl: "https://contractortrainingcenter.com/cdn/shop/articles/Untitled_design_1.png?v=1693506427",
-      status: "completed",
-      budget: "$950",
-    },
-    {
-      id: "3",
-      title: "Plumber",
-      description: "Assemble, install, and repair water, gas, and drainage systems in residential and commercial locations.",
-      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSFLhjJYz1cK6wbhSN-QVvQKq995u4EZeO_w&s",
-      status: "rejected",
-      budget: "$1100",
-    },
-    {
-      id: "4",
-      title: "Mason",
-      description: "Build and repair structures using bricks, concrete blocks, and natural stones.",
-      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8KIy3rm4JbY_OgkWBfeKMeVEwtmbQQiG98w&s",
-      status: "pending",
-      budget: "$1000",
-    },
-  ]);
+  const [jobs, setJobs] = useState<Job[]>([]);
+
+  useEffect(() => {
+    async function loadFields() {
+      try {
+        const data = await getUserFields();
+        setJobs(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to load fields", error);
+        toast.error("Could not load working fields.");
+        setJobs([]);
+      }
+    }
+    loadFields();
+  }, []);
 
   const toggleExpand = (id: string) => {
     setExpandedJobId(id === expandedJobId ? null : id);
@@ -74,19 +53,28 @@ export default function MyFields() {
     }));
   };
 
-  const handleSave = (id: string) => {
+  const handleSave = async (id: string) => {
     if (!editableJobs[id]) return;
-    setJobs((prevJobs) =>
-      prevJobs.map((job) =>
-        job.id === id ? { ...job, status: editableJobs[id].status } : job
-      )
-    );
-    setExpandedJobId(null);
-    setEditableJobs((prev) => {
-      const copy = { ...prev };
-      delete copy[id];
-      return copy;
-    });
+    try {
+      await updateUserField(id, {
+        status: editableJobs[id].status,
+        description: editableJobs[id].description,
+      });
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job.id === id ? { ...job, status: editableJobs[id].status, description: editableJobs[id].description } : job
+        )
+      );
+      setExpandedJobId(null);
+      setEditableJobs((prev) => {
+        const copy = { ...prev };
+        delete copy[id];
+        return copy;
+      });
+      toast.success("Field updated.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update field.");
+    }
   };
 
   const handleCancelEdit = (id: string) => {

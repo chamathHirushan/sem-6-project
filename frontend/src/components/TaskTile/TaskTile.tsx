@@ -193,7 +193,7 @@ const TaskTile: FC<TaskTileProps> = ({
                 onClick={(e) => { 
                   e.stopPropagation();
                   e.preventDefault();
-                  navigate(`/chat/${id}`);
+                  navigate(`/conversations`, { state: { from: pageLocation } });
                 }}
                 > 
                 </button>

@@ -4,6 +4,8 @@ import defaultProfilePic from "../../assets/users.png";
 import { toast } from "react-toastify";
 import PaymentButton from "../../components/payhere";
 import { useAuth } from "../../contexts/AuthContext";
+import { getUserProfile, updateUserProfile } from "../../api/userAPI";
+import { logoutUser } from "../../components/Logout";
 
 
 interface UserProfile {
@@ -17,34 +19,27 @@ interface UserProfile {
   joinedDate: string;
 }
 
-const fetchUserProfile = async (): Promise<UserProfile> => {
-  await new Promise((res) => setTimeout(res, 500));
+const splitName = (name?: string) => {
+  const parts = (name || "").trim().split(" ");
   return {
-    profilePicUrl: "https://i.pinimg.com/236x/dd/f0/11/ddf0110aa19f445687b737679eec9cb2.jpg",
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    phone: "+1234567890",
-    town: "Colombo",
-    lastActive: "2025-06-20 16:45",
-    joinedDate: "2025-06-12",
+    firstName: parts[0] || "",
+    lastName: parts.slice(1).join(" ") || "",
   };
 };
 
-const fetchMydata = async (user): Promise<UserProfile> => {
-    console.log("User data:", user);
-    return {
-      profilePicUrl: user?.profile_picture
- || "https://i.pinimg.com/236x/dd/f0/11/ddf0110aa19f445687b737679eec9cb2.jpg",
-      firstName: user?.name,
-      lastName: "-",
-      email: user?.email || "chamath@gmail.com",
-      phone: user.phone || "+94123456789",
-      town: "Kandy",
-      lastActive: "2025-06-20 17:00",
-      joinedDate: "2025-15-31",
-    };
+const mapProfile = (data: any): UserProfile => {
+  const { firstName, lastName } = splitName(data?.name);
+  return {
+    profilePicUrl: data?.profile_picture || data?.pro_pic || null,
+    firstName,
+    lastName,
+    email: data?.email || "",
+    phone: data?.phone_number || data?.phone || "",
+    town: data?.town || "",
+    lastActive: data?.last_active || data?.last_active_time || "",
+    joinedDate: data?.joined_date || data?.created_at || "",
   };
+};
 
 interface ProfileProps {
   my?: boolean;
@@ -53,7 +48,7 @@ interface ProfileProps {
 export default function Profile({ my = true }: ProfileProps) {
   const navigate = useNavigate();
   const [user_, setUser] = useState<UserProfile | null>(null);
-  const { user, userLoggedIn } = useAuth();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("details");
   const [isEditing, setIsEditing] = useState(false);
   const [premium, setPremium] = useState("");
@@ -65,16 +60,16 @@ export default function Profile({ my = true }: ProfileProps) {
 
   useEffect(() => {
     const loadUser = async () => {
-      let data;
-      if (!my) {
-        data = await fetchUserProfile();
-      } else {
-        data = await fetchMydata(user);
+      try {
+        const profile = await getUserProfile();
+        setUser(mapProfile(profile));
+      } catch (error) {
+        console.error("Failed to load profile", error);
+        setUser(mapProfile(user));
       }
-      setUser(data);
     };
     loadUser();
-  }, []);
+  }, [my, user]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -90,7 +85,23 @@ export default function Profile({ my = true }: ProfileProps) {
   }
 
   const handleLogout = () => {
-    navigate("/login");
+    logoutUser(navigate);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user_) return;
+    try {
+      await updateUserProfile({
+        name: `${user_.firstName} ${user_.lastName}`.trim(),
+        town: user_.town,
+        phone_number: user_.phone,
+        profile_picture: user_.profilePicUrl,
+      });
+      setIsEditing(false);
+      toast.success("Profile updated.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update profile.");
+    }
   };
 
   const fieldContainerStyle: React.CSSProperties = {
@@ -359,7 +370,7 @@ export default function Profile({ my = true }: ProfileProps) {
             <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
               {isEditing ? (
                 <button
-                  onClick={() => setIsEditing(false)}
+                  onClick={handleSaveProfile}
                   style={{
                     padding: "0.75rem 1.5rem",
                     backgroundColor: "#205781",

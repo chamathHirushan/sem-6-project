@@ -81,38 +81,19 @@ const NotificationsDropdown = ({ notifications, iconRef, onRead, onReadAll, onCl
   );
 };
 
-// Mock notifications data - replace with actual API call in your implementation
-const mockNotifications = [
-  { id: 1, message: "New message from John", time: "5 min ago", read: false },
-  { id: 2, message: "Your job application was viewed", time: "1 hour ago", read: false },
-  { id: 3, message: "Payment received for project #1234", time: "3 hours ago", read: true },
-  { id: 4, message: "New job opportunity in your field", time: "1 day ago", read: true },
-  { id: 11, message: "New message from John", time: "5 min ago", read: false },
-  { id: 12, message: "Your job application was viewed", time: "1 hour ago", read: false },
-  { id: 13, message: "Payment received for project #1234", time: "3 hours ago", read: true },
-  { id: 14, message: "New job opportunity in your field", time: "1 day ago", read: true },
-  { id: 21, message: "New message from John", time: "5 min ago", read: false },
-  { id: 22, message: "Your job application was viewed", time: "1 hour ago", read: false },
-  { id: 23, message: "Payment received for project #1234", time: "3 hours ago", read: true },
-  { id: 24, message: "New job opportunity in your field", time: "1 day ago", read: true },
-];
-
 export const NotificationsIcon = () => {
   const bellIconRef = useRef<HTMLDivElement>(null);
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   useEffect(() => {
-    // Fetch notifications from the backend
     const fetchNotifications = async () => {
       try {
         const fetchedNotifications = await getUserNotifications();
-        if (!fetchedNotifications || fetchedNotifications.length === 0) {
-          return;
-        }
-        setNotifications(fetchedNotifications);
+        setNotifications(Array.isArray(fetchedNotifications) ? fetchedNotifications : []);
       } catch (error) {
         console.error("Failed to fetch notifications:", error);
+        setNotifications([]);
       }
     };
     fetchNotifications();

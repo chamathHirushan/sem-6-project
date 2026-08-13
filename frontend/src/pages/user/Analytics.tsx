@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "../../api/client";
-import {useAuth} from "../../contexts/AuthContext";
+import { getUserAnalytics } from "../../api/userAPI";
 import DataInfoCard from "../../components/DataInfoCard";
 import viewsImg from "../../assets/views.png";
 import rateImg from "../../assets/rate.png";
@@ -83,16 +82,15 @@ export default function Analytics() {
       //const [backendData, setBackendData] = useState<string>("Loading...");
       const [fullData, setFullData] = useState<typeof DUMMY_ANALYTICS_DATA>(DUMMY_ANALYTICS_DATA);
       const [data, setData] = useState<typeof DUMMY_PERIOD_DATA>(DUMMY_ANALYTICS_DATA.for_12_months);
-      const {user} = useAuth();
       const [selectedOption, setSelectedOption] = useState<{ label: string; value: string }>({ label: "Last 12 months", value: "for_12_months" });
     
       useEffect(() => {
         const fetchAnalyticsData = async () => {
           try {
-            const response = await apiClient.get("/user/analytics") as { message?: string };
-            if (response.message) {
-              const parsedData = JSON.parse(response.message || "[]");
-              setFullData(parsedData);
+            const response: any = await getUserAnalytics();
+            if (response?.for_12_months || response?.for_1_month) {
+              setFullData(response);
+              setData(response[selectedOption.value] || response.for_12_months);
             }
           } catch (error) {
             console.error("API Error:", error);

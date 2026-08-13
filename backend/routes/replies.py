@@ -35,7 +35,7 @@ class ReplyResponse(ReplyBase):
     reply_date: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.post("/", response_model=ReplyResponse)
 def create_reply(reply: ReplyCreate, db: Session = Depends(get_db)):

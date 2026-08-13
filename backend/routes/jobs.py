@@ -38,7 +38,7 @@ class JobResponse(JobBase):
     service_received: Optional[datetime]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class JobPostBase(BaseModel):
     job_id: int
@@ -60,7 +60,7 @@ class JobPostResponse(JobPostBase):
     views: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class JobPostDetailResponse(BaseModel):
     id: int
@@ -81,7 +81,7 @@ class JobPostDetailResponse(BaseModel):
     status: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class JobApplicationBase(BaseModel):
     job_id: int
@@ -96,7 +96,7 @@ class JobApplicationResponse(JobApplicationBase):
     applied_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CommentResponse(BaseModel):
     id: int
@@ -108,7 +108,7 @@ class CommentResponse(BaseModel):
     commenter_photo: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Frontend Job Response Model
 class FrontendJobResponse(BaseModel):
@@ -125,7 +125,7 @@ class FrontendJobResponse(BaseModel):
     isBookmarked: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Job endpoints
 @router.post("/", response_model=JobResponse)
@@ -188,7 +188,7 @@ def get_all_job_posts(db: Session = Depends(get_db)):
         posts = db.query(JobPost)\
             .join(Job, JobPost.job_id == Job.id)\
             .join(User, JobPost.user_id == User.id)\
-            .join(Working, Job.category_id == Working.id)\
+            .join(WorkingCategory, Job.category_id == WorkingCategory.id)\
             .options(
                 joinedload(JobPost.job),
                 joinedload(JobPost.user),
@@ -272,7 +272,7 @@ def get_post_comments(post_id: int, db: Session = Depends(get_db)):
     for comment in comments:
         comment_dict = {
             **comment.__dict__,
-            'commenter_name': f"{comment.commenter.first_name} {comment.commenter.last_name}",
+            'commenter_name': comment.commenter.name if comment.commenter else "",
             'commenter_photo': comment.commenter.pro_pic
         }
         response.append(comment_dict)

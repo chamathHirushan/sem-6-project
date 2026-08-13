@@ -39,7 +39,7 @@ class FavouriteUserResponse(BaseModel):
     rating: Optional[float]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class FavouritePostResponse(BaseModel):
     id: int
@@ -52,7 +52,7 @@ class FavouritePostResponse(BaseModel):
     poster_photo: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.get("/user/{user_id}", response_model=dict)
 def get_user_favourites(user_id: int, db: Session = Depends(get_db)):
@@ -75,7 +75,7 @@ def get_user_favourites(user_id: int, db: Session = Depends(get_db)):
                 favourite_users.append({
                     'id': user.id,
                     'user_id': user.id,
-                    'name': f"{user.first_name} {user.last_name}",
+                    'name': user.name,
                     'photo': user.pro_pic,
                     'rating': avg_rating
                 })
@@ -90,7 +90,7 @@ def get_user_favourites(user_id: int, db: Session = Depends(get_db)):
                         'description': post.description,
                         'location': post.location,
                         'posted_date': post.post_date,
-                        'poster_name': f"{post.user.first_name} {post.user.last_name}",
+                        'poster_name': post.user.name if post.user else "",
                         'poster_photo': post.user.pro_pic
                     })
             else:  # job_post
@@ -103,7 +103,7 @@ def get_user_favourites(user_id: int, db: Session = Depends(get_db)):
                         'description': post.description,
                         'location': post.location,
                         'posted_date': post.posted_date,
-                        'poster_name': f"{post.user.first_name} {post.user.last_name}",
+                        'poster_name': post.user.name if post.user else "",
                         'poster_photo': post.user.pro_pic
                     })
 

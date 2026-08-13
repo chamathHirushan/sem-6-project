@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "../../api/client";
-import {useAuth} from "../../contexts/AuthContext";
 import SideMenu from "../../components/SideMenu/SideMenu";
 import {Squares2X2Icon, ListBulletIcon } from "@heroicons/react/24/solid";
-import { useSearchParams,useNavigate, useLocation } from "react-router-dom";
-import jobImage from "../../assets/get-a-job-with-no-experience.png"
+import { useSearchParams } from "react-router-dom";
 import TaskTile from "../../components/TaskTile/TaskTile";
 import JobTile from "../../components/JobTile/JobTile";
+import { getUserBookmarks, addBookmark } from "../../api/userAPI";
+import { toast } from "react-toastify";
 
 
 export default function Fav() {
-    const [backendData, setBackendData] = useState<string>("Loading...");
-    const {user} = useAuth();
-    const navigate = useNavigate();
-    const location = useLocation();
 
     const [selectedSubItems, setSelectedSubItems] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -129,30 +124,17 @@ export default function Fav() {
     }
 
     useEffect(() => {
-      // Reset filters when view mode changes
-      const stored = localStorage.getItem("bookmarkedTasks");
-      if (stored) {
+      async function loadBookmarks() {
         try {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed)) {
-        setTasks(parsed);
-          }
-        } catch (e) {
-          console.error("Failed to parse bookmarkedTasks from localStorage", e);
+          const data: any = await getUserBookmarks();
+          setJobs(Array.isArray(data?.jobs) ? data.jobs : []);
+          setTasks(Array.isArray(data?.services) ? data.services : Array.isArray(data?.tasks) ? data.tasks : []);
+        } catch (error) {
+          console.error("Failed to load bookmarks", error);
+          toast.error("Could not load favorites.");
         }
       }
-
-      const stored1 = localStorage.getItem("bookmarkedJobs");
-      if (stored1) {
-        try {
-          const parsed = JSON.parse(stored1);
-          if (Array.isArray(parsed)) {
-        setJobs(parsed);
-          }
-        } catch (e) {
-          console.error("Failed to parse bookmarkedJobs from localStorage", e);
-        }
-      }
+      loadBookmarks();
     },[]);
 
     const [tasks, setTasks] = useState<Task[]>([
@@ -242,25 +224,6 @@ export default function Fav() {
       // },
     ]);
 
-    const handleJobClick = (jobId: string) => {
-      navigate(`/job/${jobId}`, {
-        state: {
-          from: location,  // track previous route
-          scrollPosition: window.scrollY,
-        },
-      });
-    };
-    
-    const handleTaskClick = (taskId: string) => {
-      navigate(`/task/${taskId}`, {
-        state: {
-          from: location,
-          scrollPosition: window.scrollY,
-        },
-      });
-    };
-
-    
     // Generate menuItems from tasks
     const taskMenuItems = Object.values(
       tasks.reduce((acc, task) => {
@@ -287,12 +250,18 @@ export default function Fav() {
     );
     
   
-    const toggleBookmark = (id: string) => {
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === id ? { ...task, isBookmarked: !task.isBookmarked } : task
-        )
-      );
+    const toggleBookmark = async (id: string, entityType: "job" | "service" = "service") => {
+      if (entityType === "service") {
+        setTasks((prev) => prev.filter((task) => task.id !== id));
+      } else {
+        setJobs((prev) => prev.filter((job) => job.id !== id));
+      }
+      try {
+        await addBookmark(id, false, entityType);
+      } catch (error) {
+        console.error("Failed to remove bookmark", error);
+        toast.error("Could not update favorite.");
+      }
     };
 
     // When user changes view, update URL param too
@@ -339,20 +308,6 @@ export default function Fav() {
       setCurrentPage(1);
     }, [activeTab]);
 
-    // Fetch data once on mount
-    useEffect(() => {
-      async function fetchData() {
-        try {
-          const response = await apiClient.get("/user/dashboard");
-          setBackendData(response.message || "No data received");
-        } catch (error) {
-          setBackendData("Error fetching data");
-          console.error("API Error:", error);
-        }
-      }
-
-      fetchData();
-    }, []);
 
    
     
@@ -462,7 +417,7 @@ export default function Fav() {
                       key={`${task.id}_${index}`}
                       {...task}
                       view={viewMode}
-                      onBookmarkToggle={toggleBookmark}
+                      onBookmarkToggle={(id) => toggleBookmark(id, "service")}
                       budget={String(task.budget)}
                     />
                   ))
@@ -473,6 +428,7 @@ export default function Fav() {
                       {...job}
                       view={viewMode}
                       budget={String(job.budget)}
+                      onBookmarkToggle={(id) => toggleBookmark(id, "job")}
                     />
                   ))
                 )}

@@ -42,3 +42,4 @@ class User(Base):
     conversations_2 = relationship("Conversation", foreign_keys="[Conversation.user_2_id]", back_populates="user_2")
     messages = relationship("Message", back_populates="sender")
     favourites = relationship("Favourite", back_populates="user")
+    working_fields = relationship("UserWorkingField", back_populates="user")

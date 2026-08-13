@@ -4,6 +4,20 @@ from models.user import User
 from typing import Optional, List
 from datetime import datetime
 
+
+def user_to_payload(user: User) -> dict:
+    """Serialize a User for JWT claims and /auth/me responses."""
+    return {
+        "id": user.id,
+        "email": user.email,
+        "role": user.permission_level if user.permission_level is not None else 0,
+        "name": user.name,
+        "phone_number": user.phone_number,
+        "profile_picture": user.pro_pic,
+        "town": user.town,
+    }
+
+
 class UserService:
     def __init__(self, db: Session):
         self.db = db

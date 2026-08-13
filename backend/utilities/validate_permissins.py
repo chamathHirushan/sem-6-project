@@ -1,16 +1,31 @@
 from fastapi import Depends, HTTPException, Request, Header
+from sqlalchemy.orm import Session
 from services.auth_service import AuthService
+from services.user_service import UserService
+from models.database import SessionLocal
+from models.user import User
 import jwt
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 async def get_current_user_role(authorization: str = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing or invalid Authorization header")
     access_token = authorization.split(" ")[1]
-    
+
     try:
         decoded_token = AuthService().decode_access_token(access_token)
         email = decoded_token.get("email")
         user_role = decoded_token.get("role")
+        if user_role is None:
+            user_role = 0
         return user_role, email
 
     except jwt.ExpiredSignatureError:
@@ -19,16 +34,42 @@ async def get_current_user_role(authorization: str = Header(None)):
         raise HTTPException(status_code=401, detail="Invalid access token")
 
 
-# Create role-checking hook factory
+async def get_current_user(
+    authorization: str = Header(None),
+    db: Session = Depends(get_db),
+) -> User:
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid Authorization header")
+    access_token = authorization.split(" ")[1]
+    decoded_token = AuthService().decode_access_token(access_token)
+
+    user_service = UserService(db)
+    user = None
+    user_id = decoded_token.get("id")
+    email = decoded_token.get("email")
+    if user_id is not None:
+        try:
+            user = user_service.get_user(int(user_id))
+        except (TypeError, ValueError):
+            user = None
+    if not user and email:
+        user = user_service.get_user_by_email(email)
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    return user
+
+
 def require_role(required_role: int):
     async def dependency(
         request: Request,
         user_data: tuple = Depends(get_current_user_role)
     ):
         user_role, email = user_data
+        if user_role is None:
+            user_role = 0
         if user_role < required_role:
             raise HTTPException(
-                status_code= 403,
+                status_code=403,
                 detail="Permission denied."
             )
         request.state.email = email

@@ -1,12 +1,15 @@
 fastapi==0.115.11
 python-dotenv==1.0.1
 uvicorn==0.34.0
+httpx==0.28.1
 upstash-redis==1.4.0
 firebase-admin==6.7.0
 
-sqlalchemy==2.0.16
+# 2.0.16 breaks on Python 3.13 (TypingOnly / __firstlineno__)
+sqlalchemy==2.0.52
 psycopg2-binary==2.9.10
-pydantic==1.10.9
+# FastAPI 0.115 requires Pydantic v2 (1.10.9 is incompatible)
+pydantic==2.11.7
 
 azure-ai-projects==1.0.0b5
 azure-core==1.32.0
@@ -22,7 +25,6 @@ msal-extensions==1.2.0
 portalocker==2.10.1
 pycparser==2.22
 PyJWT==2.10.1
-python-dotenv==1.0.1
 requests==2.32.3
 six==1.17.0
 typing_extensions==4.12.2

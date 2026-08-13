@@ -1,13 +1,13 @@
 from dotenv import load_dotenv
 load_dotenv()
 
-from fastapi import FastAPI, Header
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import uvicorn
 from models.database import engine
 from models import Base
-from routes import gateway, auth, admin, user, jobs, workers, favourites, notifications, conversations, working,chat
+from routes import gateway, auth, admin, user, jobs, workers, favourites, notifications, conversations, working, chat, replies, user_api
 
 app = FastAPI()
 
@@ -35,6 +35,9 @@ app.include_router(notifications.router, prefix="/api")
 app.include_router(conversations.router, prefix="/api")
 app.include_router(working.router)
 app.include_router(chat.router)
+app.include_router(replies.router)
+app.include_router(user_api.router, prefix="/api")
+app.include_router(user_api.task_router, prefix="/api")
 
 @app.get("/")
 def read_root():
