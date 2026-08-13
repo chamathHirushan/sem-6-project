@@ -2,7 +2,7 @@
 
 Hybrid setup: run uvicorn and the Vite frontend on the host, and Postgres in Docker on port **5433**.
 
-## Local hybrid (recommended)
+## Local hybrid
 
 ### 1. Start Postgres only
 
