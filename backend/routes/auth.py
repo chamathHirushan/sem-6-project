@@ -223,8 +223,8 @@ async def store_phone(
         raise HTTPException(status_code=500, detail="Failed to store phone number")
 
 
-MERCHANT_ID = "1230959"
-MERCHANT_SECRET = "MjA5OTAzMjcyNzEzNzg1OTU1MTkxNzM5NjM0MzYyMTM1NjA0MjYyNg=="
+MERCHANT_ID = os.getenv("PAYHERE_MERCHANT_ID", "")
+MERCHANT_SECRET = os.getenv("PAYHERE_MERCHANT_SECRET", "")
 
 
 class StartPaymentRequest(BaseModel):
@@ -242,8 +242,17 @@ class NotifyRequest(BaseModel):
     md5sig: str
 
 
+def _require_payhere_config():
+    if not MERCHANT_ID or not MERCHANT_SECRET:
+        raise HTTPException(
+            status_code=503,
+            detail="PayHere is unavailable (PAYHERE_MERCHANT_ID / PAYHERE_MERCHANT_SECRET not set).",
+        )
+
+
 @router.post("/start")
 async def start_payment(data: StartPaymentRequest):
+    _require_payhere_config()
     print(f"Payment request for order: {data.order_id}")
 
     hashed_secret = hashlib.md5(MERCHANT_SECRET.encode()).hexdigest().upper()
@@ -256,6 +265,7 @@ async def start_payment(data: StartPaymentRequest):
 
 @router.post("/notify")
 async def payment_notify(data: NotifyRequest):
+    _require_payhere_config()
     print(f"Payment notification received for order: {data.order_id}")
 
     hashed_secret = hashlib.md5(MERCHANT_SECRET.encode()).hexdigest().upper()

@@ -34,7 +34,11 @@ Create `backend/.env` with at least:
 ```
 FRONTEND_URL=http://localhost:5173
 DATABASE_URL=postgresql://postgres:postgres-pw@localhost:5433/sewalk
+PAYHERE_MERCHANT_ID=
+PAYHERE_MERCHANT_SECRET=
 ```
+
+Copy `backend/.env.example` for the full list. PayHere vars are required for `/auth/start`.
 
 Start the API:
 
