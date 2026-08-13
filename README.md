@@ -1,29 +1,75 @@
 # SEWA.LK - CSE Sem-6 professional portfolio project
 
-## To run Frontend
+Hybrid setup: run uvicorn and the Vite frontend on the host, and Postgres in Docker on port **5433**.
 
-1) &nbsp;
-   Navigate to frontend folder
-2) ```
-   npm install
-3) &nbsp;
-   Make an .env with VITE_BACKEND_URL
-4) ```
-   npm run dev
+## Local hybrid (recommended)
 
-## To run Backend
+### 1. Start Postgres only
 
-1) &nbsp;
-   Navigate to backend folder
-2) &nbsp;
-   Create or activate your venv
-3) &nbsp;
-   Make an .env with FRONTEND_URL
-4) ```
-   pip install -r requirements.txt
-5) ```
-   uvicorn main:app --reload
+From the `sem-6-project` folder:
 
-# now can access frontend and backend with db via docker
-1. docker-compose build
-2. docker-compose up -d
+```powershell
+docker compose up -d db
+```
+
+Wait until `sewalk-db` is healthy (`docker compose ps`).
+
+If tables look stale after a schema change, reset the volume once:
+
+```powershell
+docker compose down -v
+docker compose up -d db
+```
+
+### 2. Backend
+
+Navigate to `backend`, create or activate the venv, then install:
+
+```powershell
+pip install -r requirements.txt
+```
+
+Create `backend/.env` with at least:
+
+```
+FRONTEND_URL=http://localhost:5173
+DATABASE_URL=postgresql://postgres:postgres-pw@localhost:5433/sewalk
+```
+
+Start the API:
+
+```powershell
+uvicorn main:app --reload
+```
+
+`/chat` returns 503 until Azure packages are installed. Jobs, auth, and user APIs do not need Azure.
+
+### 3. Frontend
+
+Navigate to `frontend`, then:
+
+```powershell
+npm install
+```
+
+Create `frontend/.env` with:
+
+```
+VITE_BACKEND_URL=http://localhost:8000
+```
+
+Start the app:
+
+```powershell
+npm run dev
+```
+
+## Full Docker
+
+Builds frontend and backend containers as well. The backend talks to Postgres at `db:5432` on the compose network.
+
+```powershell
+docker compose up -d
+```
+
+Do not start the Docker backend/frontend if you are already running uvicorn and `npm run dev` locally (port clash on 8000 / 5173).
