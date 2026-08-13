@@ -71,5 +71,3 @@ Builds frontend and backend containers as well. The backend talks to Postgres at
 ```powershell
 docker compose up -d
 ```
-
-Do not start the Docker backend/frontend if you are already running uvicorn and `npm run dev` locally (port clash on 8000 / 5173).
